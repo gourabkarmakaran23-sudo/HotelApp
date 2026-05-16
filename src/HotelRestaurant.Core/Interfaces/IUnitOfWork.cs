@@ -14,7 +14,7 @@ namespace HotelRestaurant.Core.Interfaces
         IGenericRepository<OrderItem> OrderItems { get; }
         IGenericRepository<Invoice> Invoices { get; }
         IGenericRepository<InventoryItem> InventoryItems { get; }
-
+        IUserRepository ApplicationUsers { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

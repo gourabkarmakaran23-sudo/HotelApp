@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "sep+xj/DoyI=",
+  "dgSpecHash": "0h/YgPit00w=",
   "success": true,
   "projectFilePath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Acer\\.nuget\\packages\\bcrypt.net-next\\4.2.0\\bcrypt.net-next.4.2.0.nupkg.sha512"
+  ],
   "logs": []
 }

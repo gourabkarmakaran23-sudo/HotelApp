@@ -31,7 +31,9 @@ ng serve
 Gourab Karmakar
 gourabkarmakaran23@gmail.com
 pass: @GK2026Hotel
+https://github.com/gourabkarmakaran23-sudo/HotelApp.git
 
+git remote add origin https://github.com/gourabkarmakaran23-sudo/HotelApp.git
 
 
 

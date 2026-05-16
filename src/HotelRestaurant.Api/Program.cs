@@ -1,25 +1,42 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using HotelRestaurant.Api.Middleware;
 using HotelRestaurant.Api.Models;
 using HotelRestaurant.Api.Services;
+using HotelRestaurant.Application.Services;
 using HotelRestaurant.Core.Entities;
 using HotelRestaurant.Core.Interfaces;
 using HotelRestaurant.Infrastructure.Data;
 using HotelRestaurant.Infrastructure.Repositories;
+using HotelRestaurant.Infrastructure.Services;
 using HotelRestaurant.Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// builder.Services.AddDbContext<AppDbContext>(options =>
+//     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// ── 1. Database — EF Core + PostgreSQL ───────────────────────────────────────
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+// ── 3. Application Services ───────────────────────────────────────────────────
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// ── 4. JWT Service (Singleton — stateless, thread-safe) ──────────────────────
+builder.Services.AddSingleton<IJwtService, JwtService>();
+
 
 builder.Services.AddCors(options =>
 {
@@ -31,9 +48,36 @@ builder.Services.AddCors(options =>
     });
 });
 
-var jwtKey = builder.Configuration["JwtSettings:Key"] ?? throw new InvalidOperationException("JWT signing key is not configured.");
-var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "HotelRestaurantApi";
-var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "HotelRestaurantClient";
+// var jwtKey = builder.Configuration["JwtSettings:Key"] ?? throw new InvalidOperationException("JWT signing key is not configured.");
+// var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "HotelRestaurantApi";
+// var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "HotelRestaurantClient";
+
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+// })
+// .AddJwtBearer(options =>
+// {
+//     options.TokenValidationParameters = new TokenValidationParameters
+//     {
+//         ValidateIssuerSigningKey = true,
+//         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+//         ValidateIssuer = true,
+//         ValidIssuer = jwtIssuer,
+//         ValidateAudience = true,
+//         ValidAudience = jwtAudience,
+//         ValidateLifetime = true,
+//         ClockSkew = TimeSpan.FromMinutes(2)
+//     };
+// });
+
+// ── 5. JWT Authentication ─────────────────────────────────────────────────────
+var jwtSection = builder.Configuration.GetSection("JwtSettings");
+var jwtKey = jwtSection["Key"] ?? throw new InvalidOperationException("JWT signing key is not configured. Set JwtSettings:Key in appsettings.");
+var jwtIssuer = jwtSection["Issuer"] ?? throw new InvalidOperationException("JWT issuer is not configured. Set JwtSettings:Issuer in appsettings.");
+var jwtAudience = jwtSection["Audience"] ?? throw new InvalidOperationException("JWT audience is not configured. Set JwtSettings:Audience in appsettings.");
+var key = Encoding.UTF8.GetBytes(jwtKey);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -42,37 +86,88 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    options.RequireHttpsMetadata = false; // set true in production
+    options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+        IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = true,
         ValidIssuer = jwtIssuer,
         ValidateAudience = true,
         ValidAudience = jwtAudience,
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.FromMinutes(2)
+        ClockSkew = TimeSpan.Zero
     };
 });
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddOpenApi();
+// ── 6. CORS — allow Angular dev server ───────────────────────────────────────
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+        policy.WithOrigins(
+                  "http://localhost:4200",
+                  "https://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials());
+});
+
+// ── 7. Controllers + Swagger ──────────────────────────────────────────────────
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "HotelRestaurant API",
+        Version = "v1",
+        Description = "Hotel & Restaurant Management System — Auth endpoints"
+    });
+
+    // Add JWT auth button in Swagger UI
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter: Bearer {your token}"
+    });
+});
+
 
 var app = builder.Build();
 
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
+//     var context = services.GetRequiredService<AppDbContext>();
+//     await DbInitializer.InitializeAsync(context);
+// }
+
+// ── Auto-migrate on startup (dev convenience) ─────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<AppDbContext>();
-    await DbInitializer.InitializeAsync(context);
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
 }
+// ── Middleware pipeline ───────────────────────────────────────────────────────
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelRestaurant API v1");
+        c.RoutePrefix = "swagger";
+    });
 }
-
+app.UseHttpsRedirection();
 app.UseCors("AllowAngularDevClient");
 app.UseAuthentication();
 app.UseAuthorization();

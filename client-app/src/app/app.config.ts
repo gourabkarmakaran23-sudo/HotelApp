@@ -4,7 +4,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 
 // Exported for services that need the base API URL
-export const apiBaseUrl = 'http://localhost:3000/api';
+//export const apiBaseUrl = 'http://localhost:3000/api';
+
+export const apiBaseUrl = 'http://localhost:5287/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [

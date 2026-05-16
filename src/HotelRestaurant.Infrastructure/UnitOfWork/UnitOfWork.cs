@@ -36,7 +36,7 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         public IGenericRepository<Invoice> Invoices { get; }
         public IGenericRepository<InventoryItem> InventoryItems { get; }
  
-        public IUserRepository Users
+        public IUserRepository ApplicationUsers
         => _users ??= new UserRepository(_context);
  
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
