@@ -1,0 +1,85 @@
+<div class="dashboard-shell">
+  <header class="topbar">
+    <div class="brand-block">
+      <span class="brand-tag">SMARTLüth</span>
+      <span>Hospitality</span>
+    </div>
+    <nav class="top-actions">
+      <a routerLink="/dashboard">Dashboard</a>
+      <button type="button" (click)="logout()">Log out</button>
+    </nav>
+  </header>
+
+  <section class="dashboard-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Dashboard</p>
+      <h1>Hotel operations in one place</h1>
+      <p>Monitor occupancy, settlements, reservations and service trends from a polished central workspace.</p>
+    </div>
+
+    <div class="status-cards">
+      <article class="status-card">
+        <span>Active bookings</span>
+        <strong>{{ summary?.activeBookings ?? '–' }}</strong>
+      </article>
+      <article class="status-card accent">
+        <span>Total revenue</span>
+        <strong>{{ summary?.revenue | number:'1.0-0' }}</strong>
+      </article>
+      <article class="status-card">
+        <span>Occupancy</span>
+        <strong>{{ summary?.occupancyRate ?? '–' }}%</strong>
+      </article>
+      <article class="status-card">
+        <span>Pending requests</span>
+        <strong>{{ summary?.pendingRequests ?? '–' }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <section class="dashboard-grid">
+    <article class="panel occupancy-panel">
+      <div class="panel-header">
+        <h2>Room occupancy</h2>
+        <span>Live status snapshot</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Room</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of occupancyRows">
+            <td>{{ row.room }}</td>
+            <td><span class="status-pill" [attr.data-type]="row.badge">{{ row.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+
+    <article class="panel report-panel">
+      <div class="panel-header">
+        <h2>Booking insights</h2>
+        <span>Week to date performance</span>
+      </div>
+
+      <div class="report-body">
+        <div class="report-item">
+          <span>Room revenue trend</span>
+          <strong>+18%</strong>
+        </div>
+        <div class="report-item">
+          <span>Check-in pace</span>
+          <strong>64 new bookings</strong>
+        </div>
+        <div class="report-item">
+          <span>Expected checkout</span>
+          <strong>12 rooms</strong>
+        </div>
+      </div>
+    </article>
+  </section>
+</div>

@@ -1,0 +1,160 @@
+.auth-shell {
+  display: grid;
+  grid-template-columns: minmax(320px, 520px) 1fr;
+  min-height: 100vh;
+  gap: 2rem;
+  padding: 3rem;
+  background: linear-gradient(180deg, #f4f7ff 0%, #fbfcff 100%);
+}
+
+.auth-panel,
+.auth-aside {
+  background: #ffffff;
+  border-radius: 28px;
+  box-shadow: 0 28px 80px rgba(40, 67, 120, 0.08);
+  padding: 2.5rem;
+}
+
+.auth-header {
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #50667d;
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 2.6vw, 3rem);
+  color: #111827;
+}
+
+p {
+  color: #56657d;
+  line-height: 1.8;
+  margin-top: 1rem;
+}
+
+.auth-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #d6dce5;
+  border-radius: 16px;
+  padding: 0.95rem 1rem;
+  font-size: 1rem;
+  color: #111827;
+  background: #f9fbff;
+}
+
+label {
+  font-weight: 600;
+  color: #24364f;
+}
+
+button {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #5b3cff 0%, #ff5e7a 100%);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+.form-actions {
+  margin-top: 0.5rem;
+}
+
+.register-link {
+  font-size: 0.95rem;
+  color: #556b84;
+  margin-top: 1rem;
+}
+
+.register-link a {
+  color: #5b3cff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.error-message {
+  color: #d03131;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.auth-aside {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aside-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.aside-card h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #111827;
+}
+
+.aside-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.aside-card li {
+  color: #475569;
+  padding-left: 1.4rem;
+  position: relative;
+}
+
+.aside-card li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #5b3cff;
+}
+
+@media (max-width: 980px) {
+  .auth-shell {
+    grid-template-columns: 1fr;
+    padding: 2rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

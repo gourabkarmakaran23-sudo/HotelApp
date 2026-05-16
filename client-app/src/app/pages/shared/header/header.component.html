@@ -1,0 +1,46 @@
+<header class="app-header">
+  <div class="header-left">
+    <button class="menu-btn" (click)="toggleSidebar()">
+      <span class="material-icons">menu</span>
+    </button>
+    <div class="brand">
+      <span class="brand-icon material-icons">hotel</span>
+      <span class="brand-name">StayLux</span>
+    </div>
+  </div>
+
+  <nav class="header-nav">
+    <a class="nav-link" routerLink="/website" routerLinkActive="active">
+      <span class="material-icons">language</span>
+      Website
+    </a>
+    <a class="nav-link highlight" routerLink="/customer-invoice" routerLinkActive="active">
+      <span class="material-icons">receipt_long</span>
+      Customer Invoice
+    </a>
+    <a class="nav-link primary" routerLink="/booking-report" routerLinkActive="active">
+      <span class="material-icons">bar_chart</span>
+      Booking Report
+    </a>
+    <button class="icon-btn"><span class="material-icons">grid_view</span></button>
+    <button class="icon-btn"><span class="material-icons">wifi</span></button>
+    <button class="icon-btn"><span class="material-icons">settings</span></button>
+  </nav>
+
+  <div class="header-right">
+    <div class="clock">{{ currentTime }}</div>
+    <div class="avatar-wrap">
+      <button class="avatar-btn" (click)="toggleUserMenu()">
+        <span class="material-icons">account_circle</span>
+      </button>
+      <div class="user-menu" *ngIf="showUserMenu">
+        <button class="user-menu-item">
+          <span class="material-icons">person</span> Profile
+        </button>
+        <button class="user-menu-item danger">
+          <span class="material-icons">logout</span> Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

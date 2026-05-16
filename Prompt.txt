@@ -1,0 +1,37 @@
+postgresql pass:SQL@2024
+
+Want to develop a Hotel & Restrurant Software(Professional and full package) using Lattest DotNet Core and Angular Framework and want to
+used PostgresSQL or SQLServer as a database server(I think PostgresSQL is better) 
+
+1. Design the Database first using EntityFrameworkCore code first approach.
+2. Used Solid Principle, Dry Principle, Repository Design Pattern, Singletone Design Pattern, UnitofWork framework.
+3. Use ErrorHandlingMiddleware, Logger, FluentValidation, JWT Authentication
+4. Used DotNet CLI to create project and add all the dependecies.
+5. Use ItextSharp or some other free tool to export the report in PDF.
+6. Used any to tool to export Excel or CSV for data replated report.
+7. Give it Professional Look
+
+First create the Architecture we will design the App later.
+
+Create all the Project FIrst
+dotnet new sln -n HotelRestaurant; mkdir src; dotnet new webapi -n HotelRestaurant.Api -o src/HotelRestaurant.Api; dotnet new classlib -n HotelRestaurant.Application -o src/HotelRestaurant.Application; dotnet new classlib -n HotelRestaurant.Infrastructure -o src/HotelRestaurant.Infrastructure; dotnet new classlib -n HotelRestaurant.Core -o src/HotelRestaurant.Core; dotnet sln add src/HotelRestaurant.Api/HotelRestaurant.Api.csproj src/HotelRestaurant.Application/HotelRestaurant.Application.csproj src/HotelRestaurant.Infrastructure/HotelRestaurant.Infrastructure.csproj src/HotelRestaurant.Core/HotelRestaurant.Core.csproj; dotnet add src/HotelRestaurant.Application/HotelRestaurant.Application.csproj reference src/HotelRestaurant.Core/HotelRestaurant.Core.csproj; dotnet add src/HotelRestaurant.Infrastructure/HotelRestaurant.Infrastructure.csproj reference src/HotelRestaurant.Core/HotelRestaurant.Core.csproj; dotnet add src/HotelRestaurant.Api/HotelRestaurant.Api.csproj reference src/HotelRestaurant.Application/HotelRestaurant.Application.csproj; dotnet add src/HotelRestaurant.Api/HotelRestaurant.Api.csproj reference src/HotelRestaurant.Infrastructure/HotelRestaurant.Infrastructure.csproj; dotnet add src/HotelRestaurant.Infrastructure/HotelRestaurant.Infrastructure.csproj package Microsoft.EntityFrameworkCore Npgsql.EntityFrameworkCore.PostgreSQL Microsoft.EntityFrameworkCore.Design; dotnet add src/HotelRestaurant.Api/HotelRestaurant.Api.csproj package Microsoft.AspNetCore.Authentication.JwtBearer FluentValidation.AspNetCore Swashbuckle.AspNetCore Serilog.AspNetCore AutoMapper.Extensions.Microsoft.DependencyInjection
+
+
+Now First Design the User Interface for login, register and Dashboard/Home page in frontend after
+Frontend done we implement API to integrate with. We will used JWT Authentication and Solid Principle, Dry Principle, Repository Design Pattern, Singletone Design Pattern, UnitofWork framework.
+
+Image 1: Login, 
+Image 2, Image 3, IMage 4: Dashboard
+
+writre the API endpoints for login/register and dashboard and JWT token handling in the backend.
+
+npm install
+ng serve
+
+Gourab Karmakar
+gourabkarmakaran23@gmail.com
+pass: @GK2026Hotel
+
+
+
+

@@ -1,0 +1,55 @@
+<div class="auth-shell register-shell">
+  <section class="auth-panel">
+    <div class="auth-header">
+      <p class="eyebrow">SMARTLüth Hospitality</p>
+      <h1>Create your account</h1>
+      <p>Start managing hotel rooms, reservations, invoices, and restaurant orders with one secure portal.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+      <div class="form-group">
+        <label for="name">Full name</label>
+        <input id="name" type="text" formControlName="name" placeholder="Jane Doe" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input id="email" type="email" formControlName="email" placeholder="name@example.com" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label for="password">Password</label>
+          <input id="password" type="password" formControlName="password" placeholder="••••••••" />
+        </div>
+
+        <div class="form-group half-width">
+          <label for="confirmPassword">Confirm password</label>
+          <input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="••••••••" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="loading">{{ loading ? 'Creating account...' : 'Create account' }}</button>
+      </div>
+
+      <p class="register-link">
+        Already registered? <a routerLink="/login">Sign in</a>
+      </p>
+
+      <p class="error-message" *ngIf="error">{{ error }}</p>
+    </form>
+  </section>
+
+  <section class="auth-aside">
+    <div class="aside-card">
+      <h2>Modern operations for modern hospitality</h2>
+      <p>Register now to enable centralized booking control, invoice generation, and restaurant order tracking.</p>
+      <ul>
+        <li>JWT authentication ready</li>
+        <li>Maintenance-free room management</li>
+        <li>Responsive dashboard experience</li>
+      </ul>
+    </div>
+  </section>
+</div>
