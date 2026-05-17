@@ -45,46 +45,85 @@
     <table>
       <thead>
         <tr>
-          <th>SC</th>
-          <th>Room No.</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Mobile No.</th>
           <th>Action</th>
+          <th>SL</th>
+          <th>Booking Number</th>
+          <th>Room Type</th>
+          <th>Room No.</th>
+          <th>Meal Plan</th>
+          <th>Pak</th>
+          <th>Name</th>
+          <th>Mobile</th>
+          <th>Check In</th>
+          <th>Check Out</th>
+          <th>Paid Amt</th>
+          <th>Due Amt</th>
+          <th>Booking Status</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let row of filteredRows; let idx = index">
+          <td class="row-actions" (click)="$event.stopPropagation()">
+            <div class="action-dropdown">
+              <button class="action-btn menu-btn" title="Actions" (click)="toggleRowMenu(row, $event)">
+                <span class="material-icons">more_vert</span>
+              </button>
+              <ul class="action-menu" *ngIf="row.showActions" [ngClass]="{ 'left': row.menuAlign === 'left', 'right': row.menuAlign !== 'left' }"
+                [ngStyle]="row.menuFixed ? { position: 'fixed', top: row.menuTop, left: row.menuLeft } : {}">
+                <li (click)="addGuestRow(row)"><span class="material-icons">person_add</span> Add Guest</li>
+                <li (click)="checkOutRow(row)"><span class="material-icons">logout</span> Check Out</li>
+                <li (click)="rowView(row)"><span class="material-icons">visibility</span> View</li>
+                <li (click)="rowPrint(row)"><span class="material-icons">print</span> Print</li>
+                <li (click)="cancelReservationRow(row)"><span class="material-icons">cancel</span> Cancel Reservation</li>
+                <li (click)="paymentRow(row)"><span class="material-icons">payments</span> Payment</li>
+                <li (click)="upgradeRow(row)"><span class="material-icons">arrow_upward</span> Upgrade</li>
+                <li (click)="gtcFormRow(row)"><span class="material-icons">description</span> Gtc Form</li>
+                <li (click)="guestCheckinModeRow(row)"><span class="material-icons">camera_alt</span> Guest Checkin Mode</li>
+              </ul>
+            </div>
+          </td>
           <td>{{ idx + 1 }}</td>
+          <td>{{ row.bookingNumber }}</td>
+          <td>{{ row.roomType }}</td>
           <td>{{ row.roomNo }}</td>
-          <td>{{ row.firstName }}</td>
-          <td>{{ row.lastName }}</td>
+          <td>{{ row.mealPlan }}</td>
+          <td>{{ row.pak }}</td>
+          <td>{{ row.name }}</td>
           <td>{{ row.mobile }}</td>
-            <td class="row-actions" (click)="$event.stopPropagation()">
-              <div class="action-dropdown">
-                <button class="action-btn menu-btn" title="Actions" (click)="toggleRowMenu(row, $event)">
-                  <span class="material-icons">more_vert</span>
-                </button>
-                <ul class="action-menu" *ngIf="row.showActions">
-                  <li (click)="addGuestRow(row)"><span class="material-icons">person_add</span> Add Guest</li>
-                  <li (click)="checkOutRow(row)"><span class="material-icons">logout</span> Check Out</li>
-                  <li (click)="rowView(row)"><span class="material-icons">visibility</span> View</li>
-                  <li (click)="rowPrint(row)"><span class="material-icons">print</span> Print</li>
-                  <li (click)="cancelReservationRow(row)"><span class="material-icons">cancel</span> Cancel Reservation</li>
-                  <li (click)="amenityAddRow(row)"><span class="material-icons">local_offer</span> Amenity Add</li>
-                  <li (click)="roomAlterRow(row)"><span class="material-icons">swap_horiz</span> Room Alter</li>
-                  <li (click)="paymentRow(row)"><span class="material-icons">payments</span> Payment</li>
-                  <li (click)="upgradeRow(row)"><span class="material-icons">arrow_upward</span> Upgrade</li>
-                  <li (click)="gtcFormRow(row)"><span class="material-icons">description</span> Gtc Form</li>
-                  <li (click)="guestCheckinPhotoRow(row)"><span class="material-icons">camera_alt</span> Guest Checkin Photo</li>
-                </ul>
-              </div>
-            </td>
+          <td>{{ row.checkIn }}</td>
+          <td>{{ row.checkOut }}</td>
+          <td>{{ row.paidAmt | currency:'INR' }}</td>
+          <td>{{ row.dueAmt | currency:'INR' }}</td>
+          <td>{{ row.bookingStatus }}</td>
         </tr>
         <tr *ngIf="filteredRows.length === 0">
-          <td colspan="6" class="empty-row">No records found</td>
+          <td colspan="14" class="empty-row">No records found</td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Add Guest Modal -->
+  <div class="modal-backdrop" *ngIf="showAddGuestModal">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3>Add Guest</h3>
+      <div class="form-grid">
+        <label>Room No.</label>
+        <input [(ngModel)]="modalGuest.roomNo" />
+
+        <label>First Name</label>
+        <input [(ngModel)]="modalGuest.firstName" />
+
+        <label>Last Name</label>
+        <input [(ngModel)]="modalGuest.lastName" />
+
+        <label>Mobile</label>
+        <input [(ngModel)]="modalGuest.mobile" />
+      </div>
+      <div class="modal-actions">
+        <button class="primary" (click)="saveModalGuest()">Save</button>
+        <button class="secondary" (click)="cancelModalGuest()">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>

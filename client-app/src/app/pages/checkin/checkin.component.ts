@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 interface GuestRow {
   id: number;
@@ -18,6 +19,10 @@ interface GuestRow {
   dueAmt: number;
   bookingStatus: string;
   showActions?: boolean;
+  menuAlign?: 'left' | 'right';
+  menuTop?: string;
+  menuLeft?: string;
+  menuFixed?: boolean;
 }
 
 @Component({
@@ -68,6 +73,41 @@ export class CheckinComponent {
     }
   ];
 
+  // Add Guest modal state
+  showAddGuestModal = false;
+  modalGuest: any = { roomNo: '', firstName: '', lastName: '', mobile: '' };
+
+  constructor(private readonly router: Router, private readonly http: HttpClient) {}
+
+  ngOnInit(): void {
+    // Try to load bookings from local asset to populate the checkin list
+    this.http.get<any[]>('assets/BookingList.json').subscribe({
+      next: (data) => {
+        if (data && data.length) {
+          // map to GuestRow structure — take first few relevant fields if available
+          this.guestRows = data.map((d, idx) => ({
+            id: idx + 1,
+            bookingNumber: d.bookingNumber ?? `0000${idx + 1}`,
+            roomType: d.roomType ?? d.roomType ?? '',
+            roomNo: Array.isArray(d.roomNo) ? d.roomNo.join(', ') : (d.roomNo ?? ''),
+            mealPlan: d.mealPlan ?? d.mealPlan ?? '',
+            pak: d.pax ? String(d.pax) : (d.pak ?? ''),
+            name: d.name ?? `${d.guestName ?? ''}`,
+            mobile: d.mobile ?? d.guestPhone ?? '',
+            checkIn: d.checkIn ?? '',
+            checkOut: d.checkOut ?? '',
+            paidAmt: d.amount ?? 0,
+            dueAmt: d.dueAmt ?? 0,
+            bookingStatus: d.paymentStatus ?? ''
+          }));
+        }
+      },
+      error: () => {
+        // keep existing sample rows if asset not found
+      }
+    });
+  }
+
   get filteredRows(): GuestRow[] {
     const search = this.searchText.trim().toLowerCase();
     if (!search) {
@@ -81,10 +121,10 @@ export class CheckinComponent {
       row.roomType.toLowerCase().includes(search)
     );
   }
-  constructor(private readonly router: Router) {}
 
   addGuest(): void {
-    this.router.navigate(['/add-guest']);
+    this.modalGuest = { roomNo: '', firstName: '', lastName: '', mobile: '' };
+    this.showAddGuestModal = true;
   }
 
   // Toggle per-row action menu
@@ -92,22 +132,55 @@ export class CheckinComponent {
     if (ev) { ev.stopPropagation(); }
     // close others
     this.guestRows.forEach(r => { if (r.id !== row.id) r.showActions = false; });
-    row.showActions = !row.showActions;
+    const next = !row.showActions;
+    row.showActions = next;
+    if (next && ev && ev.target) {
+      // decide whether to align menu to left or right based on viewport space
+      try {
+        const btnEl = (ev.target as HTMLElement).closest('.action-dropdown') as HTMLElement || (ev.target as HTMLElement);
+        const rect = btnEl.getBoundingClientRect();
+        const menuMinWidth = 220; // px (match SCSS min-width)
+        // alignment
+        if (rect.left + menuMinWidth > window.innerWidth) {
+          row.menuAlign = 'left';
+        } else {
+          row.menuAlign = 'right';
+        }
+        // compute fixed coordinates so menu is not clipped by ancestor overflow
+        const padding = 8;
+        const leftCandidate = row.menuAlign === 'right' ? rect.left : rect.right - menuMinWidth;
+        const left = Math.max(padding, Math.min(leftCandidate, window.innerWidth - menuMinWidth - padding));
+        const top = rect.bottom + 6; // show below button
+        row.menuLeft = `${Math.round(left)}px`;
+        row.menuTop = `${Math.round(top)}px`;
+        row.menuFixed = true;
+      } catch {
+        row.menuAlign = 'right';
+        row.menuFixed = false;
+      }
+    } else {
+      // closing menu
+      row.menuFixed = false;
+    }
   }
 
   closeAllMenus(): void {
-    this.guestRows.forEach(r => r.showActions = false);
+    this.guestRows.forEach(r => {
+      r.showActions = false;
+      r.menuFixed = false;
+    });
   }
 
   // Row-level actions
   addGuestRow(row: GuestRow): void {
     this.closeAllMenus();
-    this.router.navigate(['/add-guest'], { state: { roomNo: row.roomNo } });
+    this.modalGuest = { roomNo: row.roomNo, firstName: '', lastName: '', mobile: '' };
+    this.showAddGuestModal = true;
   }
 
   checkOutRow(row: GuestRow): void {
     this.closeAllMenus();
-    alert(`Check out ${row.firstName} ${row.lastName}`);
+    alert(`Check out ${row.name}`);
   }
 
   cancelReservationRow(row: GuestRow): void {
@@ -145,6 +218,38 @@ export class CheckinComponent {
     alert(`Open guest checkin photo for ${row.roomNo}`);
   }
 
+  guestCheckinModeRow(row: GuestRow): void {
+    this.closeAllMenus();
+    alert(`Guest Checkin Mode for ${row.roomNo}`);
+  }
+
+  saveModalGuest(): void {
+    const id = this.guestRows.length ? Math.max(...this.guestRows.map(r => r.id)) + 1 : 1;
+    const newRow: GuestRow = {
+      id,
+      bookingNumber: '',
+      roomType: '',
+      roomNo: this.modalGuest.roomNo || '',
+      mealPlan: '',
+      pak: '',
+      name: `${this.modalGuest.firstName || ''} ${this.modalGuest.lastName || ''}`.trim(),
+      mobile: this.modalGuest.mobile || '',
+      checkIn: '',
+      checkOut: '',
+      paidAmt: 0,
+      dueAmt: 0,
+      bookingStatus: 'Checked In'
+    };
+    this.guestRows.unshift(newRow);
+    this.showAddGuestModal = false;
+    this.modalGuest = { roomNo: '', firstName: '', lastName: '', mobile: '' };
+  }
+
+  cancelModalGuest(): void {
+    this.showAddGuestModal = false;
+    this.modalGuest = { roomNo: '', firstName: '', lastName: '', mobile: '' };
+  }
+
   print(): void {
     window.print();
   }
@@ -170,7 +275,7 @@ export class CheckinComponent {
   }
 
   rowPrint(row: GuestRow): void {
-    alert(`Print guest ${row.firstName} ${row.lastName}`);
+    alert(`Print guest ${row.name}`);
   }
 
   rowView(row: GuestRow): void {
