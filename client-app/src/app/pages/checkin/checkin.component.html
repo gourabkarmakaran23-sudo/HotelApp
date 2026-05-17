@@ -1,0 +1,78 @@
+<div class="checkin-page">
+  <div class="page-title-bar">
+    <div class="title-block">
+      <div class="title-label">Checked In</div>
+      <div class="room-tags">
+        <span>PV</span>
+        <span>EV</span>
+        <span>ENV</span>
+        <span>PV</span>
+        <span>FNV</span>
+        <span>FJV</span>
+      </div>
+    </div>
+    <div class="toolbar-actions">
+      <button class="toolbar-btn" type="button" (click)="print()"><span class="material-icons">print</span> Print</button>
+      <button class="toolbar-btn" type="button" (click)="view()"><span class="material-icons">visibility</span> View</button>
+      <button class="toolbar-btn" type="button" (click)="cancelReservation()"><span class="material-icons">cancel</span> Cancel Reservation</button>
+      <button class="toolbar-btn" type="button" (click)="payment()"><span class="material-icons">payments</span> Payment</button>
+      <button class="toolbar-btn" type="button" (click)="gtcForm()"><span class="material-icons">description</span> Gtc Form</button>
+      <button class="toolbar-btn primary" type="button" (click)="addGuest()"><span class="material-icons">person_add</span> Add new guest</button>
+    </div>
+  </div>
+
+  <div class="booking-header-card">
+    <div class="booking-details">
+      <div class="booking-main">Guest Details of booking No : {{ bookingNumber }}</div>
+      <div class="booking-subtitle">{{ guestNames.join(' | ') }}</div>
+    </div>
+    <div class="booking-controls">
+      <label>
+        Show
+        <select [(ngModel)]="pageSize">
+          <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+        </select>
+        entries
+      </label>
+      <div class="search-box">
+        <span class="material-icons">search</span>
+        <input type="text" placeholder="Search..." [(ngModel)]="searchText" />
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>SC</th>
+          <th>Room No.</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Mobile No.</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of filteredRows; let idx = index">
+          <td>{{ idx + 1 }}</td>
+          <td>{{ row.roomNo }}</td>
+          <td>{{ row.firstName }}</td>
+          <td>{{ row.lastName }}</td>
+          <td>{{ row.mobile }}</td>
+          <td class="row-actions">
+            <button class="action-btn" title="View" (click)="rowView(row)">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button class="action-btn" title="Print" (click)="rowPrint(row)">
+              <span class="material-icons">print</span>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredRows.length === 0">
+          <td colspan="6" class="empty-row">No records found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

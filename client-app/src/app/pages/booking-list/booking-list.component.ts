@@ -195,20 +195,20 @@ export class BookingListComponent implements OnInit {
     {
       headerName: 'Action',
       field: 'id',
-      width: 120,
+      width: 180,
       pinned: 'right',
       sortable: false,
       filter: false,
       cellRenderer: (p: ICellRendererParams) => `
         <div class="action-cell">
-          <button class="action-btn edit"   title="Edit"   onclick="console.log('edit ${p.value}')">
-            <span class="material-icons">edit</span>
+          <button class="action-btn add-guest" title="Add Guest" onclick="console.log('add guest ${p.value}')">
+            <span class="material-icons">person_add</span>
           </button>
-          <button class="action-btn view"   title="View"   onclick="console.log('view ${p.value}')">
+          <button class="action-btn view" title="View" onclick="console.log('view ${p.value}')">
             <span class="material-icons">visibility</span>
           </button>
-          <button class="action-btn delete" title="Delete" onclick="console.log('delete ${p.value}')">
-            <span class="material-icons">delete_outline</span>
+          <button class="action-btn print" title="Print" onclick="console.log('print ${p.value}')">
+            <span class="material-icons">print</span>
           </button>
         </div>`
     }

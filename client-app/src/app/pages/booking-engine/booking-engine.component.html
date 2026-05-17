@@ -82,7 +82,9 @@
         </div>
         <div class="form-group">
           <label>Child Age</label>
-          <input type="number" min="0" [(ngModel)]="form.extraChildAge" name="extraChildAge" (change)="onChildAgeChange()" />
+          <select [(ngModel)]="form.extraChildAge" name="extraChildAge" (change)="onChildAgeChange()">
+            <option *ngFor="let age of childAgeOptions" [value]="age">{{ age }}</option>
+          </select>
         </div>
         <div class="form-group full-width">
           <label>Room Package</label>

@@ -45,6 +45,12 @@ $row-hover:     #eef2ff;
 
     .page-icon { color: $accent; font-size: 24px; }
 
+    .subtitle {
+      font-size: 12px;
+      color: $text-secondary;
+      margin-top: 2px;
+    }
+
     h1 {
       font-family: 'Cinzel', serif;
       font-size: 18px;
@@ -417,23 +423,41 @@ $row-hover:     #eef2ff;
 
 ::ng-deep .action-cell {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   align-items: center;
 
   .action-btn {
     background: none;
     border: 1px solid transparent;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    padding: 3px 6px;
+    padding: 4px 8px;
     display: flex;
     align-items: center;
     transition: all 0.15s;
     .material-icons { font-size: 16px; }
 
-    &.edit   { color: #3b82f6; &:hover { background: #dbeafe; border-color: #bfdbfe; } }
-    &.view   { color: #10b981; &:hover { background: #d1fae5; border-color: #a7f3d0; } }
-    &.delete { color: #ef4444; &:hover { background: #fee2e2; border-color: #fecaca; } }
+    &.add-guest {
+      color: #1d4ed8;
+      background: rgba(59,130,246,0.1);
+      border-color: rgba(59,130,246,0.2);
+      &:hover { background: rgba(59,130,246,0.16); }
+    }
+
+    &.view {
+      color: #10b981;
+      &:hover { background: #d1fae5; border-color: #a7f3d0; }
+    }
+
+    &.print {
+      color: #475569;
+      &:hover { background: #f1f5f9; border-color: #cbd5e1; }
+    }
+
+    &.delete {
+      color: #ef4444;
+      &:hover { background: #fee2e2; border-color: #fecaca; }
+    }
   }
 }
 

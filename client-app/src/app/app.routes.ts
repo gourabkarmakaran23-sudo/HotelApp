@@ -4,6 +4,7 @@ import { RegisterComponent } from './pages/register/register.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { BookingListComponent } from './pages/booking-list/booking-list.component';
 import { BookingEngineComponent } from './pages/booking-engine/booking-engine.component';
+import { CheckinComponent } from './pages/checkin/checkin.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -23,6 +24,11 @@ export const routes: Routes = [
   {
     path: 'booking-engine',
     component: BookingEngineComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'checkin',
+    component: CheckinComponent,
     canActivate: [AuthGuard]
   },
   { path: '**',         redirectTo: 'login' }

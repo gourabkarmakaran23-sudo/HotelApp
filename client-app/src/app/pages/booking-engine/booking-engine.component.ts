@@ -138,6 +138,7 @@ export class BookingEngineComponent {
   };
 
   roomNoOptions: string[] = [];
+  childAgeOptions = Array.from({ length: 16 }, (_, i) => i);
 
   constructor(private readonly router: Router) {
     this.updateRoomOptions();
