@@ -5,6 +5,8 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { BookingListComponent } from './pages/booking-list/booking-list.component';
 import { BookingEngineComponent } from './pages/booking-engine/booking-engine.component';
 import { CheckinComponent } from './pages/checkin/checkin.component';
+import { AddGuestComponent } from './pages/add-guest/add-guest.component';
+import { GuestDetailsComponent } from './pages/guest-details/guest-details.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -29,6 +31,16 @@ export const routes: Routes = [
   {
     path: 'checkin',
     component: CheckinComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'add-guest',
+    component: AddGuestComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'guest/:id',
+    component: GuestDetailsComponent,
     canActivate: [AuthGuard]
   },
   { path: '**',         redirectTo: 'login' }

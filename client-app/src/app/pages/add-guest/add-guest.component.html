@@ -1,0 +1,23 @@
+<div class="add-guest-page">
+  <div class="card">
+    <h2>Add Guest</h2>
+    <form (ngSubmit)="save()">
+      <label>Room No.</label>
+      <input [(ngModel)]="guest.roomNo" name="roomNo" />
+
+      <label>First Name</label>
+      <input [(ngModel)]="guest.firstName" name="firstName" />
+
+      <label>Last Name</label>
+      <input [(ngModel)]="guest.lastName" name="lastName" />
+
+      <label>Mobile</label>
+      <input [(ngModel)]="guest.mobile" name="mobile" />
+
+      <div class="actions">
+        <button type="submit" class="primary">Save</button>
+        <button type="button" (click)="cancel()" class="secondary">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
