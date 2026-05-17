@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Api\\HotelRestaurant.Api.csproj": {}
+    "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Api\\HotelRestaurant.Api.csproj": {}
   },
   "projects": {
-    "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Api\\HotelRestaurant.Api.csproj": {
+    "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Api\\HotelRestaurant.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Api\\HotelRestaurant.Api.csproj",
+        "projectUniqueName": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Api\\HotelRestaurant.Api.csproj",
         "projectName": "HotelRestaurant.Api",
-        "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Api\\HotelRestaurant.Api.csproj",
+        "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Api\\HotelRestaurant.Api.csproj",
         "packagesPath": "C:\\Users\\Acer\\.nuget\\packages\\",
-        "outputPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Api\\obj\\",
+        "outputPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -32,11 +32,11 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj": {
-                "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj"
+              "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj": {
+                "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj"
               },
-              "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Infrastructure\\HotelRestaurant.Infrastructure.csproj": {
-                "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Infrastructure\\HotelRestaurant.Infrastructure.csproj"
+              "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Infrastructure\\HotelRestaurant.Infrastructure.csproj": {
+                "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Infrastructure\\HotelRestaurant.Infrastructure.csproj"
               }
             }
           }
@@ -107,14 +107,14 @@
         }
       }
     },
-    "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj": {
+    "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj",
+        "projectUniqueName": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj",
         "projectName": "HotelRestaurant.Application",
-        "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj",
+        "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Application\\HotelRestaurant.Application.csproj",
         "packagesPath": "C:\\Users\\Acer\\.nuget\\packages\\",
-        "outputPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Application\\obj\\",
+        "outputPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -135,8 +135,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj": {
-                "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj"
+              "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj": {
+                "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj"
               }
             }
           }
@@ -182,14 +182,14 @@
         }
       }
     },
-    "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj": {
+    "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj",
+        "projectUniqueName": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj",
         "projectName": "HotelRestaurant.Core",
-        "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj",
+        "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj",
         "packagesPath": "C:\\Users\\Acer\\.nuget\\packages\\",
-        "outputPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Core\\obj\\",
+        "outputPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -247,14 +247,14 @@
         }
       }
     },
-    "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Infrastructure\\HotelRestaurant.Infrastructure.csproj": {
+    "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Infrastructure\\HotelRestaurant.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Infrastructure\\HotelRestaurant.Infrastructure.csproj",
+        "projectUniqueName": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Infrastructure\\HotelRestaurant.Infrastructure.csproj",
         "projectName": "HotelRestaurant.Infrastructure",
-        "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Infrastructure\\HotelRestaurant.Infrastructure.csproj",
+        "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Infrastructure\\HotelRestaurant.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\Acer\\.nuget\\packages\\",
-        "outputPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Infrastructure\\obj\\",
+        "outputPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -275,8 +275,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj": {
-                "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj"
+              "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj": {
+                "projectPath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Core\\HotelRestaurant.Core.csproj"
               }
             }
           }

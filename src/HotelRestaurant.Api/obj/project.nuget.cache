@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "wKQ32w7zCGc=",
+  "dgSpecHash": "uyfJfg/Dvfw=",
   "success": true,
-  "projectFilePath": "F:\\1_Holel_Projects_Techno\\Hotel_New_Proj_2026\\src\\HotelRestaurant.Api\\HotelRestaurant.Api.csproj",
+  "projectFilePath": "F:\\1_Holel_Projects_Techno\\Hotel_App_2026_Lattest\\src\\HotelRestaurant.Api\\HotelRestaurant.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Acer\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Acer\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

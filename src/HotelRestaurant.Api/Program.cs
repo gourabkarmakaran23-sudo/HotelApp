@@ -241,4 +241,84 @@ apiGroup.MapGet("/dashboard/summary", async (AppDbContext context, ClaimsPrincip
 })
 .RequireAuthorization();
 
+apiGroup.MapGet("/dashboard/occupancy", async (
+    DateTime fromDate,
+    DateTime toDate,
+    string? searchRoomNumber,
+    AppDbContext context,
+    ClaimsPrincipal user) =>
+{
+    // Get all rooms
+    var rooms = await context.Rooms.ToListAsync();
+    
+    // Apply search filter if provided
+    if (!string.IsNullOrWhiteSpace(searchRoomNumber))
+    {
+        rooms = rooms.Where(r => r.RoomNumber.Contains(searchRoomNumber, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    // Get all reservations for the date range
+    var reservations = await context.Reservations
+        .Where(r => r.CheckInDate < toDate && r.CheckOutDate > fromDate)
+        .ToListAsync();
+
+    // Build the occupancy grid
+    var occupancyData = new List<object>();
+    
+    foreach (var room in rooms.OrderBy(r => r.RoomNumber))
+    {
+        var roomData = new Dictionary<string, object>
+        {
+            { "roomNumber", room.RoomNumber },
+            { "roomId", room.Id }
+        };
+
+        // Generate dates for each day in the range
+        var currentDate = fromDate.Date;
+        while (currentDate <= toDate.Date)
+        {
+            var dateKey = currentDate.ToString("yyyy-MM-dd");
+            var dateDisplay = currentDate.ToString("dd-MM-yyyy");
+            
+            // Check if room has reservation for this date
+            var reservation = reservations.FirstOrDefault(r =>
+                r.RoomId == room.Id &&
+                r.CheckInDate.Date <= currentDate &&
+                r.CheckOutDate.Date > currentDate &&
+                r.Status != ReservationStatus.Cancelled);
+
+            string status = "Available";
+            if (reservation != null)
+            {
+                if (reservation.CheckInDate.Date == currentDate)
+                    status = "CheckIn";
+                else if (reservation.CheckOutDate.Date == currentDate)
+                    status = "CheckOut";
+                else
+                    status = "Occupied";
+            }
+
+            roomData[dateKey] = new { date = dateDisplay, status = status };
+            currentDate = currentDate.AddDays(1);
+        }
+
+        occupancyData.Add(roomData);
+    }
+
+    return Results.Ok(new { dates = GenerateDateRange(fromDate, toDate), rooms = occupancyData });
+})
+.RequireAuthorization();
+
+static List<string> GenerateDateRange(DateTime fromDate, DateTime toDate)
+{
+    var dates = new List<string>();
+    var currentDate = fromDate.Date;
+    while (currentDate <= toDate.Date)
+    {
+        dates.Add(currentDate.ToString("dd-MM-yyyy"));
+        currentDate = currentDate.AddDays(1);
+    }
+    return dates;
+}
+
 await app.RunAsync();

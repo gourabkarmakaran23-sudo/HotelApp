@@ -1,85 +1,239 @@
-<div class="dashboard-shell">
-  <header class="topbar">
-    <div class="brand-block">
-      <span class="brand-tag">SMARTLüth</span>
-      <span>Hospitality</span>
+<div class="dashboard-container">
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>Menu</h2>
     </div>
-    <nav class="top-actions">
-      <a routerLink="/dashboard">Dashboard</a>
-      <button type="button" (click)="logout()">Log out</button>
+    <nav class="sidebar-menu">
+      <button 
+        *ngFor="let item of menuItems"
+        [class.active]="item.active"
+        (click)="onMenuItemClick(item)"
+        class="menu-item"
+      >
+        <span class="menu-icon">{{ item.icon }}</span>
+        <span class="menu-label">{{ item.label }}</span>
+      </button>
     </nav>
-  </header>
+  </aside>
 
-  <section class="dashboard-hero">
-    <div class="hero-copy">
-      <p class="eyebrow">Dashboard</p>
-      <h1>Hotel operations in one place</h1>
-      <p>Monitor occupancy, settlements, reservations and service trends from a polished central workspace.</p>
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Top Header -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <a routerLink="/dashboard" class="link">Dashboard</a>
+        <button type="button" (click)="logout()" class="logout-btn">Log out</button>
+      </div>
+    </header>
+
+    <!-- Scrollable Content -->
+    <div class="content-wrapper">
+      <!-- Section 1: Summary Cards -->
+      <section class="dashboard-section summary-section">
+        <div class="summary-card">
+          <div class="card-icon">🎫</div>
+          <div class="card-content">
+            <p class="card-label">Today Bookings</p>
+            <p class="card-value">0</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">💰</div>
+          <div class="card-content">
+            <p class="card-label">Total Amount</p>
+            <p class="card-value">{{ totalRevenue }}m</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <p class="card-label">Occupancy Rate</p>
+            <p class="card-value">{{ occupancyRate }}%</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">⏳</div>
+          <div class="card-content">
+            <p class="card-label">Active Bookings</p>
+            <p class="card-value">{{ activeBookings }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Calendar Grid with Filters -->
+      <section class="dashboard-section calendar-section">
+        <div class="section-header">
+          <h2>Room Occupancy Calendar</h2>
+          <p>Select date range and search rooms</p>
+        </div>
+
+        <div class="filter-controls">
+          <div class="filter-group">
+            <label>From Date</label>
+            <input
+              type="date"
+              [(ngModel)]="fromDate"
+              class="date-input"
+            />
+          </div>
+
+          <div class="filter-group">
+            <label>To Date</label>
+            <input
+              type="date"
+              [(ngModel)]="toDate"
+              class="date-input"
+            />
+          </div>
+
+          <div class="filter-group">
+            <label>Room No.</label>
+            <input
+              type="text"
+              placeholder="Search room number"
+              [(ngModel)]="searchRoomNumber"
+              class="search-input"
+            />
+          </div>
+
+          <button class="search-btn" (click)="onFilterClick()" [disabled]="loading">
+            {{ loading ? 'Loading...' : 'Search' }}
+          </button>
+        </div>
+
+        <div *ngIf="error" class="error-message">{{ error }}</div>
+
+        <!-- Grid Table -->
+        <div *ngIf="!loading && roomData.length > 0" class="grid-container ag-theme-quartz">
+          <ag-grid-angular
+            #agGrid
+            [columnDefs]="columnDefs"
+            [rowData]="roomData"
+            [gridOptions]="gridOptions"
+            [defaultColDef]="defaultColDef"
+          ></ag-grid-angular>
+        </div>
+
+        <div *ngIf="loading" class="loading-message">
+          <div class="spinner"></div>
+          <p>Loading occupancy data...</p>
+        </div>
+
+        <div *ngIf="!loading && roomData.length === 0" class="no-data-message">
+          <p>No rooms found</p>
+        </div>
+
+        <!-- Status Legend -->
+        <div class="legend">
+          <span class="legend-item">
+            <span class="legend-color checkin"></span> Check In
+          </span>
+          <span class="legend-item">
+            <span class="legend-color checkout"></span> Check Out
+          </span>
+          <span class="legend-item">
+            <span class="legend-color occupied"></span> Occupied
+          </span>
+          <span class="legend-item">
+            <span class="legend-color available"></span> Available
+          </span>
+        </div>
+      </section>
+
+      <!-- Section 3: Booking Table -->
+      <section class="dashboard-section booking-section">
+        <div class="section-header">
+          <h2>Room Types - Booking History</h2>
+        </div>
+
+        <div class="table-container">
+          <table class="booking-table">
+            <thead>
+              <tr>
+                <th>Room Type</th>
+                <th>Premium View</th>
+                <th>Standard View</th>
+                <th>Executive View</th>
+                <th>Executive Non View</th>
+                <th>Family Non View</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let room of bookingData">
+                <td>{{ room.roomType }}</td>
+                <td class="number">{{ room.premiumViews }}</td>
+                <td class="number">{{ room.standardViews }}</td>
+                <td class="number">{{ room.executiveViews }}</td>
+                <td class="number">{{ room.executiveNonViews }}</td>
+                <td class="number">{{ room.familyNonViews }}</td>
+                <td class="number total">{{ room.total }}</td>
+              </tr>
+              <tr class="total-row">
+                <td><strong>Total</strong></td>
+                <td class="number total">
+                  <strong>{{ totalPremiumViews }}</strong>
+                </td>
+                <td class="number total">
+                  <strong>{{ totalStandardViews }}</strong>
+                </td>
+                <td class="number total">
+                  <strong>{{ totalExecutiveViews }}</strong>
+                </td>
+                <td class="number total">
+                  <strong>{{ totalExecutiveNonViews }}</strong>
+                </td>
+                <td class="number total">
+                  <strong>{{ totalFamilyNonViews }}</strong>
+                </td>
+                <td class="number total">
+                  <strong>{{ totalBookingsCount }}</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 4: Statistics -->
+      <section class="dashboard-section stats-section">
+        <div class="section-header">
+          <h2>Booking Statistics</h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-icon">📅</span>
+              <span class="stat-label">Total Bookings</span>
+            </div>
+            <p class="stat-number">{{ totalBookings }}</p>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-icon">🔄</span>
+              <span class="stat-label">Canceled</span>
+            </div>
+            <p class="stat-number">12</p>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-icon">✅</span>
+              <span class="stat-label">Completed</span>
+            </div>
+            <p class="stat-number">144</p>
+          </div>
+        </div>
+      </section>
     </div>
-
-    <div class="status-cards">
-      <article class="status-card">
-        <span>Active bookings</span>
-        <strong>{{ summary?.activeBookings ?? '–' }}</strong>
-      </article>
-      <article class="status-card accent">
-        <span>Total revenue</span>
-        <strong>{{ summary?.revenue | number:'1.0-0' }}</strong>
-      </article>
-      <article class="status-card">
-        <span>Occupancy</span>
-        <strong>{{ summary?.occupancyRate ?? '–' }}%</strong>
-      </article>
-      <article class="status-card">
-        <span>Pending requests</span>
-        <strong>{{ summary?.pendingRequests ?? '–' }}</strong>
-      </article>
-    </div>
-  </section>
-
-  <section class="dashboard-grid">
-    <article class="panel occupancy-panel">
-      <div class="panel-header">
-        <h2>Room occupancy</h2>
-        <span>Live status snapshot</span>
-      </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Room</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of occupancyRows">
-            <td>{{ row.room }}</td>
-            <td><span class="status-pill" [attr.data-type]="row.badge">{{ row.status }}</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </article>
-
-    <article class="panel report-panel">
-      <div class="panel-header">
-        <h2>Booking insights</h2>
-        <span>Week to date performance</span>
-      </div>
-
-      <div class="report-body">
-        <div class="report-item">
-          <span>Room revenue trend</span>
-          <strong>+18%</strong>
-        </div>
-        <div class="report-item">
-          <span>Check-in pace</span>
-          <strong>64 new bookings</strong>
-        </div>
-        <div class="report-item">
-          <span>Expected checkout</span>
-          <strong>12 rooms</strong>
-        </div>
-      </div>
-    </article>
-  </section>
+  </main>
 </div>
