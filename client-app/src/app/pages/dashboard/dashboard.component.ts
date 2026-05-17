@@ -174,7 +174,21 @@ export class DashboardComponent implements OnInit {
       (error) => {
         console.error('Error loading occupancy data:', error);
         this.error = 'Failed to load occupancy data. Using dummy data for now.';
-        this.generateDummyRoomData();
+        // Try to load a local dummy JSON asset first (more realistic structure)
+        this.dashboardService.getOccupancyFromAsset().subscribe(
+          (asset) => {
+            if (asset && asset.rooms && asset.dates) {
+              this.roomData = asset.rooms as RoomOccupancy[];
+              this.buildColumnDefinitions(asset.dates);
+            } else {
+              this.generateDummyRoomData();
+            }
+          },
+          (assetErr) => {
+            console.warn('Failed to load local dummy asset, falling back to in-memory dummy', assetErr);
+            this.generateDummyRoomData();
+          }
+        );
         this.loading = false;
       }
     );

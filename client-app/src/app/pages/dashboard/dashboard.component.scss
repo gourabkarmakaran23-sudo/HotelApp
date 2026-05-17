@@ -8,6 +8,66 @@
   padding: 1rem;
 }
 
+/* Sidebar styling to match screenshot */
+.sidebar {
+  width: 220px;
+  background: #f7fafc;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.05);
+}
+
+.sidebar-header h2 {
+  font-size: 14px;
+  margin: 0 0 12px 0;
+  color: #0f172a;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid rgba(15,23,42,0.04);
+  cursor: pointer;
+  text-align: left;
+}
+
+.menu-item.active {
+  background: linear-gradient(90deg,#5b21b6,#7c3aed);
+  color: white;
+}
+
+.menu-icon { width: 22px; }
+
+.submenu {
+  margin-left: 18px;
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.submenu-item {
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.submenu-item:hover { background: rgba(15,23,42,0.02); border-radius: 6px; }
+
 .sidebar {
   background: #ffffff;
   border-radius: 12px;

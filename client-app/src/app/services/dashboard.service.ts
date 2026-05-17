@@ -35,4 +35,8 @@ export class DashboardService {
 
     return this.http.get<OccupancyGridResponse>(`${this.baseUrl}/occupancy`, { params });
   }
+
+  getOccupancyFromAsset(): Observable<OccupancyGridResponse> {
+    return this.http.get<OccupancyGridResponse>('assets/dummy-occupancy.json');
+  }
 }
