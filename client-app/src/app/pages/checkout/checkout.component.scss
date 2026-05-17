@@ -1,0 +1,19 @@
+.checkout-page { padding:18px; font-family: Arial, sans-serif }
+.page-header { background:#fff; border:1px solid #eef2f7; padding:12px 14px; border-radius:8px; margin-bottom:12px }
+.page-header h2 { margin:0 0 6px 0 }
+.header-row { color:#475569; font-size:0.95rem }
+.sections { display:flex; gap:14px; margin-bottom:12px }
+.section { background:#fff; border:1px solid #eef2f7; padding:12px; border-radius:8px; flex:1 }
+.section.side { width:280px; flex:0 0 280px }
+.info td { padding:6px 8px }
+.bill-grid { display:flex; gap:12px }
+.room-bills { width:100%; border-collapse:collapse }
+.room-bills th, .room-bills td { border:1px solid #f3f6f9; padding:8px; font-size:0.9rem }
+.room-bills th { background:#fafbfc; }
+.empty { color:#64748b }
+.bottom-row { display:flex; gap:14px; margin-bottom:12px }
+.room-settlement, .balance { background:#fff; border:1px solid #eef2f7; padding:12px; border-radius:8px; flex:1 }
+.actions { display:flex; gap:12px; justify-content:flex-end }
+.btn { padding:8px 12px; border-radius:6px; border:1px solid #dfe7f1; background:#fff; cursor:pointer }
+.btn.primary { background:#10b981; color:#fff; border-color:transparent }
+.btn.warn { background:#f59e0b; color:#fff; border-color:transparent }

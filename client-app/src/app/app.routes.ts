@@ -7,6 +7,7 @@ import { BookingEngineComponent } from './pages/booking-engine/booking-engine.co
 import { CheckinComponent } from './pages/checkin/checkin.component';
 import { AddGuestComponent } from './pages/add-guest/add-guest.component';
 import { GuestDetailsComponent } from './pages/guest-details/guest-details.component';
+import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -36,6 +37,11 @@ export const routes: Routes = [
   {
     path: 'add-guest',
     component: AddGuestComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'checkout',
+    component: CheckoutComponent,
     canActivate: [AuthGuard]
   },
   {

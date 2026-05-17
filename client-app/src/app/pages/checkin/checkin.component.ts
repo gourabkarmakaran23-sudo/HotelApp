@@ -174,7 +174,8 @@ export class CheckinComponent {
 
   checkOutRow(row: GuestRow): void {
     this.closeAllMenus();
-    alert(`Check out ${row.name}`);
+    // navigate to checkout page with row data so page can display full details
+    this.router.navigate(['/checkout'], { state: { row } });
   }
 
   cancelReservationRow(row: GuestRow): void {

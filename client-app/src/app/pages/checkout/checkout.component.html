@@ -1,0 +1,74 @@
+<div class="checkout-page">
+  <div class="page-header">
+    <h2>Customer Details</h2>
+    <div class="header-row">Booking No: {{ bookingNumber }} &nbsp; | &nbsp; {{ guestName }} &nbsp; | &nbsp; Rooms: {{ roomNos }}</div>
+  </div>
+
+  <div class="sections">
+    <div class="section customer">
+      <table class="info">
+        <tr><td><strong>Name</strong></td><td>{{ guestName }}</td></tr>
+        <tr><td><strong>Room No.</strong></td><td>{{ roomNos }}</td></tr>
+        <tr><td><strong>Booking No.</strong></td><td>{{ bookingNumber }}</td></tr>
+        <tr><td><strong>Mobile No.</strong></td><td>9999999999</td></tr>
+        <tr><td><strong>Address</strong></td><td>Kolkata</td></tr>
+      </table>
+    </div>
+
+    <div class="section billing">
+      <h3>Billing Details</h3>
+      <div class="bill-grid">
+        <div>
+          <div>Room Rent And: {{ billing.roomRent }}</div>
+          <div>Amenities Services: {{ billing.amenity }}</div>
+          <div>Cancellation Charge: {{ billing.cancellation }}</div>
+          <div>Refund Amount: {{ billing.refund }}</div>
+          <div>Total Tax: {{ billing.totalTax }}</div>
+          <div>Subtotal: {{ billing.subtotal }}</div>
+        </div>
+        <div>
+          <h4>Room Rent Details</h4>
+          <table class="room-bills">
+            <thead><tr><th>#</th><th>Room No</th><th>Room Type</th><th>From Date</th><th>To Date</th><th>NoD</th><th>Tot. Rent</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let b of roomBills">
+                <td>{{ b.no }}</td>
+                <td>{{ b.roomNo }}</td>
+                <td>{{ b.roomType }}</td>
+                <td>{{ b.from }}</td>
+                <td>{{ b.to }}</td>
+                <td>{{ b.nights }}</td>
+                <td>{{ b.rent }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section side">
+      <h3>Room Settlement Restaurant Bills</h3>
+      <p class="empty">(no restaurant bills)</p>
+    </div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="room-settlement">
+      <h4>Room Bill Settlement</h4>
+      <div>Payment Mode: <select><option>Choose Payment Mode</option></select></div>
+      <div>Amount: <input placeholder="Amount" /></div>
+    </div>
+    <div class="balance">
+      <h4>Balance Details</h4>
+      <div>Remain Amt: {{ balance.remaining }}</div>
+      <div>Collected Amt: {{ balance.collected }}</div>
+      <div>Change Amt: {{ balance.change }}</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" (click)="back()">Back</button>
+    <button class="btn warn">Room Rent Proforma</button>
+    <button class="btn primary" (click)="doCheckout()">Check Out</button>
+  </div>
+</div>
