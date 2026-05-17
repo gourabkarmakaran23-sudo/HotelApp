@@ -73,10 +73,6 @@ export class CheckinComponent {
     }
   ];
 
-  // Add Guest modal state
-  showAddGuestModal = false;
-  modalGuest: any = { roomNo: '', firstName: '', lastName: '', mobile: '' };
-
   constructor(private readonly router: Router, private readonly http: HttpClient) {}
 
   ngOnInit(): void {
@@ -123,8 +119,7 @@ export class CheckinComponent {
   }
 
   addGuest(): void {
-    this.modalGuest = { roomNo: '', firstName: '', lastName: '', mobile: '' };
-    this.showAddGuestModal = true;
+    this.router.navigateByUrl('/add-guest');
   }
 
   // Toggle per-row action menu
@@ -174,8 +169,7 @@ export class CheckinComponent {
   // Row-level actions
   addGuestRow(row: GuestRow): void {
     this.closeAllMenus();
-    this.modalGuest = { roomNo: row.roomNo, firstName: '', lastName: '', mobile: '' };
-    this.showAddGuestModal = true;
+    this.router.navigateByUrl('/add-guest');
   }
 
   checkOutRow(row: GuestRow): void {
@@ -223,32 +217,6 @@ export class CheckinComponent {
     alert(`Guest Checkin Mode for ${row.roomNo}`);
   }
 
-  saveModalGuest(): void {
-    const id = this.guestRows.length ? Math.max(...this.guestRows.map(r => r.id)) + 1 : 1;
-    const newRow: GuestRow = {
-      id,
-      bookingNumber: '',
-      roomType: '',
-      roomNo: this.modalGuest.roomNo || '',
-      mealPlan: '',
-      pak: '',
-      name: `${this.modalGuest.firstName || ''} ${this.modalGuest.lastName || ''}`.trim(),
-      mobile: this.modalGuest.mobile || '',
-      checkIn: '',
-      checkOut: '',
-      paidAmt: 0,
-      dueAmt: 0,
-      bookingStatus: 'Checked In'
-    };
-    this.guestRows.unshift(newRow);
-    this.showAddGuestModal = false;
-    this.modalGuest = { roomNo: '', firstName: '', lastName: '', mobile: '' };
-  }
-
-  cancelModalGuest(): void {
-    this.showAddGuestModal = false;
-    this.modalGuest = { roomNo: '', firstName: '', lastName: '', mobile: '' };
-  }
 
   print(): void {
     window.print();

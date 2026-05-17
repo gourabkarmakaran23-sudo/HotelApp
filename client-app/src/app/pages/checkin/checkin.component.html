@@ -103,27 +103,4 @@
     </table>
   </div>
 
-  <!-- Add Guest Modal -->
-  <div class="modal-backdrop" *ngIf="showAddGuestModal">
-    <div class="modal-card" (click)="$event.stopPropagation()">
-      <h3>Add Guest</h3>
-      <div class="form-grid">
-        <label>Room No.</label>
-        <input [(ngModel)]="modalGuest.roomNo" />
-
-        <label>First Name</label>
-        <input [(ngModel)]="modalGuest.firstName" />
-
-        <label>Last Name</label>
-        <input [(ngModel)]="modalGuest.lastName" />
-
-        <label>Mobile</label>
-        <input [(ngModel)]="modalGuest.mobile" />
-      </div>
-      <div class="modal-actions">
-        <button class="primary" (click)="saveModalGuest()">Save</button>
-        <button class="secondary" (click)="cancelModalGuest()">Cancel</button>
-      </div>
-    </div>
-  </div>
 </div>

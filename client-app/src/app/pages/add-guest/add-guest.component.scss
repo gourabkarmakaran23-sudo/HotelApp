@@ -1,8 +1,37 @@
-.add-guest-page { padding: 20px; }
-.card { background: #fff; padding: 18px; border-radius: 10px; border: 1px solid #e6eef8; }
-.card h2 { margin-top: 0; }
-.card label { display:block; margin-top: 10px; font-weight:600; }
-.card input { width:100%; padding:8px 10px; margin-top:6px; border-radius:6px; border:1px solid #d6dbe6 }
-.actions { margin-top:14px; display:flex; gap:8px }
-.primary { background:#2d6cdf; color:#fff; border:none; padding:8px 12px; border-radius:6px }
-.secondary { background:#f3f5fb; border:1px solid #e6eef8; padding:8px 12px; border-radius:6px }
+.add-guest-page { padding: 12px; font-family: Arial, sans-serif }
+.top-toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap }
+.top-toolbar .btn { background:#fff; border:1px solid #e6eef8; padding:8px 12px; border-radius:6px; margin-right:6px; cursor:pointer; min-height:38px; color:#475569; font-weight:600 }
+.top-toolbar .btn.primary { background:#be123c; color:#fff; border-color:transparent; box-shadow:0 2px 6px rgba(190,18,60,0.18) }
+.top-toolbar .toolbar-left { display:flex; flex-wrap:wrap; gap:8px }
+
+.page-header { background:#fff; border:1px solid #eef2f7; padding:12px 14px; border-radius:8px; margin-bottom:12px; color:#475569; font-size:0.96rem; font-weight:600 }
+
+.content-grid { display:flex; gap:14px; align-items:flex-start }
+.left-col { flex:1 }
+.right-col { width:300px }
+
+.controls { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px }
+.search-box input { padding:6px 8px; border:1px solid #e6eef8; border-radius:6px }
+
+.guest-table { width:100%; border-collapse:collapse; background:#fff; border:1px solid #f2f4f7; border-radius:8px; overflow:hidden }
+.guest-table th, .guest-table td { padding:12px 14px; text-align:left; border-bottom:1px solid #f5f7fb; font-size:0.95rem }
+.guest-table th { background:#fafbfc; font-weight:700; color:#475569 }
+.guest-table tbody tr:hover { background:#f8f9fb }
+
+.small { background:#be123c; border:none; color:#fff; padding:8px 10px; border-radius:6px; margin-right:6px; cursor:pointer; min-width:36px }
+.small:last-child { margin-right:0 }
+
+.upload-card { background:#fff; border:1px solid #eef2f7; padding:12px; border-radius:8px }
+.upload-row { display:flex; gap:6px; align-items:center; margin-top:8px }
+.upload-row input { flex:1; border:1px solid #e6eef8; padding:8px 10px; border-radius:6px }
+.upload-card .btn { min-width:80px }
+.uploaded { margin-top:12px }
+.uploaded h4 { margin:0 0 8px 0; font-size:0.95rem; letter-spacing:0.5px }
+.uploaded .empty { color:#64748b }
+
+.modal-backdrop { position:fixed; inset:0; background:rgba(15,23,42,0.35); display:flex; align-items:center; justify-content:center; z-index:999 }
+.modal-card { background:#fff; padding:22px; border-radius:12px; width:360px; box-shadow:0 16px 40px rgba(15,23,42,0.18) }
+.modal-card h3 { margin-top:0; margin-bottom:14px; font-size:1.1rem }
+.modal-form label { display:block; margin-top:10px; font-size:0.9rem; color:#475569 }
+.modal-form input { width:100%; padding:10px 12px; margin-top:6px; border:1px solid #dfe7f1; border-radius:8px }
+.modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:16px }
