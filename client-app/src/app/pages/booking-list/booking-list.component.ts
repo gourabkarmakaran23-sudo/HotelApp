@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
@@ -229,7 +230,7 @@ export class BookingListComponent implements OnInit {
     { field: 'paymentStatus',headerName: 'Status',        visible: true }
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private readonly router: Router) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -325,7 +326,6 @@ export class BookingListComponent implements OnInit {
   }
 
   openNewBooking(): void {
-    // Navigate to new booking form — wire up router as needed
-    alert('Open Room Booking form');
+    this.router.navigate(['/booking-engine']);
   }
 }

@@ -1,0 +1,227 @@
+<div class="booking-engine-page">
+  <div class="page-header">
+    <div>
+      <h1>Room Booking</h1>
+      <p>Enter booking and guest details for the reservation.</p>
+    </div>
+    <button class="secondary-btn" type="button" (click)="cancel()">Back to Booking List</button>
+  </div>
+
+  <form class="booking-form" (ngSubmit)="saveBooking()">
+    <section class="section-card">
+      <h2>Reservation Details</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Check In</label>
+          <input type="datetime-local" [(ngModel)]="form.checkIn" name="checkIn" (change)="recalculate()" />
+        </div>
+        <div class="form-group">
+          <label>Check Out</label>
+          <input type="datetime-local" [(ngModel)]="form.checkOut" name="checkOut" (change)="recalculate()" />
+        </div>
+        <div class="form-group">
+          <label>Arrival From</label>
+          <input type="text" placeholder="Arrival From" [(ngModel)]="form.arrivalFrom" name="arrivalFrom" />
+        </div>
+        <div class="form-group">
+          <label>Booking Type</label>
+          <select [(ngModel)]="form.bookingType" name="bookingType">
+            <option *ngFor="let type of bookingTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Choose Booking Reference</label>
+          <select [(ngModel)]="form.bookingReference" name="bookingReference">
+            <option *ngFor="let ref of bookingReferences" [value]="ref">{{ ref }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Choose Sold By Name</label>
+          <select [(ngModel)]="form.soldBy" name="soldBy">
+            <option *ngFor="let sold of soldByNames" [value]="sold">{{ sold }}</option>
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label>Customer Profile</label>
+          <input type="text" placeholder="Customer Profile" [(ngModel)]="form.customerProfile" name="customerProfile" />
+        </div>
+        <div class="form-group full-width">
+          <label>Purpose of Visit</label>
+          <input type="text" placeholder="Purpose of Visit" [(ngModel)]="form.purposeOfVisit" name="purposeOfVisit" />
+        </div>
+        <div class="form-group full-width">
+          <label>Remarks</label>
+          <textarea placeholder="Remarks" [(ngModel)]="form.remarks" name="remarks"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>Room Details</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Room Type</label>
+          <select [(ngModel)]="form.roomType" name="roomType" (change)="onRoomTypeChange()">
+            <option *ngFor="let room of roomTypes" [value]="room">{{ room }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Room No.</label>
+          <select [(ngModel)]="form.roomNo" name="roomNo">
+            <option value="">Choose Room No.</option>
+            <option *ngFor="let roomNo of roomNoOptions" [value]="roomNo">{{ roomNo }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>#Adults</label>
+          <input type="number" min="1" [(ngModel)]="form.adults" name="adults" />
+        </div>
+        <div class="form-group">
+          <label>#Children</label>
+          <input type="number" min="0" [(ngModel)]="form.children" name="children" />
+        </div>
+        <div class="form-group">
+          <label>Child Age</label>
+          <input type="number" min="0" [(ngModel)]="form.extraChildAge" name="extraChildAge" (change)="onChildAgeChange()" />
+        </div>
+        <div class="form-group full-width">
+          <label>Room Package</label>
+          <select [(ngModel)]="form.mealPlan" name="mealPlan" (change)="onMealPlanChange()">
+            <option *ngFor="let plan of mealPlanOptions" [value]="plan">{{ plan }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div>
+          <label>Rent / Night</label>
+          <input type="text" [value]="form.rentPerNight | currency:'INR'" readonly />
+        </div>
+        <div>
+          <label>Complimentary / Night</label>
+          <input type="text" [value]="form.complimentaryPerNight | currency:'INR'" readonly />
+        </div>
+        <div>
+          <label>Extra Child Charge</label>
+          <input type="text" [value]="form.extraCharge | currency:'INR'" readonly />
+        </div>
+        <div>
+          <label>Total Amount</label>
+          <input type="text" [value]="form.totalAmount | currency:'INR'" readonly />
+        </div>
+      </div>
+    </section>
+
+    <section class="section-card form-columns">
+      <div>
+        <h2>Customer Info</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Mobile No.</label>
+            <input type="tel" placeholder="Mobile No." [(ngModel)]="form.billingMobile" name="billingMobile" />
+          </div>
+          <div class="form-group">
+            <label>Billing Name/Title</label>
+            <select [(ngModel)]="form.billingTitle" name="billingTitle">
+              <option *ngFor="let title of billingNameTitles" [value]="title">{{ title }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Billing First Name</label>
+            <input type="text" placeholder="First Name" [(ngModel)]="form.billingFirstName" name="billingFirstName" />
+          </div>
+          <div class="form-group">
+            <label>Billing Last Name</label>
+            <input type="text" placeholder="Last Name" [(ngModel)]="form.billingLastName" name="billingLastName" />
+          </div>
+          <div class="form-group full-width">
+            <label>Billing Address</label>
+            <input type="text" placeholder="Billing Address" [(ngModel)]="form.billingAddress" name="billingAddress" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="Email" [(ngModel)]="form.email" name="email" />
+          </div>
+          <div class="form-group">
+            <label>GSTIN (Optional)</label>
+            <input type="text" placeholder="GSTIN" [(ngModel)]="form.gstin" name="gstin" />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2>Primary Guest Info</h2>
+        <label class="checkbox-inline">
+          <input type="checkbox" [(ngModel)]="form.sameAsCustomer" name="sameAsCustomer" (change)="onSameAsCustomerChange()" />
+          Same as Customer Details
+        </label>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Title</label>
+            <select [(ngModel)]="form.primaryTitle" name="primaryTitle">
+              <option *ngFor="let title of billingNameTitles" [value]="title">{{ title }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" placeholder="First Name" [(ngModel)]="form.primaryFirstName" name="primaryFirstName" />
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" placeholder="Last Name" [(ngModel)]="form.primaryLastName" name="primaryLastName" />
+          </div>
+          <div class="form-group full-width">
+            <label>Mobile No.</label>
+            <input type="tel" placeholder="Mobile No." [(ngModel)]="form.primaryMobile" name="primaryMobile" />
+          </div>
+          <div class="form-group full-width">
+            <label>Nationality</label>
+            <select [(ngModel)]="form.nationality" name="nationality">
+              <option value="Indian">Indian</option>
+              <option value="Foreigner">Foreigner</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="billing-summary-card">
+        <h2>Billing Details</h2>
+        <div class="billing-row">
+          <span>Booking Charge</span>
+          <strong>{{ form.totalAmount | currency:'INR' }}</strong>
+        </div>
+        <div class="billing-row">
+          <span>GST</span>
+          <strong>{{ (form.totalAmount * 0.05) | currency:'INR' }}</strong>
+        </div>
+        <div class="billing-row total-row">
+          <span>Total</span>
+          <strong>{{ (form.totalAmount * 1.05) | currency:'INR' }}</strong>
+        </div>
+        <div class="form-group">
+          <label>Payment Mode</label>
+          <select [(ngModel)]="form.paymentMode" name="paymentMode">
+            <option value="">Choose Payment Mode</option>
+            <option value="Cash">Cash</option>
+            <option value="Card">Card</option>
+            <option value="Online">Online</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Advance Amount</label>
+          <input type="number" min="0" [(ngModel)]="form.advanceAmount" name="advanceAmount" />
+        </div>
+        <div class="form-group full-width">
+          <label>Advance Remarks</label>
+          <textarea placeholder="Advance Remarks" [(ngModel)]="form.advanceRemarks" name="advanceRemarks"></textarea>
+        </div>
+        <button type="button" class="secondary-btn" (click)="recalculate()">Recalculate</button>
+      </div>
+    </section>
+
+    <div class="form-actions">
+      <button type="submit" class="primary-btn">Save</button>
+      <button type="button" class="secondary-btn" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</div>
