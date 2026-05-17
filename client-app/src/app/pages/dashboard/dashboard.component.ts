@@ -160,16 +160,48 @@ export class DashboardComponent implements OnInit {
     const from = new Date(this.fromDate);
     const to = new Date(this.toDate);
 
+    // Prefill from local asset so UI shows dummy data immediately during development
+    this.dashboardService.getOccupancyFromAsset().subscribe(
+      (asset) => {
+        if (asset && asset.rooms && asset.rooms.length > 0 && asset.dates) {
+          this.roomData = asset.rooms as RoomOccupancy[];
+          this.buildColumnDefinitions(asset.dates);
+        }
+      },
+      (assetErr) => {
+        // ignore — we'll attempt to fetch from API below or fall back to in-memory generator
+        console.warn('Prefill asset failed', assetErr);
+      }
+    );
+
     this.dashboardService.getOccupancyGrid(from, to, this.searchRoomNumber).subscribe(
       (response) => {
         console.log('Occupancy data received:', response);
-        
-        if (response && response.rooms && response.dates) {
+        // If API returned rooms, use them. If rooms is empty, fall back to local asset.
+        if (response && response.rooms && response.dates && response.rooms.length > 0) {
           this.roomData = response.rooms;
           this.buildColumnDefinitions(response.dates);
+          this.loading = false;
+          return;
         }
-        
-        this.loading = false;
+
+        console.warn('Occupancy API returned no rooms; falling back to local dummy asset.');
+        this.dashboardService.getOccupancyFromAsset().subscribe(
+          (asset) => {
+            if (asset && asset.rooms && asset.rooms.length > 0 && asset.dates) {
+              this.roomData = asset.rooms as RoomOccupancy[];
+              this.buildColumnDefinitions(asset.dates);
+            } else {
+              this.generateDummyRoomData();
+            }
+            this.loading = false;
+          },
+          (assetErr) => {
+            console.warn('Failed to load local dummy asset, falling back to in-memory dummy', assetErr);
+            this.generateDummyRoomData();
+            this.loading = false;
+          }
+        );
       },
       (error) => {
         console.error('Error loading occupancy data:', error);
