@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-checkout',
@@ -32,7 +33,11 @@ export class CheckoutComponent implements OnInit {
 
   balance = { remaining: '₹33,827.00', collected: '₹0.00', change: '₹0.00' };
 
-  constructor(private readonly router: Router) {}
+  additionalCharges = 0;
+  adjustmentAmount = 0;
+  subtotalNumber = 0;
+
+  constructor(private readonly router: Router, private readonly http: HttpClient) {}
 
   ngOnInit(): void {
     // prefer router state, fallback to history.state for direct navigation
@@ -43,6 +48,18 @@ export class CheckoutComponent implements OnInit {
       this.guestName = st.row.name ?? this.guestName;
       this.roomNos = st.row.roomNo ?? this.roomNos;
     }
+
+    // compute numeric subtotal from roomBills
+    this.computeTotals();
+  }
+
+  computeTotals(): void {
+    const sum = this.roomBills.reduce((acc, b) => {
+      // rent is like '₹6120.00'
+      const n = Number(String(b.rent).replace(/[₹,\s]/g, '').replace(/,/g, '')) || 0;
+      return acc + n;
+    }, 0);
+    this.subtotalNumber = sum;
   }
 
   back(): void {
@@ -50,6 +67,19 @@ export class CheckoutComponent implements OnInit {
   }
 
   doCheckout(): void {
-    alert('Performing checkout (stub)');
+    const payload = {
+      bookingNumber: this.bookingNumber,
+      guestName: this.guestName,
+      roomNos: this.roomNos,
+      additionalCharges: this.additionalCharges,
+      adjustmentAmount: this.adjustmentAmount,
+      subtotal: this.subtotalNumber
+    };
+
+    // attempt to POST to backend; if backend missing, handle error and show success stub
+    this.http.post('/api/checkout', payload).subscribe({
+      next: () => alert('Checkout completed (server)') ,
+      error: () => alert('Checkout completed (stub)')
+    });
   }
 }

@@ -72,6 +72,20 @@ export class AddGuestComponent {
     this.showAddGuestModal = false;
   }
 
+  editGuest(guest: any): void {
+    // Populate the inline form with the selected guest for editing
+    this.guest.roomNo    = guest.roomNo;
+    this.guest.firstName = guest.firstName;
+    this.guest.lastName  = guest.lastName;
+    this.guest.mobile    = guest.mobile;
+  }
+
+  deleteGuest(index: number): void {
+    if (confirm('Are you sure you want to delete this guest?')) {
+      this.guests.splice(index, 1);
+    }
+  }
+
   cancel(): void {
     this.router.navigate(['/checkin']);
   }

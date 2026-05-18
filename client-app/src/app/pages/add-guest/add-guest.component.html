@@ -52,8 +52,11 @@
             <td>{{ g.lastName }}</td>
             <td>{{ g.mobile }}</td>
             <td>
-              <button class="small" (click)="alert('Edit')">✎</button>
-              <button class="small" (click)="alert('Delete')">🗑</button>
+              <!-- <button class="small" (click)="alert('Edit')">✎</button>
+              <button class="small" (click)="alert('Delete')">🗑</button> -->
+              <!-- ✅ FIXED — use the methods already in your TS file -->
+              <button class="small" (click)="editGuest(guest)">✎</button>
+              <button class="small" (click)="deleteGuest(i)">🗑</button>
             </td>
           </tr>
         </tbody>
