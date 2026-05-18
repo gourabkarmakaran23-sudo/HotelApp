@@ -65,6 +65,13 @@
             <option *ngFor="let room of roomTypes" [value]="room">{{ room }}</option>
           </select>
         </div>
+        <!-- <div class="form-group">
+          <label>Room No.</label>
+          <select [(ngModel)]="form.roomNo" name="roomNo">
+            <option value="">Choose Room No.</option>
+            <option *ngFor="let roomNo of roomNoOptions" [value]="roomNo">{{ roomNo }}</option>
+          </select>
+        </div> -->
         <div class="form-group">
           <label>Room No.</label>
           <select [(ngModel)]="form.roomNo" name="roomNo">
@@ -154,7 +161,8 @@
       <div>
         <h2>Primary Guest Info</h2>
         <label class="checkbox-inline">
-          <input type="checkbox" [(ngModel)]="form.sameAsCustomer" name="sameAsCustomer" (change)="onSameAsCustomerChange()" />
+          <input type="checkbox" [(ngModel)]="form.sameAsCustomer" name="sameAsCustomer"
+            (change)="onSameAsCustomerChange()" />
           Same as Customer Details
         </label>
         <div class="form-grid">

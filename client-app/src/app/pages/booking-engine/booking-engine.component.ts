@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { BookingService } from '../../services/booking.service'; // 1. Import Service Component
 
 interface BookingForm {
   bookingType: string;
@@ -140,18 +141,100 @@ export class BookingEngineComponent {
   roomNoOptions: string[] = [];
   childAgeOptions = Array.from({ length: 16 }, (_, i) => i);
 
-  constructor(private readonly router: Router) {
+  constructor(
+    private readonly router: Router,
+    private readonly bookingService: BookingService // 2. Inject Service in Constructor
+  ) {
     this.updateRoomOptions();
     this.updateCharges();
   }
 
+  saveBooking(): void {
+    // 1. Force calculation pass before submission
+    this.updateCharges();
+
+    // 2. Clear debugging prints to see what data is currently stored in the form
+    console.log('Current Angular Form Submission Payload:', this.form);
+
+    // 3. Validation Checks
+    if (!this.form.checkIn) {
+      alert('Validation Error: The Check-In Date field cannot be left blank.');
+      return;
+    }
+    if (!this.form.checkOut) {
+      alert('Validation Error: The Check-Out Date field cannot be left blank.');
+      return;
+    }
+    if (!this.form.roomNo || this.form.roomNo.trim() === '') {
+      alert('Validation Error: Please select an Assigned Room Number from the dropdown menu.');
+      return;
+    }
+
+    // 4. Sanitize JSON types exactly like the working Swagger Payload
+    const sanitizedPayload = {
+      ...this.form,
+      extraChildAge: Number(this.form.extraChildAge) || 0,
+      adults: Number(this.form.adults) || 1,
+      children: Number(this.form.children) || 0,
+      rentPerNight: Number(this.form.rentPerNight) || 0,
+      complimentaryPerNight: Number(this.form.complimentaryPerNight) || 0,
+      extraCharge: Number(this.form.extraCharge) || 0,
+      totalAmount: Number(this.form.totalAmount) || 0,
+      advanceAmount: Number(this.form.advanceAmount) || 0,
+
+      // Format to clean ISO string stamps
+      checkIn: this.form.checkIn ? new Date(this.form.checkIn).toISOString() : new Date().toISOString(),
+      checkOut: this.form.checkOut ? new Date(this.form.checkOut).toISOString() : new Date().toISOString()
+    };
+
+    console.log('Sanitized payload transmitting safely to backend:', sanitizedPayload);
+
+    // 5. Send verified dataset to your multi-table .NET endpoint
+    this.bookingService.createReservation(sanitizedPayload).subscribe({
+      next: (response) => {
+        alert(
+          `Booking Saved Successfully!\n` +
+          `-------------------------------\n` +
+          `Reservation Reference ID: ${response.bookingId}\n` +
+          `Primary Guest Account ID: ${response.guestId}\n` +
+          `Tax Ledger Invoice Code: ${response.invoiceId}`
+        );
+        this.router.navigate(['/reservations']);
+      },
+      error: (err) => {
+        console.error('API Error Context Payload:', err);
+
+        let errorDetail = err.message || 'Unknown network connection fault';
+        if (err.error && typeof err.error === 'string') {
+          errorDetail = err.error;
+        } else if (err.error && err.error.message) {
+          errorDetail = err.error.message;
+        }
+
+        alert(`Backend System Error: ${errorDetail}\n\nPlease review your browser's F12 developer tools console for detailed exception stacks.`);
+      }
+    });
+  }
+  cancel(): void {
+    this.router.navigate(['/booking-list']);
+  }
+  // updateRoomOptions(): void {
+  //   this.roomNoOptions = this.roomNumbersByType[this.form.roomType] ?? [];
+  //   if (!this.roomNoOptions.includes(this.form.roomNo)) {
+  //     this.form.roomNo = '';
+  //   }
+  // }
   updateRoomOptions(): void {
-    this.roomNoOptions = this.roomNumbersByType[this.form.roomType] ?? [];
+    const selectedType = this.form.roomType;
+
+    // Correctly map items into roomNoOptions instead of roomOptions
+    this.roomNoOptions = this.roomNumbersByType[selectedType] || [];
+
+    // Reset selection back to blank if the previously selected number isn't in the new array
     if (!this.roomNoOptions.includes(this.form.roomNo)) {
       this.form.roomNo = '';
     }
   }
-
   updateCharges(): void {
     this.form.rentPerNight = this.mealPlanRates[this.form.mealPlan] ?? 0;
     this.form.complimentaryPerNight = this.mealPlanComplimentary[this.form.mealPlan] ?? 0;
@@ -204,12 +287,12 @@ export class BookingEngineComponent {
     this.updateCharges();
   }
 
-  saveBooking(): void {
-    this.updateCharges();
-    alert(`Booking saved. Total amount: ₹${this.form.totalAmount.toLocaleString('en-IN')}`);
-  }
+  // saveBooking(): void {
+  //   this.updateCharges();
+  //   alert(`Booking saved. Total amount: ₹${this.form.totalAmount.toLocaleString('en-IN')}`);
+  // }
 
-  cancel(): void {
-    this.router.navigate(['/booking-list']);
-  }
+  // cancel(): void {
+  //   this.router.navigate(['/booking-list']);
+  // }
 }

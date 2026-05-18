@@ -46,15 +46,15 @@ namespace HotelRestaurant.Infrastructure.Data
 
             var guest = new Guest
             {
-                FirstName = "Ethan",
-                LastName = "Grant",
-                Email = "ethan.grant@example.com",
-                Phone = "+1-555-0145",
-                Address = "17 Maple Street, Harmony",
-                NationalId = "ID123456789",
-                DateOfBirth = new DateTime(1990, 4, 22)
+                FirstName = "Jane",
+                LastName = "Doe",
+                Email = "jane.doe@example.com",
+                Phone = "+1-555-0199",
+                Address = "456 Oak Avenue",
+                NationalId = "AB123456C",
+                // FIX: Explicitly enforce UTC on the date instance
+                DateOfBirth = DateTime.SpecifyKind(new DateTime(1985, 5, 12), DateTimeKind.Utc)
             };
-
             var reservation = new Reservation
             {
                 Guest = guest,

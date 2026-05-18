@@ -13,19 +13,29 @@ using HotelRestaurant.Infrastructure.Services;
 using HotelRestaurant.Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
+// ADD THIS EXACT LINE AT THE VERY TOP OF PROGRAM.CS:
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
 // builder.Services.AddDbContext<AppDbContext>(options =>
 //     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // ── 1. Database — EF Core + PostgreSQL ───────────────────────────────────────
+// builder.Services.AddDbContext<AppDbContext>(options =>
+//     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    // ADD THIS LINE TO SUPPRESS THE EXCEPTION:
+    options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+});
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -152,6 +162,9 @@ var app = builder.Build();
 // ── Auto-migrate on startup (dev convenience) ─────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
+       var services = scope.ServiceProvider;
+       var context = services.GetRequiredService<AppDbContext>();
+       await DbInitializer.InitializeAsync(context);
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
@@ -168,7 +181,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 app.UseHttpsRedirection();
-app.UseCors("AllowAngularDevClient");
+//app.UseCors("AllowAngularDevClient");
+// Enable CORS so your Angular app (port 4200) can communicate with port 5287
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
@@ -320,5 +336,6 @@ static List<string> GenerateDateRange(DateTime fromDate, DateTime toDate)
     }
     return dates;
 }
-
+// 2. CRITICAL MIDDLEWARE ENDPOINT: Instructs Web API to map your controller endpoints
+app.MapControllers();
 await app.RunAsync();
