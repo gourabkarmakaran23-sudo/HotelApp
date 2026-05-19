@@ -1,3 +1,16 @@
+<!-- Modal Alert — renders on top of everything when alertService triggers -->
+<app-custom-alert></app-custom-alert>
+
+<!-- Loader Overlay — shown while API call is in progress -->
+@if (isLoading) {
+  <div class="loader-overlay">
+    <div class="loader-box">
+      <div class="spinner"></div>
+      <p>Saving booking, please wait…</p>
+    </div>
+  </div>
+}
+
 <div class="booking-engine-page">
   <div class="page-header">
     <div>
@@ -7,48 +20,68 @@
     <button class="secondary-btn" type="button" (click)="cancel()">Back to Booking List</button>
   </div>
 
-  <form class="booking-form" (ngSubmit)="saveBooking()">
+  <form class="booking-form" (ngSubmit)="saveBooking()" #bookingForm="ngForm" novalidate>
+
+    <!-- ── Reservation Details ────────────────────────────────────────────── -->
     <section class="section-card">
       <h2>Reservation Details</h2>
       <div class="form-grid">
+
         <div class="form-group">
-          <label>Check In</label>
-          <input type="datetime-local" [(ngModel)]="form.checkIn" name="checkIn" (change)="recalculate()" />
+          <label>Check In <span class="req">*</span></label>
+          <input type="datetime-local"
+                 [(ngModel)]="form.checkIn" name="checkIn"
+                 (change)="recalculate()"
+                 [class.input-error]="bookingForm.submitted && !form.checkIn" />
         </div>
+
         <div class="form-group">
-          <label>Check Out</label>
-          <input type="datetime-local" [(ngModel)]="form.checkOut" name="checkOut" (change)="recalculate()" />
+          <label>Check Out <span class="req">*</span></label>
+          <input type="datetime-local"
+                 [(ngModel)]="form.checkOut" name="checkOut"
+                 (change)="recalculate()"
+                 [class.input-error]="bookingForm.submitted && !form.checkOut" />
         </div>
+
         <div class="form-group">
-          <label>Arrival From</label>
-          <input type="text" placeholder="Arrival From" [(ngModel)]="form.arrivalFrom" name="arrivalFrom" />
+          <label>Arrival From <span class="req">*</span></label>
+          <input type="text" placeholder="Arrival From"
+                 [(ngModel)]="form.arrivalFrom" name="arrivalFrom" />
         </div>
+
         <div class="form-group">
           <label>Booking Type</label>
           <select [(ngModel)]="form.bookingType" name="bookingType">
             <option *ngFor="let type of bookingTypes" [value]="type">{{ type }}</option>
           </select>
         </div>
+
         <div class="form-group">
-          <label>Choose Booking Reference</label>
+          <label>Booking Reference</label>
           <select [(ngModel)]="form.bookingReference" name="bookingReference">
             <option *ngFor="let ref of bookingReferences" [value]="ref">{{ ref }}</option>
           </select>
         </div>
+
         <div class="form-group">
-          <label>Choose Sold By Name</label>
+          <label>Sold By</label>
           <select [(ngModel)]="form.soldBy" name="soldBy">
             <option *ngFor="let sold of soldByNames" [value]="sold">{{ sold }}</option>
           </select>
         </div>
+
         <div class="form-group full-width">
           <label>Customer Profile</label>
-          <input type="text" placeholder="Customer Profile" [(ngModel)]="form.customerProfile" name="customerProfile" />
+          <input type="text" placeholder="Customer Profile"
+                 [(ngModel)]="form.customerProfile" name="customerProfile" />
         </div>
+
         <div class="form-group full-width">
           <label>Purpose of Visit</label>
-          <input type="text" placeholder="Purpose of Visit" [(ngModel)]="form.purposeOfVisit" name="purposeOfVisit" />
+          <input type="text" placeholder="Purpose of Visit"
+                 [(ngModel)]="form.purposeOfVisit" name="purposeOfVisit" />
         </div>
+
         <div class="form-group full-width">
           <label>Remarks</label>
           <textarea placeholder="Remarks" [(ngModel)]="form.remarks" name="remarks"></textarea>
@@ -56,101 +89,123 @@
       </div>
     </section>
 
+    <!-- ── Room Details ───────────────────────────────────────────────────── -->
     <section class="section-card">
       <h2>Room Details</h2>
       <div class="form-grid">
+
         <div class="form-group">
-          <label>Room Type</label>
+          <label>Room Type <span class="req">*</span></label>
           <select [(ngModel)]="form.roomType" name="roomType" (change)="onRoomTypeChange()">
             <option *ngFor="let room of roomTypes" [value]="room">{{ room }}</option>
           </select>
         </div>
-        <!-- <div class="form-group">
-          <label>Room No.</label>
-          <select [(ngModel)]="form.roomNo" name="roomNo">
-            <option value="">Choose Room No.</option>
-            <option *ngFor="let roomNo of roomNoOptions" [value]="roomNo">{{ roomNo }}</option>
-          </select>
-        </div> -->
+
         <div class="form-group">
-          <label>Room No.</label>
-          <select [(ngModel)]="form.roomNo" name="roomNo">
+          <label>Room No. <span class="req">*</span></label>
+          <select [(ngModel)]="form.roomNo" name="roomNo"
+                  [class.input-error]="bookingForm.submitted && !form.roomNo">
             <option value="">Choose Room No.</option>
             <option *ngFor="let roomNo of roomNoOptions" [value]="roomNo">{{ roomNo }}</option>
           </select>
         </div>
+
         <div class="form-group">
           <label>#Adults</label>
           <input type="number" min="1" [(ngModel)]="form.adults" name="adults" />
         </div>
+
         <div class="form-group">
           <label>#Children</label>
           <input type="number" min="0" [(ngModel)]="form.children" name="children" />
         </div>
+
         <div class="form-group">
           <label>Child Age</label>
           <select [(ngModel)]="form.extraChildAge" name="extraChildAge" (change)="onChildAgeChange()">
             <option *ngFor="let age of childAgeOptions" [value]="age">{{ age }}</option>
           </select>
         </div>
+
         <div class="form-group full-width">
-          <label>Room Package</label>
+          <label>Room Package <span class="req">*</span></label>
           <select [(ngModel)]="form.mealPlan" name="mealPlan" (change)="onMealPlanChange()">
             <option *ngFor="let plan of mealPlanOptions" [value]="plan">{{ plan }}</option>
           </select>
         </div>
       </div>
 
+      <!-- Charges summary row -->
       <div class="summary-grid">
-        <div>
+        <div class="form-group">
           <label>Rent / Night</label>
           <input type="text" [value]="form.rentPerNight | currency:'INR'" readonly />
         </div>
-        <div>
+        <div class="form-group">
           <label>Complimentary / Night</label>
           <input type="text" [value]="form.complimentaryPerNight | currency:'INR'" readonly />
         </div>
-        <div>
+        <div class="form-group">
           <label>Extra Child Charge</label>
           <input type="text" [value]="form.extraCharge | currency:'INR'" readonly />
         </div>
-        <div>
+        <div class="form-group">
           <label>Total Amount</label>
-          <input type="text" [value]="form.totalAmount | currency:'INR'" readonly />
+          <input type="text" [value]="form.totalAmount | currency:'INR'" readonly class="total-highlight" />
         </div>
       </div>
     </section>
 
+    <!-- ── Customer + Guest + Billing ─────────────────────────────────────── -->
     <section class="section-card form-columns">
+
+      <!-- Customer Info -->
       <div>
         <h2>Customer Info</h2>
         <div class="form-grid">
+
           <div class="form-group">
-            <label>Mobile No.</label>
-            <input type="tel" placeholder="Mobile No." [(ngModel)]="form.billingMobile" name="billingMobile" />
+            <label>Mobile No. <span class="req">*</span></label>
+            <input type="tel" placeholder="Mobile No."
+                   [(ngModel)]="form.billingMobile" name="billingMobile"
+                   [class.input-error]="bookingForm.submitted && !form.billingMobile" />
           </div>
+
           <div class="form-group">
-            <label>Billing Name/Title</label>
+            <label>Title</label>
             <select [(ngModel)]="form.billingTitle" name="billingTitle">
               <option *ngFor="let title of billingNameTitles" [value]="title">{{ title }}</option>
             </select>
           </div>
+
           <div class="form-group">
-            <label>Billing First Name</label>
-            <input type="text" placeholder="First Name" [(ngModel)]="form.billingFirstName" name="billingFirstName" />
+            <label>First Name <span class="req">*</span></label>
+            <input type="text" placeholder="First Name"
+                   [(ngModel)]="form.billingFirstName" name="billingFirstName"
+                   [class.input-error]="bookingForm.submitted && !form.billingFirstName" />
           </div>
+
           <div class="form-group">
-            <label>Billing Last Name</label>
-            <input type="text" placeholder="Last Name" [(ngModel)]="form.billingLastName" name="billingLastName" />
+            <label>Last Name <span class="req">*</span></label>
+            <input type="text" placeholder="Last Name"
+                   [(ngModel)]="form.billingLastName" name="billingLastName"
+                   [class.input-error]="bookingForm.submitted && !form.billingLastName" />
           </div>
+
           <div class="form-group full-width">
-            <label>Billing Address</label>
-            <input type="text" placeholder="Billing Address" [(ngModel)]="form.billingAddress" name="billingAddress" />
+            <label>Billing Address <span class="req">*</span></label>
+            <input type="text" placeholder="Billing Address"
+                   [(ngModel)]="form.billingAddress" name="billingAddress"
+                   [class.input-error]="bookingForm.submitted && !form.billingAddress" />
           </div>
+
           <div class="form-group">
-            <label>Email</label>
-            <input type="email" placeholder="Email" [(ngModel)]="form.email" name="email" />
+            <label>Email <span class="req">*</span></label>
+            <input type="email" placeholder="Email"
+                   [(ngModel)]="form.email" name="email"
+                   [class.input-error]="bookingForm.submitted && !form.email" />
           </div>
+
           <div class="form-group">
             <label>GSTIN (Optional)</label>
             <input type="text" placeholder="GSTIN" [(ngModel)]="form.gstin" name="gstin" />
@@ -158,32 +213,44 @@
         </div>
       </div>
 
+      <!-- Primary Guest Info -->
       <div>
         <h2>Primary Guest Info</h2>
         <label class="checkbox-inline">
           <input type="checkbox" [(ngModel)]="form.sameAsCustomer" name="sameAsCustomer"
-            (change)="onSameAsCustomerChange()" />
+                 (change)="onSameAsCustomerChange()" />
           Same as Customer Details
         </label>
         <div class="form-grid">
+
           <div class="form-group">
             <label>Title</label>
             <select [(ngModel)]="form.primaryTitle" name="primaryTitle">
               <option *ngFor="let title of billingNameTitles" [value]="title">{{ title }}</option>
             </select>
           </div>
+
           <div class="form-group">
-            <label>First Name</label>
-            <input type="text" placeholder="First Name" [(ngModel)]="form.primaryFirstName" name="primaryFirstName" />
+            <label>First Name <span class="req">*</span></label>
+            <input type="text" placeholder="First Name"
+                   [(ngModel)]="form.primaryFirstName" name="primaryFirstName"
+                   [class.input-error]="bookingForm.submitted && !form.primaryFirstName" />
           </div>
-          <div class="form-group">
-            <label>Last Name</label>
-            <input type="text" placeholder="Last Name" [(ngModel)]="form.primaryLastName" name="primaryLastName" />
-          </div>
+
           <div class="form-group full-width">
-            <label>Mobile No.</label>
-            <input type="tel" placeholder="Mobile No." [(ngModel)]="form.primaryMobile" name="primaryMobile" />
+            <label>Last Name <span class="req">*</span></label>
+            <input type="text" placeholder="Last Name"
+                   [(ngModel)]="form.primaryLastName" name="primaryLastName"
+                   [class.input-error]="bookingForm.submitted && !form.primaryLastName" />
           </div>
+
+          <div class="form-group full-width">
+            <label>Mobile No. <span class="req">*</span></label>
+            <input type="tel" placeholder="Mobile No."
+                   [(ngModel)]="form.primaryMobile" name="primaryMobile"
+                   [class.input-error]="bookingForm.submitted && !form.primaryMobile" />
+          </div>
+
           <div class="form-group full-width">
             <label>Nationality</label>
             <select [(ngModel)]="form.nationality" name="nationality">
@@ -194,44 +261,61 @@
         </div>
       </div>
 
+      <!-- Billing Summary -->
       <div class="billing-summary-card">
         <h2>Billing Details</h2>
+
         <div class="billing-row">
           <span>Booking Charge</span>
           <strong>{{ form.totalAmount | currency:'INR' }}</strong>
         </div>
         <div class="billing-row">
-          <span>GST</span>
+          <span>GST (5%)</span>
           <strong>{{ (form.totalAmount * 0.05) | currency:'INR' }}</strong>
         </div>
         <div class="billing-row total-row">
-          <span>Total</span>
+          <span>Grand Total</span>
           <strong>{{ (form.totalAmount * 1.05) | currency:'INR' }}</strong>
         </div>
+
         <div class="form-group">
-          <label>Payment Mode</label>
-          <select [(ngModel)]="form.paymentMode" name="paymentMode">
+          <label>Payment Mode <span class="req">*</span></label>
+          <select [(ngModel)]="form.paymentMode" name="paymentMode"
+                  [class.input-error]="bookingForm.submitted && !form.paymentMode">
             <option value="">Choose Payment Mode</option>
             <option value="Cash">Cash</option>
             <option value="Card">Card</option>
             <option value="Online">Online</option>
           </select>
         </div>
+
         <div class="form-group">
           <label>Advance Amount</label>
-          <input type="number" min="0" [(ngModel)]="form.advanceAmount" name="advanceAmount" />
+          <input type="number" min="0"
+                 [(ngModel)]="form.advanceAmount" name="advanceAmount" />
         </div>
+
         <div class="form-group full-width">
           <label>Advance Remarks</label>
-          <textarea placeholder="Advance Remarks" [(ngModel)]="form.advanceRemarks" name="advanceRemarks"></textarea>
+          <textarea placeholder="Advance Remarks"
+                    [(ngModel)]="form.advanceRemarks" name="advanceRemarks"></textarea>
         </div>
-        <button type="button" class="secondary-btn" (click)="recalculate()">Recalculate</button>
+
+        <button type="button" class="secondary-btn recalc-btn" (click)="recalculate()">
+          ⟳ Recalculate
+        </button>
       </div>
     </section>
 
+    <!-- ── Actions ─────────────────────────────────────────────────────────── -->
     <div class="form-actions">
-      <button type="submit" class="primary-btn">Save</button>
-      <button type="button" class="secondary-btn" (click)="cancel()">Cancel</button>
+      <button type="submit" class="primary-btn" [disabled]="isLoading">
+        @if (isLoading) { Saving… } @else { Save Booking }
+      </button>
+      <button type="button" class="secondary-btn" (click)="cancel()" [disabled]="isLoading">
+        Cancel
+      </button>
     </div>
+
   </form>
 </div>

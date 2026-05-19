@@ -2,8 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BookingService } from '../../services/booking.service'; // 1. Import Service Component
-import { CustomAlertService } from '../../services/custom-alert.service'; // 1. Import Custom Alert Service
+import { BookingService } from '../../services/booking.service';
+import { CustomAlertService } from '../../services/custom-alert.service';
+import { CustomAlertComponent } from '../shared/custom-alert/custom-alert.component';
 
 interface BookingForm {
   bookingType: string;
@@ -46,11 +47,16 @@ interface BookingForm {
 @Component({
   selector: 'app-booking-engine',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CustomAlertComponent],  // ← alert component imported
   templateUrl: './booking-engine.component.html',
   styleUrls: ['./booking-engine.component.scss']
 })
 export class BookingEngineComponent {
+
+  // ── Loader state ──────────────────────────────────────────────────────────
+  isLoading = false;
+
+  // ── Dropdown data ─────────────────────────────────────────────────────────
   bookingTypes = [
     'Book Online',
     'Counter Booking',
@@ -77,14 +83,16 @@ export class BookingEngineComponent {
   ];
 
   billingNameTitles = ['Mr.', 'Ms.', 'Mrs.', 'M/s', 'Dr.', 'Prof.'];
+  childAgeOptions   = Array.from({ length: 16 }, (_, i) => i);
+  roomNoOptions: string[] = [];
 
   roomNumbersByType: Record<string, string[]> = {
-    'Family Non View': ['101', '102', '103', '104'],
-    'Family View': ['201', '202', '203', '204'],
-    'Executive Non View': ['301', '302', '303', '304'],
-    'Executive View': ['401', '402', '403', '404'],
-    'Family Junction View': ['501', '502', '503'],
-    'Premium View': ['601', '602', '603']
+    'Family Non View':     ['101', '102', '103', '104'],
+    'Family View':         ['201', '202', '203', '204'],
+    'Executive Non View':  ['301', '302', '303', '304'],
+    'Executive View':      ['401', '402', '403', '404'],
+    'Family Junction View':['501', '502', '503'],
+    'Premium View':        ['601', '602', '603']
   };
 
   mealPlanRates: Record<string, number> = {
@@ -101,6 +109,7 @@ export class BookingEngineComponent {
     'Room with Breakfast': 1500
   };
 
+  // ── Form model ────────────────────────────────────────────────────────────
   form: BookingForm = {
     bookingType: 'Book Online',
     bookingReference: 'Head Back Office',
@@ -117,8 +126,8 @@ export class BookingEngineComponent {
     extraChildAge: 0,
     adults: 2,
     children: 0,
-    rentPerNight: this.mealPlanRates['Room Only'],
-    complimentaryPerNight: this.mealPlanComplimentary['Room Only'],
+    rentPerNight: 4500,
+    complimentaryPerNight: 0,
     extraCharge: 0,
     totalAmount: 0,
     billingTitle: 'Mr.',
@@ -139,165 +148,158 @@ export class BookingEngineComponent {
     nationality: 'Indian'
   };
 
-  roomNoOptions: string[] = [];
-  childAgeOptions = Array.from({ length: 16 }, (_, i) => i);
-
   constructor(
     private readonly router: Router,
     private readonly bookingService: BookingService,
-    private readonly alertService: CustomAlertService // 2. Inject Service in Constructor
+    private readonly alertService: CustomAlertService
   ) {
     this.updateRoomOptions();
     this.updateCharges();
   }
 
+  // ── Save ──────────────────────────────────────────────────────────────────
   saveBooking(): void {
-    // 1. Force calculation pass before submission
+    // Step 1: Run all validations first — stop if any fail
+    if (!this.validateForm()) return;
+
+    // Step 2: Recalculate charges before submission
     this.updateCharges();
 
-    // 2. Clear debugging prints to see what data is currently stored in the form
-    console.log('Current Angular Form Submission Payload:', this.form);
-
-    // 3. Validation Checks
-    if (!this.form.checkIn) {
-      this.alertService.error('Validation Error: The Check-In Date field cannot be left blank.');
-      return;
-    }
-    if (!this.form.checkOut) {
-      this.alertService.error('Validation Error: The Check-Out Date field cannot be left blank.');
-      return;
-    }
-    if (!this.form.roomNo || this.form.roomNo.trim() === '') {
-      this.alertService.error('Validation Error: Please select an Assigned Room Number from the dropdown menu.');
-      return;
-    }
-
-    // 4. Sanitize JSON types exactly like the working Swagger Payload
-    const sanitizedPayload = {
+    // Step 3: Build clean payload
+    const payload = {
       ...this.form,
-      extraChildAge: Number(this.form.extraChildAge) || 0,
-      adults: Number(this.form.adults) || 1,
-      children: Number(this.form.children) || 0,
-      rentPerNight: Number(this.form.rentPerNight) || 0,
+      extraChildAge:         Number(this.form.extraChildAge)         || 0,
+      adults:                Number(this.form.adults)                || 1,
+      children:              Number(this.form.children)              || 0,
+      rentPerNight:          Number(this.form.rentPerNight)          || 0,
       complimentaryPerNight: Number(this.form.complimentaryPerNight) || 0,
-      extraCharge: Number(this.form.extraCharge) || 0,
-      totalAmount: Number(this.form.totalAmount) || 0,
-      advanceAmount: Number(this.form.advanceAmount) || 0,
-
-      // Format to clean ISO string stamps
-      checkIn: this.form.checkIn ? new Date(this.form.checkIn).toISOString() : new Date().toISOString(),
-      checkOut: this.form.checkOut ? new Date(this.form.checkOut).toISOString() : new Date().toISOString()
+      extraCharge:           Number(this.form.extraCharge)           || 0,
+      totalAmount:           Number(this.form.totalAmount)           || 0,
+      advanceAmount:         Number(this.form.advanceAmount)         || 0,
+      checkIn:  new Date(this.form.checkIn).toISOString(),
+      checkOut: new Date(this.form.checkOut).toISOString()
     };
 
-    console.log('Sanitized payload transmitting safely to backend:', sanitizedPayload);
+    console.log('Submitting payload:', payload);
 
-    // 5. Send verified dataset to your multi-table .NET endpoint
-    this.bookingService.createReservation(sanitizedPayload).subscribe({
+    // Step 4: Show loader, call API
+    this.isLoading = true;
+
+    this.bookingService.createReservation(payload).subscribe({
       next: (response) => {
+        this.isLoading = false;
+
+        // Show success modal; redirect ONLY after user clicks OK
         this.alertService.success(
-          `Booking Saved Successfully!\n` +
-          `-------------------------------\n` +
-          `Reservation Reference ID: ${response.bookingId}\n` +
-          `Primary Guest Account ID: ${response.guestId}\n` +
-          `Tax Ledger Invoice Code: ${response.invoiceId}`
+          `Booking saved successfully!\n\n` +
+          `Reservation ID : ${response.bookingId}\n` +
+          `Guest ID       : ${response.guestId}\n` +
+          `Invoice ID     : ${response.invoiceId}`,
+          () => this.router.navigate(['/booking-list'])  // ← onClose callback
         );
-        //this.router.navigate(['/booking-list']);
-        setTimeout(() => {
-          this.router.navigate(['/booking-list']);
-        }, 3000);
       },
       error: (err) => {
-        this.alertService.error('API Error Context Payload:', err);
+        this.isLoading = false;
 
-        let errorDetail = err.message || 'Unknown network connection fault';
-        if (err.error && typeof err.error === 'string') {
-          errorDetail = err.error;
-        } else if (err.error && err.error.message) {
-          errorDetail = err.error.message;
-        }
+        const detail =
+          err?.error?.message ??
+          err?.message         ??
+          'Unknown network error';
 
-        this.alertService.error(`Backend System Error: ${errorDetail}\n\nPlease review your browser's F12 developer tools console for detailed exception stacks.`);
+        this.alertService.error(
+          `Failed to save booking.\n\n${detail}\n\nCheck F12 console for details.`
+        );
+
+        console.error('Booking API error:', err);
       }
     });
   }
-  cancel(): void {
-    this.router.navigate(['/booking-list']);
+
+  // ── Validation ────────────────────────────────────────────────────────────
+  validateForm(): boolean {
+    const rules: Array<[boolean, string]> = [
+      [!this.form.checkIn,
+        'Check-In Date cannot be blank.'],
+      [!this.form.checkOut,
+        'Check-Out Date cannot be blank.'],
+      [new Date(this.form.checkOut) <= new Date(this.form.checkIn),
+        'Check-Out must be after Check-In.'],
+      [!this.form.roomNo?.trim(),
+        'Please select a Room Number.'],
+      [!this.form.billingFirstName?.trim(),
+        'Billing First Name cannot be blank.'],
+      [!this.form.billingLastName?.trim(),
+        'Billing Last Name cannot be blank.'],
+      [!this.form.billingMobile?.trim(),
+        'Billing Mobile Number cannot be blank.'],
+      [!this.form.billingAddress?.trim(),
+        'Billing Address cannot be blank.'],
+      [!this.form.email?.trim(),
+        'Email cannot be blank.'],
+      [!this.form.paymentMode?.trim(),
+        'Please select a Payment Mode.'],
+      [this.form.advanceAmount > 0 && !this.form.advanceRemarks?.trim(),
+        'Please provide remarks for the advance payment.'],
+      [!this.form.primaryFirstName?.trim(),
+        'Primary Guest First Name cannot be blank.'],
+      [!this.form.primaryLastName?.trim(),
+        'Primary Guest Last Name cannot be blank.'],
+      [!this.form.primaryMobile?.trim(),
+        'Primary Guest Mobile Number cannot be blank.'],
+    ];
+
+    for (const [condition, message] of rules) {
+      if (condition) {
+        this.alertService.error(`Validation Error\n\n${message}`);
+        return false;
+      }
+    }
+    return true;
   }
-  // updateRoomOptions(): void {
-  //   this.roomNoOptions = this.roomNumbersByType[this.form.roomType] ?? [];
-  //   if (!this.roomNoOptions.includes(this.form.roomNo)) {
-  //     this.form.roomNo = '';
-  //   }
-  // }
+
+  // ── Room & Charge Helpers ─────────────────────────────────────────────────
   updateRoomOptions(): void {
-    const selectedType = this.form.roomType;
-
-    // Correctly map items into roomNoOptions instead of roomOptions
-    this.roomNoOptions = this.roomNumbersByType[selectedType] || [];
-
-    // Reset selection back to blank if the previously selected number isn't in the new array
+    this.roomNoOptions = this.roomNumbersByType[this.form.roomType] ?? [];
     if (!this.roomNoOptions.includes(this.form.roomNo)) {
       this.form.roomNo = '';
     }
   }
+
   updateCharges(): void {
-    this.form.rentPerNight = this.mealPlanRates[this.form.mealPlan] ?? 0;
+    this.form.rentPerNight          = this.mealPlanRates[this.form.mealPlan]         ?? 0;
     this.form.complimentaryPerNight = this.mealPlanComplimentary[this.form.mealPlan] ?? 0;
 
-    const nights = this.calculateNights();
-    const roomCharge = this.form.rentPerNight * Math.max(1, nights);
+    const nights      = this.calculateNights();
+    const roomCharge  = this.form.rentPerNight * Math.max(1, nights);
+    const extraChild  = (this.form.extraChildAge >= 7 &&
+                         this.form.mealPlan.includes('Breakfast')) ? 300 : 0;
 
-    const extraChildCharge =
-      this.form.extraChildAge >= 7 && this.form.mealPlan.includes('Breakfast')
-        ? 300
-        : 0;
-
-    this.form.extraCharge = extraChildCharge;
-    this.form.totalAmount = roomCharge + extraChildCharge;
+    this.form.extraCharge  = extraChild;
+    this.form.totalAmount  = roomCharge + extraChild;
   }
 
   calculateNights(): number {
-    if (!this.form.checkIn || !this.form.checkOut) {
-      return 1;
-    }
-
-    const checkInDate = new Date(this.form.checkIn);
-    const checkOutDate = new Date(this.form.checkOut);
-    const diff = checkOutDate.getTime() - checkInDate.getTime();
+    if (!this.form.checkIn || !this.form.checkOut) return 1;
+    const diff = new Date(this.form.checkOut).getTime() -
+                 new Date(this.form.checkIn).getTime();
     return diff > 0 ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : 1;
   }
 
-  onRoomTypeChange(): void {
-    this.updateRoomOptions();
-  }
-
-  onMealPlanChange(): void {
-    this.updateCharges();
-  }
-
-  onChildAgeChange(): void {
-    this.updateCharges();
-  }
+  onRoomTypeChange():     void { this.updateRoomOptions(); }
+  onMealPlanChange():     void { this.updateCharges(); }
+  onChildAgeChange():     void { this.updateCharges(); }
+  recalculate():          void { this.updateCharges(); }
 
   onSameAsCustomerChange(): void {
     if (this.form.sameAsCustomer) {
-      this.form.primaryTitle = this.form.billingTitle;
+      this.form.primaryTitle     = this.form.billingTitle;
       this.form.primaryFirstName = this.form.billingFirstName;
-      this.form.primaryLastName = this.form.billingLastName;
-      this.form.primaryMobile = this.form.billingMobile;
+      this.form.primaryLastName  = this.form.billingLastName;
+      this.form.primaryMobile    = this.form.billingMobile;
     }
   }
 
-  recalculate(): void {
-    this.updateCharges();
+  cancel(): void {
+    this.router.navigate(['/booking-list']);
   }
-
-  // saveBooking(): void {
-  //   this.updateCharges();
-  //   alert(`Booking saved. Total amount: ₹${this.form.totalAmount.toLocaleString('en-IN')}`);
-  // }
-
-  // cancel(): void {
-  //   this.router.navigate(['/booking-list']);
-  // }
 }

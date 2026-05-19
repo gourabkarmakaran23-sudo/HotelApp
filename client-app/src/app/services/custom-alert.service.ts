@@ -1,57 +1,67 @@
-import { Injectable,signal } from "@angular/core";
+import { Injectable, signal } from '@angular/core';
+import { Subject } from 'rxjs';
 
-export interface Alert {
-  id: number;
-  type: 'success' | 'error' | 'info' | 'warning';
-  message: string;
-  duration?: number; // Duration in milliseconds
+export type AlertType = 'success' | 'error' | 'warning' | 'info';
+
+export interface AlertState {
+  visible:  boolean;
+  type:     AlertType;
+  title:    string;
+  message:  string;
+  /** Emits true when user clicks the OK button */
+  onClose?: () => void;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+/**
+ * CustomAlertService — Singleton service (provided in root).
+ * Replaces window.alert() with an in-app modal dialog.
+ * Components subscribe to `state` signal and render the modal themselves,
+ * OR use the <app-custom-alert> shared component.
+ */
+@Injectable({ providedIn: 'root' })
 export class CustomAlertService {
-  private alerts = signal<Alert[]>([]); 
-  private nextId = 1;
 
-  getAlerts() {
-    return this.alerts.asReadonly();
-  }
-  
-  success(message: string, duration: number=3000) {
-    this.show('success', message, duration);
-  }
+  // Reactive signal — any component reading this re-renders automatically
+  state = signal<AlertState>({
+    visible: false,
+    type:    'info',
+    title:   '',
+    message: ''
+  });
 
-  error(message: string, duration: number=5000) {
-    this.show('error', message, duration);
-  }
+  // Emits after the user clicks OK (used for post-confirm navigation)
+  private _closed$ = new Subject<void>();
+  closed$ = this._closed$.asObservable();
 
-  info(message: string, duration: number=3000) {
-    this.show('info', message, duration);
-  }
+  // ── Public API ──────────────────────────────────────────────────────────────
 
-  warning(message: string, duration: number=4000) {
-    this.show('warning', message, duration);
+  success(message: string, onClose?: () => void): void {
+    this._show('success', 'Success', message, onClose);
   }
 
-  private show(type: Alert['type'], message: string, duration: number) {
-    const alert: Alert = {
-      id: this.nextId++,
-      type,
-      message,
-      duration
-    };
-    this.alerts.update(alerts => [...alerts, alert]);
-
-    if(duration && duration > 0) {
-      setTimeout(() => this.remove(alert.id), duration);
-    }
+  error(message: string, onClose?: () => void): void {
+    this._show('error', 'Error', message, onClose);
   }
 
-    remove(id: number) {
-    this.alerts.update(alerts => alerts.filter(alert => alert.id !== id));
-  }
-  clear() {    this.alerts.set([]);
+  warning(message: string, onClose?: () => void): void {
+    this._show('warning', 'Warning', message, onClose);
   }
 
-} 
+  info(message: string, onClose?: () => void): void {
+    this._show('info', 'Info', message, onClose);
+  }
+
+  /** Called by the alert component when the user clicks OK */
+  close(): void {
+    const cb = this.state().onClose;
+    this.state.set({ visible: false, type: 'info', title: '', message: '' });
+    this._closed$.next();
+    if (cb) cb();
+  }
+
+  // ── Private ─────────────────────────────────────────────────────────────────
+
+  private _show(type: AlertType, title: string, message: string, onClose?: () => void): void {
+    this.state.set({ visible: true, type, title, message, onClose });
+  }
+}
