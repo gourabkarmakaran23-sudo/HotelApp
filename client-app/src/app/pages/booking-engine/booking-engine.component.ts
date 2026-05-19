@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service'; // 1. Import Service Component
+import { CustomAlertService } from '../../services/custom-alert.service'; // 1. Import Custom Alert Service
 
 interface BookingForm {
   bookingType: string;
@@ -143,7 +144,8 @@ export class BookingEngineComponent {
 
   constructor(
     private readonly router: Router,
-    private readonly bookingService: BookingService // 2. Inject Service in Constructor
+    private readonly bookingService: BookingService,
+    private readonly alertService: CustomAlertService // 2. Inject Service in Constructor
   ) {
     this.updateRoomOptions();
     this.updateCharges();
@@ -158,15 +160,15 @@ export class BookingEngineComponent {
 
     // 3. Validation Checks
     if (!this.form.checkIn) {
-      alert('Validation Error: The Check-In Date field cannot be left blank.');
+      this.alertService.error('Validation Error: The Check-In Date field cannot be left blank.');
       return;
     }
     if (!this.form.checkOut) {
-      alert('Validation Error: The Check-Out Date field cannot be left blank.');
+      this.alertService.error('Validation Error: The Check-Out Date field cannot be left blank.');
       return;
     }
     if (!this.form.roomNo || this.form.roomNo.trim() === '') {
-      alert('Validation Error: Please select an Assigned Room Number from the dropdown menu.');
+      this.alertService.error('Validation Error: Please select an Assigned Room Number from the dropdown menu.');
       return;
     }
 
@@ -192,17 +194,20 @@ export class BookingEngineComponent {
     // 5. Send verified dataset to your multi-table .NET endpoint
     this.bookingService.createReservation(sanitizedPayload).subscribe({
       next: (response) => {
-        alert(
+        this.alertService.success(
           `Booking Saved Successfully!\n` +
           `-------------------------------\n` +
           `Reservation Reference ID: ${response.bookingId}\n` +
           `Primary Guest Account ID: ${response.guestId}\n` +
           `Tax Ledger Invoice Code: ${response.invoiceId}`
         );
-        this.router.navigate(['/reservations']);
+        //this.router.navigate(['/booking-list']);
+        setTimeout(() => {
+          this.router.navigate(['/booking-list']);
+        }, 3000);
       },
       error: (err) => {
-        console.error('API Error Context Payload:', err);
+        this.alertService.error('API Error Context Payload:', err);
 
         let errorDetail = err.message || 'Unknown network connection fault';
         if (err.error && typeof err.error === 'string') {
@@ -211,7 +216,7 @@ export class BookingEngineComponent {
           errorDetail = err.error.message;
         }
 
-        alert(`Backend System Error: ${errorDetail}\n\nPlease review your browser's F12 developer tools console for detailed exception stacks.`);
+        this.alertService.error(`Backend System Error: ${errorDetail}\n\nPlease review your browser's F12 developer tools console for detailed exception stacks.`);
       }
     });
   }
