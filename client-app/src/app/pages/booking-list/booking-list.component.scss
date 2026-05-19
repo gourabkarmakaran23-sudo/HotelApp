@@ -336,16 +336,39 @@ $row-hover:     #eef2ff;
 }
 
 // ─── AG-Grid Wrapper ──────────────────────────────────────────────────────────
+// .grid-wrapper {
+//   flex: 1;
+//   background: $bg-card;
+//   border-radius: 10px;
+//   overflow: hidden;
+//   box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+//   //min-height: 420px;
+//   //height: 520px;
+//    width: 100%;
+//   height: 600px;
+// }
+// .ag-theme-alpine {
+//   width: 100%;
+//   height: 100%;
+// }
+
 .grid-wrapper {
-  flex: 1;
-  background: $bg-card;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-  min-height: 420px;
-  height: 520px;
+  width: 100%;
+  height: 650px;
 }
 
+.booking-grid {
+  width: 100%;
+  height: 100%;
+}
+
+.ag-theme-alpine {
+  --ag-background-color: white;
+  --ag-foreground-color: #222;
+  --ag-header-background-color: #f4f4f4;
+  --ag-header-foreground-color: #000;
+  --ag-row-hover-color: #f5f7fa;
+}
 // ─── AG-Grid Custom Theme ─────────────────────────────────────────────────────
 .ag-theme-hotel {
   --ag-background-color: #ffffff;

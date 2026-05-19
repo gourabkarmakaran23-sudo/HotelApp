@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelRestaurant.Infrastructure.Repositories
 {
-    public  class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         protected readonly AppDbContext _context;
-        protected readonly DbSet<T>    _dbSet;
+        protected readonly DbSet<T> _dbSet;
 
 
         public GenericRepository(AppDbContext context)
@@ -17,7 +17,10 @@ namespace HotelRestaurant.Infrastructure.Repositories
             _dbSet = context.Set<T>();
         }
 
-
+        public IQueryable<T> GetAllQueryable()
+        {
+            return _dbSet.AsQueryable();
+        }
         public async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);

@@ -4,6 +4,7 @@ using HotelRestaurant.Application.DTOs;
 using HotelRestaurant.Core.Interfaces;
 using System.Threading.Tasks;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelRestaurant.Api.Controllers
 {
@@ -18,7 +19,7 @@ namespace HotelRestaurant.Api.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-
+        #region CreateBooking
         // LEAVE ROUTE BALK BLANK SO IT PINPOINTS ABSOLUTE BASE URL ROUTE ("api/bookings")
         [HttpPost("")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto dto)
@@ -115,5 +116,94 @@ namespace HotelRestaurant.Api.Controllers
                 return StatusCode(500, $"Internal Database Error: {internalMessage}");
             }
         }
+        #endregion
+
+        #region GetBookingById
+        [HttpGet]
+        public async Task<IActionResult> GetAllBookings()
+        {
+            try
+            {
+                var reservations = await _unitOfWork.Reservations
+                    .GetAllQueryable()
+                    .Include(r => r.Guest)
+                    .Include(r => r.Room)
+                    .Include(r => r.Invoice)
+                    .OrderByDescending(r => r.CreatedAt)
+                    .ToListAsync();
+
+                var result = reservations.Select(r => new
+                {
+                    id = r.Id,
+                    bookingNumber = r.Notes != null && r.Notes.Contains("REF-")
+                        ? r.Notes
+                        : $"RES-{r.Id}",
+
+                    bookingDate = r.CreatedAt.ToString("yyyy-MM-dd"),
+
+                    roomType = r.Room?.RoomType.ToString() ?? "Standard",
+
+                    roomNo = r.Room?.RoomNumber ?? "N/A",
+
+                    mealPlan = "Room Only",
+
+                    pax = r.Adults + r.Children,
+
+                    name = r.Guest != null
+                        ? $"{r.Guest.FirstName} {r.Guest.LastName}"
+                        : "Unknown Guest",
+
+                    mobile = r.Guest?.Phone ?? string.Empty,
+
+                    guestName = r.Guest != null
+                        ? $"{r.Guest.FirstName} {r.Guest.LastName}"
+                        : "Unknown Guest",
+
+                    guestPhone = r.Guest?.Phone ?? string.Empty,
+
+                    checkIn = r.CheckInDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+
+                    checkOut = r.CheckOutDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+
+                    paymentStatus = r.Invoice?.PaymentStatus.ToString() ?? "Unpaid",
+
+                    amount = r.TotalAmount
+                });
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+        // [HttpGet("{id}")]
+        // public async Task<IActionResult> GetBookingById(int id)
+        // {
+        //     var reservation = await _unitOfWork.Reservations.GetByIdAsync(id);
+        //     if (reservation == null)
+        //         return NotFound($"No booking found with ID {id}.");
+
+        //     var guest = await _unitOfWork.Guests.GetByIdAsync(reservation.GuestId);
+        //     var room = await _unitOfWork.Rooms.GetByIdAsync(reservation.RoomId);
+        //     var invoice = await _unitOfWork.Invoices.GetAllAsync();
+        //     var invoiceForReservation = invoice.FirstOrDefault(i => i.ReservationId == reservation.Id);
+
+        //     var bookingDetails = new
+        //     {
+        //         ReservationId = reservation.Id,
+        //         GuestName = $"{guest?.FirstName} {guest?.LastName}",
+        //         RoomNumber = room?.RoomNumber,
+        //         CheckInDate = reservation.CheckInDate,
+        //         CheckOutDate = reservation.CheckOutDate,
+        //         TotalAmount = reservation.TotalAmount,
+        //         InvoiceTotal = invoiceForReservation?.Total ?? 0,
+        //         PaymentStatus = invoiceForReservation?.PaymentStatus.ToString() ?? "N/A",
+        //         Notes = reservation.Notes
+        //     };
+
+        //     return Ok(bookingDetails);
+        // }
+        #endregion
     }
 }
