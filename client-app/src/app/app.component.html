@@ -1,9 +1,12 @@
 <app-header (sidebarToggle)="onSidebarToggle()"></app-header>
 
-<main class="app-main">
-  <app-custom-alert></app-custom-alert>
-  <router-outlet></router-outlet>
+<div class="app-body">
+  <app-sidebar></app-sidebar>
 
-</main>
+  <main class="app-main">
+    <app-custom-alert></app-custom-alert>
+    <router-outlet></router-outlet>
+  </main>
+</div>
 
 <app-footer></app-footer>

@@ -1,10 +1,23 @@
-:host {
+.app-body {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  gap: 1rem;
+  padding: 1rem;
+  background: #e7edf8;
+  min-height: calc(100vh - 120px); /* adjust 120px to match your header + footer height */
+  align-items: flex-start;
 }
 
 .app-main {
   flex: 1;
-  background: #f0f2f8;
+  min-width: 0; /* prevents flex child overflow */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .app-body {
+    flex-direction: column;
+    padding: 0.5rem;
+  }
 }

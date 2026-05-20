@@ -1,0 +1,31 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Menu</h2>
+  </div>
+  <nav class="sidebar-menu">
+    <div *ngFor="let item of menuItems" class="menu-group">
+      <button
+        [class.active]="item.active"
+        (click)="onMenuItemClick(item)"
+        class="menu-item"
+      >
+        <span class="menu-icon">{{ item.icon }}</span>
+        <span class="menu-label">{{ item.label }}</span>
+        <span *ngIf="item.children" class="menu-chevron">
+          {{ item.open ? '▾' : '▸' }}
+        </span>
+      </button>
+
+      <div *ngIf="item.children && item.open" class="submenu">
+        <button
+          *ngFor="let sub of item.children"
+          class="submenu-item"
+          [class.sub-active]="isSubActive(sub.route)"
+          (click)="onSubMenuClick(item, sub)"
+        >
+          {{ sub.label }}
+        </button>
+      </div>
+    </div>
+  </nav>
+</aside>
