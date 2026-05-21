@@ -49,5 +49,6 @@ export const routes: Routes = [
     component: GuestDetailsComponent,
     canActivate: [AuthGuard]
   },
+  { path: 'rooms',      loadComponent: () => import('./pages/rooms/room.component').then(m => m.RoomComponent), canActivate: [AuthGuard] },
   { path: '**',         redirectTo: 'login' }
 ];

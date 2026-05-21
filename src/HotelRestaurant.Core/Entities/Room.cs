@@ -17,6 +17,7 @@ namespace HotelRestaurant.Core.Entities
 
         public int HotelId { get; set; }
         public string RoomNumber { get; set; } = string.Empty;
+
         public RoomType RoomType { get; set; }
         public int Capacity { get; set; }
         public decimal Price { get; set; }

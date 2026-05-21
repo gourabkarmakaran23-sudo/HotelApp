@@ -6,7 +6,8 @@ namespace HotelRestaurant.Core.Entities
         Reserved,
         Occupied,
         Maintenance,
-        OutOfService
+        OutOfService,
+        Cleaning 
     }
 
     public enum RoomType
@@ -76,5 +77,22 @@ namespace HotelRestaurant.Core.Entities
         Bartender,
         Accountant,
         Maintenance
+    }
+
+    public enum PaymentMethod
+    {
+        Cash,
+        CreditCard,
+        DebitCard,
+        MobilePayment,
+        BankTransfer,
+        Voucher
+    }
+
+    public enum SeasonType
+    {
+        Regular,
+        Peak,   
+        OffPeak
     }
 }

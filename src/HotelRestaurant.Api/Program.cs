@@ -5,6 +5,8 @@ using HotelRestaurant.Api.Middleware;
 using HotelRestaurant.Api.Models;
 using HotelRestaurant.Api.Services;
 using HotelRestaurant.Application.Services;
+using HotelRestaurant.Application.Services.Implementations;
+using HotelRestaurant.Application.Services.Interfaces;
 using HotelRestaurant.Core.Entities;
 using HotelRestaurant.Core.Interfaces;
 using HotelRestaurant.Infrastructure.Data;
@@ -47,6 +49,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // ── 4. JWT Service (Singleton — stateless, thread-safe) ──────────────────────
 builder.Services.AddSingleton<IJwtService, JwtService>();
 
+builder.Services.AddScoped<IRoomService, RoomService>();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddCors(options =>
 {

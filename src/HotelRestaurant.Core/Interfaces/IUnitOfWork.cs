@@ -2,9 +2,10 @@ using HotelRestaurant.Core.Entities;
 
 namespace HotelRestaurant.Core.Interfaces
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork:IDisposable
     {
         IGenericRepository<Hotel> Hotels { get; }
+        IGenericRepository<RoomTypes> RoomTypes { get; }
         IGenericRepository<Room> Rooms { get; }
         IGenericRepository<Guest> Guests { get; }
         IGenericRepository<Reservation> Reservations { get; }

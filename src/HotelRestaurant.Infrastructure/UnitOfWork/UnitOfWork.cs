@@ -14,6 +14,7 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             _context = context;
             Hotels = new GenericRepository<Hotel>(_context);
             Rooms = new GenericRepository<Room>(_context);
+            RoomTypes = new GenericRepository<RoomTypes>(_context);
             Guests = new GenericRepository<Guest>(_context);
             Reservations = new GenericRepository<Reservation>(_context);
             Employees = new GenericRepository<Employee>(_context);
@@ -27,6 +28,7 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
           private IUserRepository?      _users;
         public IGenericRepository<Hotel> Hotels { get; }
         public IGenericRepository<Room> Rooms { get; }
+        public IGenericRepository<RoomTypes> RoomTypes { get; }
         public IGenericRepository<Guest> Guests { get; }
         public IGenericRepository<Reservation> Reservations { get; }
         public IGenericRepository<Employee> Employees { get; }
