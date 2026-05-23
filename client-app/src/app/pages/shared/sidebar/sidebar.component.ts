@@ -29,6 +29,7 @@ export class SidebarComponent implements OnInit {
     { icon: '📊', label: 'Dashboard', active: true, route: '/dashboard' },
     { icon: '📋', label: 'Tariff Interface', route: '/tariff' },
     { icon: '👤', label: 'Account', route: '/account' },
+    { icon: '🛏️', label: 'Room Types', route: '/room-types' },
     { icon: '🛏️', label: 'Rooms', route: '/rooms' },
     { icon: '💳', label: 'Payment Setting', route: '/payment' },
     { icon: '🛒', label: 'Purchase Manage', route: '/purchase' },

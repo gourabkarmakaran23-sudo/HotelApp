@@ -25,19 +25,37 @@ namespace HotelRestaurant.Application.Services.Implementations
             _logger = logger;
         }
 
-        public Task<ApiResponseDto<IEnumerable<RoomTypeDto>>> GetAllAsync()
+        // public Task<ApiResponseDto<IEnumerable<RoomTypeDto>>> GetAllAsync()
+        // {
+        //     try
+        //     {
+        //         _logger.LogInformation("Fetching all room types");
+        //         var roomTypes = _unitOfWork.RoomTypes.GetAllAsync();
+        //         var roomTypeDtos = _mapper.Map<IEnumerable<RoomTypeDto>>(roomTypes);
+        //         return Task.FromResult(ApiResponseDto<IEnumerable<RoomTypeDto>>.SuccessResponse(roomTypeDtos));
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _logger.LogError(ex, "Error fetching all room types");
+        //         return Task.FromResult(ApiResponseDto<IEnumerable<RoomTypeDto>>.FailureResponse("Failed to fetch room types."));
+        //     }
+        // }
+
+        public async Task<ApiResponseDto<IEnumerable<RoomTypeDto>>> GetAllAsync()
         {
             try
             {
                 _logger.LogInformation("Fetching all room types");
-                var roomTypes = _unitOfWork.RoomTypes.GetAllAsync();
+                // ⬇️ Added await keyword here
+                var roomTypes = await _unitOfWork.RoomTypes.GetAllAsync();
+
                 var roomTypeDtos = _mapper.Map<IEnumerable<RoomTypeDto>>(roomTypes);
-                return Task.FromResult(ApiResponseDto<IEnumerable<RoomTypeDto>>.SuccessResponse(roomTypeDtos));
+                return ApiResponseDto<IEnumerable<RoomTypeDto>>.SuccessResponse(roomTypeDtos);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching all room types");
-                return Task.FromResult(ApiResponseDto<IEnumerable<RoomTypeDto>>.FailureResponse("Failed to fetch room types."));
+                return ApiResponseDto<IEnumerable<RoomTypeDto>>.FailureResponse("Failed to fetch room types.");
             }
         }
 

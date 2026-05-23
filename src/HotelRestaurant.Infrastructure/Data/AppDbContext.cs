@@ -12,6 +12,9 @@ namespace HotelRestaurant.Infrastructure.Data
 
         public DbSet<Hotel> Hotels => Set<Hotel>();
         public DbSet<Room> Rooms => Set<Room>();
+        public DbSet<RoomTypes> RoomTypes { get; set; }
+
+        public DbSet<RoomTypeFacility> RoomTypeFacility { get; set; }
         public DbSet<Guest> Guests => Set<Guest>();
         public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         public DbSet<Reservation> Reservations => Set<Reservation>();
@@ -25,6 +28,28 @@ namespace HotelRestaurant.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+             // ⬇️ ADD THIS CONFIGURATION BLOCK HERE
+    modelBuilder.Entity<RoomTypeFacility>(entity =>
+    {
+        // Define the composite key configuration using both foreign keys
+        // (Verify that the property names match your actual RoomTypeFacility class exactly)
+        entity.HasKey(rtf => new { rtf.RoomTypeId, rtf.RoomFacilityId });
+
+        // Explicitly establish the relationship mapping back to RoomTypes
+        entity.HasOne(rtf => rtf.RoomType)
+              .WithMany(rt => rt.RoomTypeFacilities) // or whatever your navigation property name is
+              .HasForeignKey(rtf => rtf.RoomTypeId)
+              .OnDelete(DeleteBehavior.Cascade);
+
+        // If you have a Facility entity mapping as well, define it here:
+        /*
+        entity.HasOne(rtf => rtf.Facility)
+              .WithMany(f => f.RoomTypeFacilities)
+              .HasForeignKey(rtf => rtf.FacilityId)
+              .OnDelete(DeleteBehavior.Cascade);
+        */
+    });
 
             modelBuilder.Entity<Hotel>(entity =>
             {
