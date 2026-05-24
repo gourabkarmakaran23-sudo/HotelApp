@@ -141,8 +141,8 @@ namespace HotelRestaurant.Api.Controllers
 
                     bookingDate = r.CreatedAt.ToString("yyyy-MM-dd"),
 
-                    roomType = r.Room?.RoomType.ToString() ?? "Standard",
-
+                    // roomType = r.Room?.RoomType.ToString() ?? "Standard",
+                    roomType = r.Room?.RoomTypesId.ToString() ?? "N/A",
                     roomNo = r.Room?.RoomNumber ?? "N/A",
 
                     mealPlan = "Room Only",

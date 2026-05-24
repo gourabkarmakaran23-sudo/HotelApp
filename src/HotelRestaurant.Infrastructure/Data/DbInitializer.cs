@@ -27,9 +27,9 @@ namespace HotelRestaurant.Infrastructure.Data
 
             var rooms = new List<Room>
             {
-                new Room { RoomNumber = "101", RoomType = RoomType.Standard, Capacity = 2, Price = 120m, Status = RoomStatus.Available, Description = "Standard room with garden view", Hotel = hotel },
-                new Room { RoomNumber = "102", RoomType = RoomType.Deluxe, Capacity = 3, Price = 180m, Status = RoomStatus.Available, Description = "Deluxe room with balcony", Hotel = hotel },
-                new Room { RoomNumber = "201", RoomType = RoomType.Suite, Capacity = 4, Price = 320m, Status = RoomStatus.Available, Description = "Spacious suite with lake view", Hotel = hotel }
+                new Room { RoomNumber = "101", RoomTypesId = 1, Capacity = 2, Price = 120m, Status = RoomStatus.Available, Description = "Standard room with garden view", Hotel = hotel },
+                new Room { RoomNumber = "102", RoomTypesId = 2, Capacity = 3, Price = 180m, Status = RoomStatus.Available, Description = "Deluxe room with balcony", Hotel = hotel },
+                new Room { RoomNumber = "201", RoomTypesId = 3, Capacity = 4, Price = 320m, Status = RoomStatus.Available, Description = "Spacious suite with lake view", Hotel = hotel }
             };
 
             var employee = new Employee

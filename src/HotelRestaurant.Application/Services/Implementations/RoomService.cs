@@ -65,7 +65,7 @@ namespace HotelRestaurant.Application.Services.Implementations
             {
                 _logger.LogInformation("Fetching room with ID: {RoomId}", id);
                 var room =  _unitOfWork.Rooms.GetAllQueryable()
-                    .Include(r => r.RoomType)
+                    .Include(r => r.RoomTypes)
                     .FirstOrDefault(r => r.Id == id);
                 if (room == null)
                 {

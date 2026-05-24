@@ -1,9 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using FluentValidation;
 using HotelRestaurant.Api.Middleware;
 using HotelRestaurant.Api.Models;
 using HotelRestaurant.Api.Services;
+using HotelRestaurant.Application.DTOs.Rooms.Validators;
 using HotelRestaurant.Application.Services;
 using HotelRestaurant.Application.Services.Implementations;
 using HotelRestaurant.Application.Services.Interfaces;
@@ -38,6 +40,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     // ADD THIS LINE TO SUPPRESS THE EXCEPTION:
     options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
 });
+
+// Register all validators from the assembly where CreateRoomDtoValidator resides
+builder.Services.AddValidatorsFromAssemblyContaining<CreateRoomDtoValidator>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -132,7 +137,11 @@ builder.Services.AddCors(options =>
 });
 
 // ── 7. Controllers + Swagger ──────────────────────────────────────────────────
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {

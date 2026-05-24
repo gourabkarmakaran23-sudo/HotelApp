@@ -10,15 +10,15 @@ namespace HotelRestaurant.Core.Entities
         Cleaning 
     }
 
-    public enum RoomType
-    {
-        Standard,
-        Deluxe,
-        Suite,
-        Presidential,
-        Twin,
-        Double
-    }
+    // public enum RoomType
+    // {
+    //     Standard,
+    //     Deluxe,
+    //     Suite,
+    //     Presidential,
+    //     Twin,
+    //     Double
+    // }
 
     public enum ReservationStatus
     {
