@@ -22,7 +22,7 @@ namespace HotelRestaurant.Core.Entities
         //public RoomType RoomType { get; set; }
         public int Capacity { get; set; }
         public decimal Price { get; set; }
-        public RoomStatus Status { get; set; } = RoomStatus.Available;
+        public RoomStatus Status { get; set; } 
         public string Description { get; set; } = string.Empty;
         public bool IsDeleted { get; set; }
         // Navigation relationships 

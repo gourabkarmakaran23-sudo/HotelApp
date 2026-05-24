@@ -1,3 +1,5 @@
+
+
 .management-container {
   background: #ffffff;
   padding: 1.5rem;
@@ -23,41 +25,61 @@
 .filter-panel {
   margin-bottom: 1.2rem;
   
+  // Make search input visible and beautifully bounded
   .search-input {
     max-width: 300px;
     padding: 0.6rem;
     border: 1px solid #ced4da;
     border-radius: 4px;
+    background-color: #fff !important;
+    color: #333 !important;
   }
 }
 
-.management-table {
+/* AG-Grid Theme Application Core */
+.grid-wrapper {
+  margin-bottom: 1rem;
   width: 100%;
-  border-collapse: collapse;
-  text-align: left;
 
-  th, td {
-    padding: 0.85rem 1rem;
-    border-bottom: 1px solid #eef2f7;
-    color: #495057;
-    font-size: 0.9rem;
-  }
+  .ag-theme-alpine {
+    // Variable mappings to apply your theme colors to the grid rows and headers
+    --ag-header-background-color: #2e7d32;
+    --ag-header-foreground-color: #ffffff;
+    --ag-header-cell-hover-background-color: #236026;
+    --ag-row-hover-color: #f8f9fa;
+    --ag-selected-row-background-color: #e8f5e9;
+    --ag-font-size: 0.9rem;
+    --ag-border-color: #eef2f7;
 
-  th {
-    background-color: #2e7d32;
-    color: #ffffff;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.78rem;
-    letter-spacing: 0.5px;
-  }
+    // Add these two layout variables to match your cell heights nicely:
+  --ag-row-height: 22px;
+  --ag-header-height: 22px;
 
-  tbody tr:hover {
-    background-color: #f8f9fa;
+    border: 1px solid #eef2f7;
+    border-radius: 6px;
+
+
+
+
+
+    .ag-header-cell-label {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+    }
   }
 }
 
-.status-badge {
+/* Custom rendered utility classes inside grid cells */
+::v-deep .actions-cell {
+  display: flex !important;
+  gap: 0.5rem;
+  align-items: center;
+  height: 100%;
+}
+
+::v-deep .status-badge {
   padding: 0.25rem 0.6rem;
   border-radius: 50px;
   font-size: 0.75rem;
@@ -75,13 +97,7 @@
   }
 }
 
-.actions-cell {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-.action-btn {
+::v-deep .action-btn {
   padding: 0.35rem 0.7rem;
   border: 1px solid;
   border-radius: 4px;
@@ -107,6 +123,7 @@
   }
 }
 
+/* Modals Core Styles */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -126,7 +143,6 @@
   width: 100%;
   max-width: 600px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  animation: fadeIn 0.2s ease-out;
 }
 
 .modal-header {
@@ -208,8 +224,3 @@
 }
 
 .required { color: #dc3545; margin-left: 2px; }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}

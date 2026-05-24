@@ -19,14 +19,13 @@ public CreateRoomDtoValidator()
         RuleFor(x => x.RoomTypesId)
             .GreaterThan(0).WithMessage("Room Type Id must be greater than 0");
 
-        RuleFor(x => x.FLoorNumber)
-            .GreaterThan(0).WithMessage("Floor Number must be greater than 0");
+        RuleFor(x => x.FloorNo)
+            .GreaterThan(0).WithMessage("Floor No must be greater than 0");
 
         RuleFor(x => x.Price)
             .GreaterThan(0).WithMessage("Price must be greater than 0");
 
-        RuleFor(x => x.Status)
-            .NotEmpty().WithMessage("Status is required");
+       RuleFor(x => x.Status).IsInEnum().WithMessage("Please select a valid Status.");
     }
 }
 }

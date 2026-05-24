@@ -2,12 +2,24 @@ namespace HotelRestaurant.Core.Entities
 {
     public enum RoomStatus
     {
-        Available,
-        Reserved,
-        Occupied,
-        Maintenance,
-        OutOfService,
-        Cleaning 
+        // Available,
+        // Reserved,
+        // Occupied,
+        // Maintenance,
+
+        // Available = 0,
+        // Occupied = 1,
+        // Maintenance = 2,
+        // OutOfService = 3,
+        // Cleaning = 4,
+        // Reserved = 5
+
+        Available = 1,
+    Occupied = 2,
+    Maintenance = 3,
+    Reserved = 4,
+    OutOfService = 5,
+    Cleaning = 6
     }
 
     // public enum RoomType
@@ -92,7 +104,7 @@ namespace HotelRestaurant.Core.Entities
     public enum SeasonType
     {
         Regular,
-        Peak,   
+        Peak,
         OffPeak
     }
 }
