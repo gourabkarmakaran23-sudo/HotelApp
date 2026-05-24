@@ -7,7 +7,7 @@ using HotelRestaurant.Application.DTOs.Rooms;
 using HotelRestaurant.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 // 1. ADD THIS IMPORT FOR FLUENTVALIDATION
-using FluentValidation; 
+using FluentValidation;
 
 namespace HotelRestaurant.Api.Controllers
 {
@@ -17,14 +17,14 @@ namespace HotelRestaurant.Api.Controllers
     {
         private readonly IRoomService _roomService;
         private readonly ILogger<RoomController> _logger;
-        
+
         // 2. DECLARE THE VALIDATOR FIELDS
         private readonly IValidator<CreateRoomDto> _createValidator;
         private readonly IValidator<UpdateRoomDto> _updateValidator;
 
         // 3. INJECT THEM VIA THE CONSTRUCTOR
         public RoomController(
-            IRoomService roomService, 
+            IRoomService roomService,
             ILogger<RoomController> logger,
             IValidator<CreateRoomDto> createValidator,
             IValidator<UpdateRoomDto> updateValidator)
@@ -117,6 +117,21 @@ namespace HotelRestaurant.Api.Controllers
             {
                 _logger.LogError(ex, "Error updating room with ID: {RoomId}", id);
                 return StatusCode(500, "An error occurred while updating the room.");
+            }
+        }
+
+        [HttpGet("by-roomtype/{roomTypeId}")]
+        public async Task<IActionResult> GetRoomsByRoomType(int roomTypeId)
+        {
+            try
+            {
+                var rooms = await _roomService.GetRoomsByRoomTypeAsync(roomTypeId);
+                return Ok(rooms);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching rooms by room type");
+                return StatusCode(500, "Internal server error");
             }
         }
     }

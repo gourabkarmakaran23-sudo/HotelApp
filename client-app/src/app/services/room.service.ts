@@ -68,4 +68,10 @@ export class RoomService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  getRoomsByRoomType(roomTypeId: number) {
+  return this.http.get<any[]>(
+    `${this.baseUrl}/by-roomtype/${roomTypeId}`
+  );
+}
 }

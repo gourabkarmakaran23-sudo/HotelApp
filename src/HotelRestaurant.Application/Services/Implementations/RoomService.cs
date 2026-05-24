@@ -14,12 +14,12 @@ using HotelRestaurant.Core.Entities;
 
 namespace HotelRestaurant.Application.Services.Implementations
 {
-    public class RoomService:IRoomService
+    public class RoomService : IRoomService
     {
-       private readonly IUnitOfWork _unitOfWork;
-       private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-       private readonly ILogger<RoomService> _logger;
+        private readonly ILogger<RoomService> _logger;
 
         public RoomService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<RoomService> logger)
         {
@@ -32,25 +32,25 @@ namespace HotelRestaurant.Application.Services.Implementations
         {
             try
             {
-                _logger.LogInformation("Fetching rooms with filter: {@Filter}", filter);    
-            var rooms = await _unitOfWork.Rooms.GetPagedAsync(
-                filter.PageNumber, 
-                filter.PageSize, 
-                r => string.IsNullOrEmpty(filter.SearchTerm) || 
-                r.RoomNumber.Contains(filter.SearchTerm), 
-                null,
-                null
-                // query => query.Include(q => q.RoomType)
-                );
-            var roomDtos = _mapper.Map<IEnumerable<RoomDto>>(rooms.Items);
-            var result = new PageResultDto<RoomDto>
-            {
-                Items = roomDtos,
-                TotalCount = rooms.TotalCount,
-                PageNumber = filter.PageNumber,
-                PageSize = filter.PageSize
-            };
-            return result;
+                _logger.LogInformation("Fetching rooms with filter: {@Filter}", filter);
+                var rooms = await _unitOfWork.Rooms.GetPagedAsync(
+                    filter.PageNumber,
+                    filter.PageSize,
+                    r => string.IsNullOrEmpty(filter.SearchTerm) ||
+                    r.RoomNumber.Contains(filter.SearchTerm),
+                    null,
+                    null
+                    // query => query.Include(q => q.RoomType)
+                    );
+                var roomDtos = _mapper.Map<IEnumerable<RoomDto>>(rooms.Items);
+                var result = new PageResultDto<RoomDto>
+                {
+                    Items = roomDtos,
+                    TotalCount = rooms.TotalCount,
+                    PageNumber = filter.PageNumber,
+                    PageSize = filter.PageSize
+                };
+                return result;
             }
             catch (Exception ex)
             {
@@ -61,10 +61,10 @@ namespace HotelRestaurant.Application.Services.Implementations
 
         public Task<RoomDto?> GetByIdAsync(int id)
         {
-           try
+            try
             {
                 _logger.LogInformation("Fetching room with ID: {RoomId}", id);
-                var room =  _unitOfWork.Rooms.GetAllQueryable()
+                var room = _unitOfWork.Rooms.GetAllQueryable()
                     .Include(r => r.RoomTypes)
                     .FirstOrDefault(r => r.Id == id);
                 if (room == null)
@@ -89,12 +89,13 @@ namespace HotelRestaurant.Application.Services.Implementations
                 _logger.LogInformation("Creating new room with data: {@CreateRoomDto}", createRoomDto);
                 //Check if room number already exists
                 var existingRoom = _unitOfWork.Rooms.GetAllQueryable()
-                    .FirstOrDefault(r => r.RoomNumber == createRoomDto.RoomNumber); 
-                if (existingRoom != null)                {
+                    .FirstOrDefault(r => r.RoomNumber == createRoomDto.RoomNumber);
+                if (existingRoom != null)
+                {
                     _logger.LogWarning("Room with number: {RoomNumber} already exists", createRoomDto.RoomNumber);
                     throw new InvalidOperationException($"Room with number {createRoomDto.RoomNumber} already exists        ");
                 }
-                
+
                 var room = _mapper.Map<Core.Entities.Room>(createRoomDto);
                 await _unitOfWork.Rooms.AddAsync(room);
                 await _unitOfWork.SaveChangesAsync();
@@ -122,12 +123,13 @@ namespace HotelRestaurant.Application.Services.Implementations
                 }
                 //Check if new room number already exists for another room
                 var existingRoom = _unitOfWork.Rooms.GetAllQueryable()
-                    .FirstOrDefault(r => r.RoomNumber == updateRoomDto.RoomNumber && r.Id != updateRoomDto.Id); 
-                if (existingRoom != null)                {
+                    .FirstOrDefault(r => r.RoomNumber == updateRoomDto.RoomNumber && r.Id != updateRoomDto.Id);
+                if (existingRoom != null)
+                {
                     _logger.LogWarning("Another room with number: {RoomNumber} already exists", updateRoomDto.RoomNumber);
                     throw new InvalidOperationException($"Another room with number {updateRoomDto.RoomNumber} already exists        ");
                 }
-                
+
                 _mapper.Map(updateRoomDto, room);
                 _unitOfWork.Rooms.Update(room);
                 await _unitOfWork.SaveChangesAsync();
@@ -144,7 +146,7 @@ namespace HotelRestaurant.Application.Services.Implementations
 
         public async Task<bool> DeleteAsync(int id)
         {
-           try
+            try
             {
                 _logger.LogInformation("Deleting room with ID: {RoomId}", id);
                 var room = await _unitOfWork.Rooms.GetByIdAsync(id);
@@ -170,17 +172,17 @@ namespace HotelRestaurant.Application.Services.Implementations
             try
             {
                 _logger.LogInformation("Fetching available rooms for check-in: {CheckIn} and check-out: {CheckOut}", checkIn, checkOut);
-                   //Get  all roo,s with avaliable or cleaning status and not booked for the given date range
-                 var availableRooms = _unitOfWork.Rooms.GetAllQueryable()
-                .Include(r => r.Reservations)
-                .Where(r => (r.Status == RoomStatus.Available || r.Status == RoomStatus.Cleaning) &&
-                            !r.Reservations.Any(res =>
-                                res.Status != ReservationStatus.Cancelled &&
-                                ((checkIn >= res.CheckInDate && checkIn < res.CheckOutDate) ||
-                                 (checkOut > res.CheckInDate && checkOut <= res.CheckOutDate) ||
-                                 (checkIn <= res.CheckInDate && checkOut >= res.CheckOutDate))))
-                .ToList();  
-            return Task.FromResult(availableRooms.Select(r => _mapper.Map<RoomDto>(r)));
+                //Get  all roo,s with avaliable or cleaning status and not booked for the given date range
+                var availableRooms = _unitOfWork.Rooms.GetAllQueryable()
+               .Include(r => r.Reservations)
+               .Where(r => (r.Status == RoomStatus.Available || r.Status == RoomStatus.Cleaning) &&
+                           !r.Reservations.Any(res =>
+                               res.Status != ReservationStatus.Cancelled &&
+                               ((checkIn >= res.CheckInDate && checkIn < res.CheckOutDate) ||
+                                (checkOut > res.CheckInDate && checkOut <= res.CheckOutDate) ||
+                                (checkIn <= res.CheckInDate && checkOut >= res.CheckOutDate))))
+               .ToList();
+                return Task.FromResult(availableRooms.Select(r => _mapper.Map<RoomDto>(r)));
             }
             catch (Exception ex)
             {
@@ -188,13 +190,13 @@ namespace HotelRestaurant.Application.Services.Implementations
                 throw;
             }
         }
-        
+
         public Task<bool> UpdateRoomStatusAsync(int roomId, RoomStatus newStatus)
         {
             try
             {
                 _logger.LogInformation("Updating status of room with ID: {RoomId} to new status: {NewStatus}", roomId, newStatus);
-                var room =  _unitOfWork.Rooms.GetByIdAsync(roomId).Result;
+                var room = _unitOfWork.Rooms.GetByIdAsync(roomId).Result;
                 if (room == null)
                 {
                     _logger.LogWarning("Room with ID: {RoomId} not found for status update", roomId);
@@ -210,8 +212,38 @@ namespace HotelRestaurant.Application.Services.Implementations
             {
                 _logger.LogError(ex, "Error updating status of room with ID: {RoomId} to new status: {NewStatus}", roomId, newStatus);
                 throw;
-        }
+            }
         }
 
+        public async Task<List<RoomDto>> GetRoomsByRoomTypeAsync(int roomTypeId)
+        {
+            try
+            {
+                _logger.LogInformation(
+                    "Fetching rooms for RoomTypeId: {RoomTypeId}",
+                    roomTypeId
+                );
+
+                var rooms = await _unitOfWork.Rooms
+                    .GetAllQueryable()
+                    .Where(r => r.RoomTypesId == roomTypeId)
+                    .Include(r => r.RoomTypes)
+                    .ToListAsync();
+
+                var roomDtos = _mapper.Map<List<RoomDto>>(rooms);
+
+                return roomDtos;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error fetching rooms by RoomTypeId: {RoomTypeId}",
+                    roomTypeId
+                );
+
+                throw;
+            }
+        }
     }
 }

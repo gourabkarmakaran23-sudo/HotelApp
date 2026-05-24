@@ -95,14 +95,14 @@
                 {{ type.name }}
               </option>
             </select> -->
-          <select [(ngModel)]="form.roomTypeId" name="roomTypeId" (change)="onRoomTypeChange()">
+          <select [(ngModel)]="form.roomTypeId" name="roomTypeId" (change)="onRoomTypeChange($event)" required>
 
-            <option [ngValue]="0">
-              Select Room Type
-            </option>
+            <option value="">Select Room Type</option>
 
-            <option *ngFor="let type of roomTypesList" [ngValue]="type.id">
+            <option *ngFor="let type of roomTypesList" [value]="type.id">
+
               {{ type.name }}
+
             </option>
 
           </select>
@@ -110,9 +110,20 @@
 
         <div class="form-group">
           <label>Room No. <span class="req">*</span></label>
-          <select [(ngModel)]="form.roomNo" name="roomNo" [class.input-error]="bookingForm.submitted && !form.roomNo">
+          <!-- <select [(ngModel)]="form.roomNo" name="roomNo" [class.input-error]="bookingForm.submitted && !form.roomNo">
             <option value="">Choose Room No.</option>
             <option *ngFor="let roomNo of roomNoOptions" [value]="roomNo">{{ roomNo }}</option>
+          </select> -->
+          <select [(ngModel)]="form.roomNo" name="roomNo" required>
+
+            <option value="">Choose Room No.</option>
+
+            <option *ngFor="let room of roomNoOptions" [value]="room.roomNumber">
+
+              {{ room.roomNumber }}
+
+            </option>
+
           </select>
         </div>
 
@@ -332,20 +343,17 @@
       <!-- <button type="submit" class="primary-btn" [disabled]="isLoading">
         @if (isLoading) { Saving… } @else { Save Booking }
       </button> -->
-      <button
-  type="submit"
-  [disabled]="isLoading"
->
+      <button type="submit" [disabled]="isLoading">
 
-  <span *ngIf="!isLoading">
-    Save Booking
-  </span>
+        <span *ngIf="!isLoading">
+          Save Booking
+        </span>
 
-  <span *ngIf="isLoading">
-    Saving...
-  </span>
+        <span *ngIf="isLoading">
+          Saving...
+        </span>
 
-</button>
+      </button>
       <button type="button" class="secondary-btn" (click)="cancel()" [disabled]="isLoading">
         Cancel
       </button>

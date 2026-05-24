@@ -6,6 +6,7 @@ import { BookingService } from '../../services/booking.service';
 import { CustomAlertService } from '../../services/custom-alert.service';
 import { CustomAlertComponent } from '../shared/custom-alert/custom-alert.component';
 import { RoomTypeService } from '../../services/room-type.service';
+import { RoomService } from '../../services/room.service';
 
 interface BookingForm {
   bookingType: string;
@@ -55,6 +56,7 @@ interface BookingForm {
 })
 export class BookingEngineComponent implements OnInit {
 
+  roomNoOptions: any[] = [];
   // ── Loader state ──────────────────────────────────────────────────────────
   isLoading = false;
   roomTypesList: any[] = [];
@@ -87,7 +89,7 @@ export class BookingEngineComponent implements OnInit {
 
   billingNameTitles = ['Mr.', 'Ms.', 'Mrs.', 'M/s', 'Dr.', 'Prof.'];
   childAgeOptions   = Array.from({ length: 16 }, (_, i) => i);
-  roomNoOptions: string[] = [];
+  //roomNoOptions: string[] = [];
 
   // roomNumbersByType: Record<string, string[]> = {
   //   'Family Non View':     ['101', '102', '103', '104'],
@@ -155,6 +157,7 @@ export class BookingEngineComponent implements OnInit {
     private readonly router: Router,
     private readonly bookingService: BookingService,
     private roomTypeService: RoomTypeService,
+    private roomService: RoomService,
     private readonly alertService: CustomAlertService
   ) {
     this.updateRoomOptions();
@@ -162,8 +165,44 @@ export class BookingEngineComponent implements OnInit {
   }
 ngOnInit(): void {
     this.loadRoomTypes();
-  }
 
+};
+  onRoomTypeChange(event: any): void {
+
+  const roomTypeId = Number(event.target.value);
+
+  if (roomTypeId) {
+    this.loadRoomNumbers(roomTypeId);
+  } else {
+    this.roomNoOptions = [];
+    this.form.roomNo = '';
+  }
+}
+
+
+  loadRoomNumbers(roomTypeId: number): void {
+
+  this.roomService.getRoomsByRoomType(roomTypeId).subscribe({
+
+    next: (res: any[]) => {
+
+      this.roomNoOptions = res;
+
+      console.log('Room Numbers:', this.roomNoOptions);
+
+    },
+
+    error: (err) => {
+
+      console.error(err);
+
+      this.roomNoOptions = [];
+
+    }
+
+  });
+
+}
 
   loadRoomTypes(): void {
   this.roomTypeService.getAll().subscribe({
@@ -342,21 +381,21 @@ updateRoomOptions(): void {
   }
 
   // onRoomTypeChange():     void { this.updateRoomOptions(); }
-  onRoomTypeChange(): void {
+//   onRoomTypeChange(): void {
 
-  const selectedRoom = this.roomTypesList.find(
-    x => x.id === this.form.roomTypeId
-  );
+//   const selectedRoom = this.roomTypesList.find(
+//     x => x.id === this.form.roomTypeId
+//   );
 
-  console.log('Selected Room Type:', selectedRoom);
+//   console.log('Selected Room Type:', selectedRoom);
 
-  // TODO:
-  // Later load available rooms from API
+//   // TODO:
+//   // Later load available rooms from API
 
-  this.roomNoOptions = [];
+//   this.roomNoOptions = [];
 
-  this.form.roomNo = '';
-}
+//   this.form.roomNo = '';
+// }
   onMealPlanChange():     void { this.updateCharges(); }
   onChildAgeChange():     void { this.updateCharges(); }
   recalculate():          void { this.updateCharges(); }

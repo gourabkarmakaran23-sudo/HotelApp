@@ -19,6 +19,8 @@ namespace HotelRestaurant.Application.Services.Interfaces
 
         Task<bool> UpdateRoomStatusAsync(int roomId, RoomStatus newStatus);
 
+        Task<List<RoomDto>> GetRoomsByRoomTypeAsync(int roomTypeId);
+
         
 
 
