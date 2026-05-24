@@ -18,7 +18,7 @@ interface BookingForm {
   remarks: string;
   checkIn: string;
   checkOut: string;
- roomTypeId: number; // Matches foreign key to RoomTypes entity
+  roomTypeId: number; // Matches foreign key to RoomTypes entity
   roomType?: any;     // Optional navigation object if included
   roomNo: string;
   mealPlan: string;
@@ -88,7 +88,7 @@ export class BookingEngineComponent implements OnInit {
   ];
 
   billingNameTitles = ['Mr.', 'Ms.', 'Mrs.', 'M/s', 'Dr.', 'Prof.'];
-  childAgeOptions   = Array.from({ length: 16 }, (_, i) => i);
+  childAgeOptions = Array.from({ length: 16 }, (_, i) => i);
   //roomNoOptions: string[] = [];
 
   // roomNumbersByType: Record<string, string[]> = {
@@ -163,69 +163,69 @@ export class BookingEngineComponent implements OnInit {
     this.updateRoomOptions();
     this.updateCharges();
   }
-ngOnInit(): void {
+  ngOnInit(): void {
     this.loadRoomTypes();
 
-};
+  };
   onRoomTypeChange(event: any): void {
 
-  const roomTypeId = Number(event.target.value);
+    const roomTypeId = Number(event.target.value);
 
-  if (roomTypeId) {
-    this.loadRoomNumbers(roomTypeId);
-  } else {
-    this.roomNoOptions = [];
-    this.form.roomNo = '';
+    if (roomTypeId) {
+      this.loadRoomNumbers(roomTypeId);
+    } else {
+      this.roomNoOptions = [];
+      this.form.roomNo = '';
+    }
   }
-}
 
 
   loadRoomNumbers(roomTypeId: number): void {
 
-  this.roomService.getRoomsByRoomType(roomTypeId).subscribe({
+    this.roomService.getRoomsByRoomType(roomTypeId).subscribe({
 
-    next: (res: any[]) => {
+      next: (res: any[]) => {
 
-      this.roomNoOptions = res;
+        this.roomNoOptions = res;
 
-      console.log('Room Numbers:', this.roomNoOptions);
+        console.log('Room Numbers:', this.roomNoOptions);
 
-    },
+      },
 
-    error: (err) => {
+      error: (err) => {
 
-      console.error(err);
+        console.error(err);
 
-      this.roomNoOptions = [];
+        this.roomNoOptions = [];
 
-    }
+      }
 
-  });
+    });
 
-}
+  }
 
   loadRoomTypes(): void {
-  this.roomTypeService.getAll().subscribe({
-    next: (res: any) => {
-      console.log('Room Types API Response:', res);
+    this.roomTypeService.getAll().subscribe({
+      next: (res: any) => {
+        console.log('Room Types API Response:', res);
 
-      if (Array.isArray(res)) {
-        this.roomTypesList = res;
-      } else if (res && Array.isArray(res.data)) {
-        this.roomTypesList = res.data; // Matches your console log: res.data holds the array
-      } else if (res && Array.isArray(res.items)) {
-        this.roomTypesList = res.items;
-      } else if (res && res.$values) {
-        this.roomTypesList = res.$values;
-      } else {
-        this.roomTypesList = [];
+        if (Array.isArray(res)) {
+          this.roomTypesList = res;
+        } else if (res && Array.isArray(res.data)) {
+          this.roomTypesList = res.data; // Matches your console log: res.data holds the array
+        } else if (res && Array.isArray(res.items)) {
+          this.roomTypesList = res.items;
+        } else if (res && res.$values) {
+          this.roomTypesList = res.$values;
+        } else {
+          this.roomTypesList = [];
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load room types:', err);
       }
-    },
-    error: (err) => {
-      console.error('Failed to load room types:', err);
-    }
-  });
-}
+    });
+  }
 
   // ── Save ──────────────────────────────────────────────────────────────────
   saveBooking(): void {
@@ -238,15 +238,15 @@ ngOnInit(): void {
     // Step 3: Build clean payload
     const payload = {
       ...this.form,
-      extraChildAge:         Number(this.form.extraChildAge)         || 0,
-      adults:                Number(this.form.adults)                || 1,
-      children:              Number(this.form.children)              || 0,
-      rentPerNight:          Number(this.form.rentPerNight)          || 0,
+      extraChildAge: Number(this.form.extraChildAge) || 0,
+      adults: Number(this.form.adults) || 1,
+      children: Number(this.form.children) || 0,
+      rentPerNight: Number(this.form.rentPerNight) || 0,
       complimentaryPerNight: Number(this.form.complimentaryPerNight) || 0,
-      extraCharge:           Number(this.form.extraCharge)           || 0,
-      totalAmount:           Number(this.form.totalAmount)           || 0,
-      advanceAmount:         Number(this.form.advanceAmount)         || 0,
-      checkIn:  new Date(this.form.checkIn).toISOString(),
+      extraCharge: Number(this.form.extraCharge) || 0,
+      totalAmount: Number(this.form.totalAmount) || 0,
+      advanceAmount: Number(this.form.advanceAmount) || 0,
+      checkIn: new Date(this.form.checkIn).toISOString(),
       checkOut: new Date(this.form.checkOut).toISOString()
     };
 
@@ -260,20 +260,28 @@ ngOnInit(): void {
         this.isLoading = false;
 
         // Show success modal; redirect ONLY after user clicks OK
-        this.alertService.success(
-          `Booking saved successfully!\n\n` +
-          `Reservation ID : ${response.bookingId}\n` +
-          `Guest ID       : ${response.guestId}\n` +
-          `Invoice ID     : ${response.invoiceId}`,
-          () => this.router.navigate(['/booking-list'])  // ← onClose callback
-        );
+        // this.alertService.success(
+        //   `Booking saved successfully!\n\n` +
+        //   `Reservation ID : ${response.bookingId}\n` +
+        //   `Guest ID       : ${response.guestId}\n` +
+        //   `Invoice ID     : ${response.invoiceId}`,
+        //   () => this.router.navigate(['/booking-list'])  // ← onClose callback
+        // );
+
+        this.alertService.success('Booking Saved Successfully');
+
+        setTimeout(() => {
+
+          this.router.navigate(['/booking-list']);
+
+        }, 1000);
       },
       error: (err) => {
         this.isLoading = false;
 
         const detail =
           err?.error?.message ??
-          err?.message         ??
+          err?.message ??
           'Unknown network error';
 
         this.alertService.error(
@@ -296,8 +304,8 @@ ngOnInit(): void {
         'Check-Out must be after Check-In.'],
       [!this.form.roomNo?.trim(),
         'Please select a Room Number.'],
-        [this.form.roomTypeId <= 0,
- 'Please select a Room Type.'],
+      [this.form.roomTypeId <= 0,
+        'Please select a Room Type.'],
       [!this.form.billingFirstName?.trim(),
         'Billing First Name cannot be blank.'],
       [!this.form.billingLastName?.trim(),
@@ -337,75 +345,75 @@ ngOnInit(): void {
   //   }
   // }
 
-updateRoomOptions(): void {
+  updateRoomOptions(): void {
 
-  const selectedRoomType = this.roomTypesList.find(
-    x => x.id === this.form.roomTypeId
-  );
+    const selectedRoomType = this.roomTypesList.find(
+      x => x.id === this.form.roomTypeId
+    );
 
-  console.log('Selected Room Type:', selectedRoomType);
+    console.log('Selected Room Type:', selectedRoomType);
 
-  // Temporary dummy room numbers
-  // Later load from Room API
+    // Temporary dummy room numbers
+    // Later load from Room API
 
-  this.roomNoOptions = [
-    '101',
-    '102',
-    '103',
-    '201',
-    '202'
-  ];
+    this.roomNoOptions = [
+      '101',
+      '102',
+      '103',
+      '201',
+      '202'
+    ];
 
-  if (!this.roomNoOptions.includes(this.form.roomNo)) {
-    this.form.roomNo = '';
+    if (!this.roomNoOptions.includes(this.form.roomNo)) {
+      this.form.roomNo = '';
+    }
   }
-}
   updateCharges(): void {
-    this.form.rentPerNight          = this.mealPlanRates[this.form.mealPlan]         ?? 0;
+    this.form.rentPerNight = this.mealPlanRates[this.form.mealPlan] ?? 0;
     this.form.complimentaryPerNight = this.mealPlanComplimentary[this.form.mealPlan] ?? 0;
 
-    const nights      = this.calculateNights();
-    const roomCharge  = this.form.rentPerNight * Math.max(1, nights);
-    const extraChild  = (this.form.extraChildAge >= 7 &&
-                         this.form.mealPlan.includes('Breakfast')) ? 300 : 0;
+    const nights = this.calculateNights();
+    const roomCharge = this.form.rentPerNight * Math.max(1, nights);
+    const extraChild = (this.form.extraChildAge >= 7 &&
+      this.form.mealPlan.includes('Breakfast')) ? 300 : 0;
 
-    this.form.extraCharge  = extraChild;
-    this.form.totalAmount  = roomCharge + extraChild;
+    this.form.extraCharge = extraChild;
+    this.form.totalAmount = roomCharge + extraChild;
   }
 
   calculateNights(): number {
     if (!this.form.checkIn || !this.form.checkOut) return 1;
     const diff = new Date(this.form.checkOut).getTime() -
-                 new Date(this.form.checkIn).getTime();
+      new Date(this.form.checkIn).getTime();
     return diff > 0 ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : 1;
   }
 
   // onRoomTypeChange():     void { this.updateRoomOptions(); }
-//   onRoomTypeChange(): void {
+  //   onRoomTypeChange(): void {
 
-//   const selectedRoom = this.roomTypesList.find(
-//     x => x.id === this.form.roomTypeId
-//   );
+  //   const selectedRoom = this.roomTypesList.find(
+  //     x => x.id === this.form.roomTypeId
+  //   );
 
-//   console.log('Selected Room Type:', selectedRoom);
+  //   console.log('Selected Room Type:', selectedRoom);
 
-//   // TODO:
-//   // Later load available rooms from API
+  //   // TODO:
+  //   // Later load available rooms from API
 
-//   this.roomNoOptions = [];
+  //   this.roomNoOptions = [];
 
-//   this.form.roomNo = '';
-// }
-  onMealPlanChange():     void { this.updateCharges(); }
-  onChildAgeChange():     void { this.updateCharges(); }
-  recalculate():          void { this.updateCharges(); }
+  //   this.form.roomNo = '';
+  // }
+  onMealPlanChange(): void { this.updateCharges(); }
+  onChildAgeChange(): void { this.updateCharges(); }
+  recalculate(): void { this.updateCharges(); }
 
   onSameAsCustomerChange(): void {
     if (this.form.sameAsCustomer) {
-      this.form.primaryTitle     = this.form.billingTitle;
+      this.form.primaryTitle = this.form.billingTitle;
       this.form.primaryFirstName = this.form.billingFirstName;
-      this.form.primaryLastName  = this.form.billingLastName;
-      this.form.primaryMobile    = this.form.billingMobile;
+      this.form.primaryLastName = this.form.billingLastName;
+      this.form.primaryMobile = this.form.billingMobile;
     }
   }
 
