@@ -21,11 +21,9 @@ export class RoomComponent implements OnInit {
   isEditMode = false;
   selectedId = 0;
   roomForm!: FormGroup;
+  allRooms: any[] = [];          // Will hold the items returned from pagination
 
-  
-allRooms: any[] = [];          // Will hold the items returned from pagination
-   
-searchQuery: string = ''
+  searchQuery: string = ''
   constructor(
     private fb: FormBuilder,
     private roomService: RoomService,
@@ -44,96 +42,71 @@ searchQuery: string = ''
   initForm(): void {
     this.roomForm = this.fb.group({
       roomNumber: ['', Validators.required],
-      roomTypesId: ['', [Validators.required, Validators.min(1)]], // Changed default to empty string for placeholder match
-      floorNo: ['', [Validators.required, Validators.min(0)]],
+      roomTypesId: [null, Validators.required],
+      floorNumber: ['', [Validators.required, Validators.min(0)]],
       price: ['', [Validators.required, Validators.min(0)]],
       status: ['Available', Validators.required],
       description: ['']
     });
   }
 
-  // loadRoomTypes(): void {
-  //   this.roomTypeService.getAll().subscribe({
-  //     // Notice the type definition change to (res: any) right here:
-  //     next: (res: any) => {
-  //       console.log('Room Types API Response:', res);
-
-  //       if (Array.isArray(res)) {
-  //         this.roomTypesList = res;
-  //       } else if (res && Array.isArray(res.data)) {
-  //         this.roomTypesList = res.data;
-  //       } else if (res && Array.isArray(res.items)) {
-  //         this.roomTypesList = res.items;
-  //       } else if (res && res.$values) {
-  //         this.roomTypesList = res.$values;
-  //       } else {
-  //         this.roomTypesList = [];
-  //       }
-
-  //       this.loadRooms();
-  //     },
-  //     error: (err) => {
-  //       console.error('Failed to load room types:', err);
-  //     }
-  //   });
-  // }
 
   loadRoomTypes(): void {
-  this.roomTypeService.getAll().subscribe({
-    next: (res: any) => {
-      console.log('Room Types API Response:', res);
+    this.roomTypeService.getAll().subscribe({
+      next: (res: any) => {
+        console.log('Room Types API Response:', res);
 
-      if (Array.isArray(res)) {
-        this.roomTypesList = res;
-      } else if (res && Array.isArray(res.data)) {
-        this.roomTypesList = res.data; // Matches your console log: res.data holds the array
-      } else if (res && Array.isArray(res.items)) {
-        this.roomTypesList = res.items;
-      } else if (res && res.$values) {
-        this.roomTypesList = res.$values;
-      } else {
-        this.roomTypesList = [];
+        if (Array.isArray(res)) {
+          this.roomTypesList = res;
+        } else if (res && Array.isArray(res.data)) {
+          this.roomTypesList = res.data; // Matches your console log: res.data holds the array
+        } else if (res && Array.isArray(res.items)) {
+          this.roomTypesList = res.items;
+        } else if (res && res.$values) {
+          this.roomTypesList = res.$values;
+        } else {
+          this.roomTypesList = [];
+        }
+
+        // FIX 1: Trigger the new pagination loader instead of the old loadRooms()
+        this.loadRoomsList();
+      },
+      error: (err) => {
+        console.error('Failed to load room types:', err);
       }
-
-      // FIX 1: Trigger the new pagination loader instead of the old loadRooms()
-      this.loadRoomsList();
-    },
-    error: (err) => {
-      console.error('Failed to load room types:', err);
-    }
-  });
-}
+    });
+  }
 
 
   loadRoomsList(): void {
-  // Pass required pagination defaults matching the backend filter expectations
-  this.roomService.getAll(1, 50, this.searchQuery).subscribe({
-    next: (response: any) => { // using 'any' or 'PageResult<Room>' depending on your types
-      // Safely access the paginated list collection from the wrapper
-      this.allRooms = response.items || [];
-      console.log('Rooms API Response:', response.items);
-      this.applyFilteringEngine();
-    },
-    error: (err) => {
-      console.error(err);
-      this.alertService.error('Failed to load rooms.');
-    }
-  });
-}
-// 3. The engine mapping room names and setting up template array visibility
-applyFilteringEngine(): void {
-  if (!this.allRooms || !this.roomTypesList) return;
+    // Pass required pagination defaults matching the backend filter expectations
+    this.roomService.getAll(1, 50, this.searchQuery).subscribe({
+      next: (response: any) => { // using 'any' or 'PageResult<Room>' depending on your types
+        // Safely access the paginated list collection from the wrapper
+        this.allRooms = response.items || [];
+        console.log('Rooms API Response:', response.items);
+        this.applyFilteringEngine();
+      },
+      error: (err) => {
+        console.error(err);
+        this.alertService.error('Failed to load rooms.');
+      }
+    });
+  }
+  // 3. The engine mapping room names and setting up template array visibility
+  applyFilteringEngine(): void {
+    if (!this.allRooms || !this.roomTypesList) return;
 
-  // Map backend room type IDs to names
-  this.allRooms.forEach(room => {
-    const match = this.roomTypesList.find(t => t.id === Number(room.roomTypesId || room.roomTypeId));
-    room.roomTypeName = match ? match.name : 'Unknown';
-    
-  });
+    // Map backend room type IDs to names
+    this.allRooms.forEach(room => {
+      const match = this.roomTypesList.find(t => t.id === Number(room.roomTypesId || room.roomTypesId));
+      room.roomTypeName = match ? match.name : 'Unknown';
 
-  // Assign directly to the array feeding your *ngFor table view
-  this.filteredRooms = [...this.allRooms];
-}
+    });
+
+    // Assign directly to the array feeding your *ngFor table view
+    this.filteredRooms = [...this.allRooms];
+  }
 
 
   loadRooms(): void {
@@ -170,9 +143,9 @@ applyFilteringEngine(): void {
   onSearch(event: any): void {
     const value = event.target.value.toLowerCase().trim();
     if (!value) {
-      this.filteredRooms = [...this.rooms];
+      this.filteredRooms = [...this.allRooms];
     } else {
-      this.filteredRooms = this.rooms.filter(room =>
+      this.filteredRooms = this.allRooms.filter(room =>
         (room.roomNumber && room.roomNumber.toString().toLowerCase().includes(value)) ||
         (room.roomTypeName && room.roomTypeName.toLowerCase().includes(value))
       );
@@ -184,8 +157,8 @@ applyFilteringEngine(): void {
     this.selectedId = 0;
     this.roomForm.reset({
       roomNumber: '',
-      roomTypesId: '',
-      floorNo: '',
+      roomTypesId: null,
+      floorNumber: '',
       price: '',
       status: 'Available',
       description: ''
@@ -199,7 +172,7 @@ applyFilteringEngine(): void {
     this.roomForm.patchValue({
       roomNumber: room.roomNumber,
       roomTypesId: room.roomTypesId,
-      floorNo: room.floorNo,
+      floorNumber: room.floorNumber,
       price: room.price,
       status: room.status,
       description: room.description
@@ -222,27 +195,18 @@ applyFilteringEngine(): void {
       roomNumber: formValues.roomNumber,
 
       // 1. Supply BOTH ID properties so the backend validator passes
-      roomTypeId: Number(formValues.roomTypesId),
       roomTypesId: Number(formValues.roomTypesId),
+      // roomTypesId: Number(formValues.roomTypesId),
 
-      // 2. Use exact property casing expected by C# DTO ('FLoorNumber')
-      fLoorNumber: Number(formValues.floorNo),
+      // 2. Use exact property casing expected by C# DTO ('floorNumber')
+      floorNumber: Number(formValues.floorNumber),
 
       price: Number(formValues.price),
       status: formValues.status,
-      description: formValues.description,
-      hotelId: 1
+      description: formValues.description || '',
+      hotelId: 1 // Assuming a default hotel ID for now
     };
 
-    // const payload: any = {
-    //   roomNumber: this.roomForm.value.roomNumber.toString(),
-    //   roomTypeId: Number(this.roomForm.value.roomTypesId), // Maps to RoomTypeId
-    //   fLoorNumber: Number(this.roomForm.value.floorNo),    // Maps to FLoorNumber (lower camelCase for JSON)
-    //   price: Number(this.roomForm.value.price),
-    //   status: this.roomForm.value.status,
-    //   description: this.roomForm.value.description || '',
-    //   hotelId: 1 // Default or selected hotel id if needed
-    // };
 
     if (this.isEditMode) {
       payload.id = this.selectedId;
@@ -250,19 +214,43 @@ applyFilteringEngine(): void {
         next: () => {
           this.alertService.success('Room Updated Successfully!');
           this.closeModal();
-          this.loadRooms();
+          //this.loadRooms();
+          this.loadRoomsList(); // Refresh the paginated list to reflect changes
         },
+        // error: (err) => {
+        //   console.error(err);
+        //   this.alertService.error('Failed to update room.');
+        // }
         error: (err) => {
-          console.error(err);
-          this.alertService.error('Failed to update room.');
+          console.log(err);
+          console.log(err.error);
+
+          this.alertService.error(
+            JSON.stringify(err.error)
+          );
         }
       });
-    } else {
+    }
+    // else {
+    //   this.roomService.create(payload).subscribe({
+    //     next: () => {
+    //       this.alertService.success('Room Created Successfully!');
+    //       this.closeModal();
+    //       this.loadRooms();
+    //     },
+    //     error: (err) => {
+    //       console.error(err);
+    //       this.alertService.error('Failed to create room.');
+    //     }
+    //   });
+    // }
+    // Inside onSubmit() -> else block (Create Room)
+    else {
       this.roomService.create(payload).subscribe({
         next: () => {
           this.alertService.success('Room Created Successfully!');
           this.closeModal();
-          this.loadRooms();
+          this.loadRoomsList(); // <--- FIX HERE: Change from loadRooms()
         },
         error: (err) => {
           console.error(err);
@@ -271,64 +259,35 @@ applyFilteringEngine(): void {
       });
     }
   }
-  // onSubmit(): void {
-  //   if (this.roomForm.invalid) {
-  //     return;
-  //   }
 
-  //   // Build standard body payload matching the Create/Update API DTO structures exactly
-  //   const payload: any = {
-  //     roomNumber: this.roomForm.value.roomNumber.toString(),
-  //     roomTypesId: Number(this.roomForm.value.roomTypesId),
-  //     floorNo: Number(this.roomForm.value.floorNo),
-  //     price: Number(this.roomForm.value.price),
-  //     status: this.roomForm.value.status,
-  //     description: this.roomForm.value.description || '',
-  //     hotelId: 1 // Providing standard fallback context matching schema defaults if required
-  //   };
 
-  //   if (this.isEditMode) {
-  //     payload.id = this.selectedId; // Backend Update needs ID alignment checking validation
-  //     this.roomService.update(this.selectedId, payload).subscribe({
+  // onDelete(id: number): void {
+  //   this.alertService.confirm('Are you sure you want to delete this room?', () => {
+  //     this.roomService.delete(id).subscribe({
   //       next: () => {
-  //         this.alertService.success('Room Updated Successfully!');
-  //         this.closeModal();
+  //         this.alertService.success('Room Deleted Successfully!');
   //         this.loadRooms();
   //       },
   //       error: (err) => {
   //         console.error(err);
-  //         this.alertService.error('Failed to update room.');
+  //         this.alertService.error('Failed to delete room.');
   //       }
   //     });
-  //   } else {
-  //     // Do NOT attach an ID parameter for fresh creations
-  //     this.roomService.create(payload).subscribe({
-  //       next: () => {
-  //         this.alertService.success('Room Created Successfully!');
-  //         this.closeModal();
-  //         this.loadRooms();
-  //       },
-  //       error: (err) => {
-  //         console.error(err);
-  //         this.alertService.error('Failed to create room.');
-  //       }
-  //     });
-  //   }
+  //   });
   // }
 
-
   onDelete(id: number): void {
-    this.alertService.confirm('Are you sure you want to delete this room?', () => {
-      this.roomService.delete(id).subscribe({
-        next: () => {
-          this.alertService.success('Room Deleted Successfully!');
-          this.loadRooms();
-        },
-        error: (err) => {
-          console.error(err);
-          this.alertService.error('Failed to delete room.');
-        }
-      });
+  this.alertService.confirm('Are you sure you want to delete this room?', () => {
+    this.roomService.delete(id).subscribe({
+      next: () => {
+        this.alertService.success('Room Deleted Successfully!');
+        this.loadRoomsList(); // <--- FIX HERE: Change from loadRooms()
+      },
+      error: (err) => {
+        console.error(err);
+        this.alertService.error('Failed to delete room.');
+      }
     });
-  }
+  });
+}
 }

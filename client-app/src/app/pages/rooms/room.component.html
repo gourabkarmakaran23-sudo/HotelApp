@@ -24,7 +24,7 @@
         <tr *ngFor="let room of filteredRooms">
           <td><strong>{{ room.roomNumber }}</strong></td>
           <td>{{ room.roomTypeName }}</td>
-          <td>{{ room.floorNo }}</td>
+          <td>{{ room.floorNumber }}</td>
           <td>₹{{ room.price | number:'1.2-2' }}</td>
           <td>
             <span class="status-badge" [ngClass]="room.status === 'Available' ? 'active' : 'inactive'">
@@ -72,19 +72,36 @@
           </div> -->
           <div class="form-group col">
             <label>Room Type <span class="required">*</span></label>
-            <select formControlName="roomTypesId" class="form-control">
+            <!-- <select formControlName="roomTypesId" class="form-control">
               <option value="" disabled selected>-- Select Room Type --</option>
               <option *ngFor="let type of roomTypesList" [value]="type.id">
                 {{ type.name }}
               </option>
+            </select> -->
+            <select formControlName="roomTypesId" class="form-control">
+
+              <option [ngValue]="null">
+                -- Select Room Type --
+              </option>
+
+              <option *ngFor="let type of roomTypesList" [ngValue]="type.id">
+                {{ type.name }}
+              </option>
+
             </select>
+          </div>
+          <div class="validation-error" *ngIf="
+    roomForm.get('roomTypesId')?.invalid &&
+    roomForm.get('roomTypesId')?.touched
+  ">
+            Room Type is required
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col">
             <label>Floor No <span class="required">*</span></label>
-            <input type="number" formControlName="floorNo" class="form-control" />
+            <input type="number" formControlName="floorNumber" class="form-control" />
           </div>
           <div class="form-group col">
             <label>Price <span class="required">*</span></label>
@@ -114,6 +131,8 @@
         </div>
 
       </form>
+      <!-- <pre>{{ roomForm.value | json }}</pre>
+<pre>{{ roomForm.valid }}</pre> -->
     </div>
   </div>
 </div>

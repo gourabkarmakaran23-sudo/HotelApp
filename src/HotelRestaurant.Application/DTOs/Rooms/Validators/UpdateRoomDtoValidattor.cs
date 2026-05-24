@@ -17,7 +17,7 @@ namespace HotelRestaurant.Application.DTOs.Rooms.Validators
             .NotEmpty().WithMessage("Room Number is required")
             .MaximumLength(50).WithMessage("Room Number cannot exceed 50 characters."); // Fixed
 
-        RuleFor(x => x.RoomTypeId)
+        RuleFor(x => x.RoomTypesId)
             .GreaterThan(0).WithMessage("Room Type Id must be greater than 0");
 
         RuleFor(x => x.FLoorNumber)

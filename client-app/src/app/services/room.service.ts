@@ -6,6 +6,8 @@ import { apiBaseUrl } from '../app.config';
 export interface Room {
   id: number;
   roomNumber: string;
+  // floorNumber: number;
+  floorNo: number; // Matches backend property name
   roomTypeId: number; // Matches foreign key to RoomTypes entity
   roomType?: any;     // Optional navigation object if included
   capacity: number;

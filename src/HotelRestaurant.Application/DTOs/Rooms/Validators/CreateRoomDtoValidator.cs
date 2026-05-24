@@ -16,7 +16,7 @@ public CreateRoomDtoValidator()
             .NotEmpty().WithMessage("Room Number is required")
             .MaximumLength(10).WithMessage("Room Number cannot exceed 10 characters."); // Fixed
 
-        RuleFor(x => x.RoomTypeId)
+        RuleFor(x => x.RoomTypesId)
             .GreaterThan(0).WithMessage("Room Type Id must be greater than 0");
 
         RuleFor(x => x.FLoorNumber)

@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { CustomAlertService } from '../../services/custom-alert.service';
 import { CustomAlertComponent } from '../shared/custom-alert/custom-alert.component';
+import { RoomTypeService } from '../../services/room-type.service';
 
 interface BookingForm {
   bookingType: string;
@@ -16,7 +17,8 @@ interface BookingForm {
   remarks: string;
   checkIn: string;
   checkOut: string;
-  roomType: string;
+ roomTypeId: number; // Matches foreign key to RoomTypes entity
+  roomType?: any;     // Optional navigation object if included
   roomNo: string;
   mealPlan: string;
   extraChildAge: number;
@@ -51,10 +53,11 @@ interface BookingForm {
   templateUrl: './booking-engine.component.html',
   styleUrls: ['./booking-engine.component.scss']
 })
-export class BookingEngineComponent {
+export class BookingEngineComponent implements OnInit {
 
   // ── Loader state ──────────────────────────────────────────────────────────
   isLoading = false;
+  roomTypesList: any[] = [];
 
   // ── Dropdown data ─────────────────────────────────────────────────────────
   bookingTypes = [
@@ -66,14 +69,14 @@ export class BookingEngineComponent {
 
   bookingReferences = ['Head Back Office', 'Kolkata Back Office'];
   soldByNames = ['Gourab Karmakar', 'Sanjay Kumar Hazra', 'Pinaki Das', 'Rohit Sen'];
-  roomTypes = [
-    'Family Non View',
-    'Family View',
-    'Executive Non View',
-    'Executive View',
-    'Family Junction View',
-    'Premium View'
-  ];
+  // roomTypes = [
+  //   'Family Non View',
+  //   'Family View',
+  //   'Executive Non View',
+  //   'Executive View',
+  //   'Family Junction View',
+  //   'Premium View'
+  // ];
 
   mealPlanOptions = [
     'Room Only',
@@ -86,14 +89,14 @@ export class BookingEngineComponent {
   childAgeOptions   = Array.from({ length: 16 }, (_, i) => i);
   roomNoOptions: string[] = [];
 
-  roomNumbersByType: Record<string, string[]> = {
-    'Family Non View':     ['101', '102', '103', '104'],
-    'Family View':         ['201', '202', '203', '204'],
-    'Executive Non View':  ['301', '302', '303', '304'],
-    'Executive View':      ['401', '402', '403', '404'],
-    'Family Junction View':['501', '502', '503'],
-    'Premium View':        ['601', '602', '603']
-  };
+  // roomNumbersByType: Record<string, string[]> = {
+  //   'Family Non View':     ['101', '102', '103', '104'],
+  //   'Family View':         ['201', '202', '203', '204'],
+  //   'Executive Non View':  ['301', '302', '303', '304'],
+  //   'Executive View':      ['401', '402', '403', '404'],
+  //   'Family Junction View':['501', '502', '503'],
+  //   'Premium View':        ['601', '602', '603']
+  // };
 
   mealPlanRates: Record<string, number> = {
     'Room Only': 4500,
@@ -109,7 +112,7 @@ export class BookingEngineComponent {
     'Room with Breakfast': 1500
   };
 
-  // ── Form model ────────────────────────────────────────────────────────────
+  // ── Form model ──────────────────────────────────────────────────────────
   form: BookingForm = {
     bookingType: 'Book Online',
     bookingReference: 'Head Back Office',
@@ -120,7 +123,7 @@ export class BookingEngineComponent {
     remarks: '',
     checkIn: '',
     checkOut: '',
-    roomType: 'Family Non View',
+    roomTypeId: 0,
     roomNo: '',
     mealPlan: 'Room Only',
     extraChildAge: 0,
@@ -151,11 +154,39 @@ export class BookingEngineComponent {
   constructor(
     private readonly router: Router,
     private readonly bookingService: BookingService,
+    private roomTypeService: RoomTypeService,
     private readonly alertService: CustomAlertService
   ) {
     this.updateRoomOptions();
     this.updateCharges();
   }
+ngOnInit(): void {
+    this.loadRoomTypes();
+  }
+
+
+  loadRoomTypes(): void {
+  this.roomTypeService.getAll().subscribe({
+    next: (res: any) => {
+      console.log('Room Types API Response:', res);
+
+      if (Array.isArray(res)) {
+        this.roomTypesList = res;
+      } else if (res && Array.isArray(res.data)) {
+        this.roomTypesList = res.data; // Matches your console log: res.data holds the array
+      } else if (res && Array.isArray(res.items)) {
+        this.roomTypesList = res.items;
+      } else if (res && res.$values) {
+        this.roomTypesList = res.$values;
+      } else {
+        this.roomTypesList = [];
+      }
+    },
+    error: (err) => {
+      console.error('Failed to load room types:', err);
+    }
+  });
+}
 
   // ── Save ──────────────────────────────────────────────────────────────────
   saveBooking(): void {
@@ -226,6 +257,8 @@ export class BookingEngineComponent {
         'Check-Out must be after Check-In.'],
       [!this.form.roomNo?.trim(),
         'Please select a Room Number.'],
+        [this.form.roomTypeId <= 0,
+ 'Please select a Room Type.'],
       [!this.form.billingFirstName?.trim(),
         'Billing First Name cannot be blank.'],
       [!this.form.billingLastName?.trim(),
@@ -258,13 +291,36 @@ export class BookingEngineComponent {
   }
 
   // ── Room & Charge Helpers ─────────────────────────────────────────────────
-  updateRoomOptions(): void {
-    this.roomNoOptions = this.roomNumbersByType[this.form.roomType] ?? [];
-    if (!this.roomNoOptions.includes(this.form.roomNo)) {
-      this.form.roomNo = '';
-    }
-  }
+  // updateRoomOptions(): void {
+  //   this.roomNoOptions = this.roomNumbersByType[this.form.roomType] ?? [];
+  //   if (!this.roomNoOptions.includes(this.form.roomNo)) {
+  //     this.form.roomNo = '';
+  //   }
+  // }
 
+updateRoomOptions(): void {
+
+  const selectedRoomType = this.roomTypesList.find(
+    x => x.id === this.form.roomTypeId
+  );
+
+  console.log('Selected Room Type:', selectedRoomType);
+
+  // Temporary dummy room numbers
+  // Later load from Room API
+
+  this.roomNoOptions = [
+    '101',
+    '102',
+    '103',
+    '201',
+    '202'
+  ];
+
+  if (!this.roomNoOptions.includes(this.form.roomNo)) {
+    this.form.roomNo = '';
+  }
+}
   updateCharges(): void {
     this.form.rentPerNight          = this.mealPlanRates[this.form.mealPlan]         ?? 0;
     this.form.complimentaryPerNight = this.mealPlanComplimentary[this.form.mealPlan] ?? 0;
@@ -285,7 +341,22 @@ export class BookingEngineComponent {
     return diff > 0 ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : 1;
   }
 
-  onRoomTypeChange():     void { this.updateRoomOptions(); }
+  // onRoomTypeChange():     void { this.updateRoomOptions(); }
+  onRoomTypeChange(): void {
+
+  const selectedRoom = this.roomTypesList.find(
+    x => x.id === this.form.roomTypeId
+  );
+
+  console.log('Selected Room Type:', selectedRoom);
+
+  // TODO:
+  // Later load available rooms from API
+
+  this.roomNoOptions = [];
+
+  this.form.roomNo = '';
+}
   onMealPlanChange():     void { this.updateCharges(); }
   onChildAgeChange():     void { this.updateCharges(); }
   recalculate():          void { this.updateCharges(); }
