@@ -5,6 +5,7 @@ using HotelRestaurant.Core.Interfaces;
 using System.Threading.Tasks;
 using System;
 using Microsoft.EntityFrameworkCore;
+using HotelRestaurant.Application.Services.Interfaces;
 
 namespace HotelRestaurant.Api.Controllers
 {
@@ -15,10 +16,25 @@ namespace HotelRestaurant.Api.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public BookingsController(IUnitOfWork unitOfWork)
+        private readonly IReservationService _reservationService;
+
+        public BookingsController(
+            IUnitOfWork unitOfWork,
+            IReservationService reservationService)
         {
             _unitOfWork = unitOfWork;
+            _reservationService = reservationService;
         }
+
+        #region GetCheckInList 
+        [HttpGet("checkin-list")]
+        public async Task<IActionResult> GetCheckInList()
+        {
+            var data = await _reservationService.GetCheckInListAsync();
+
+            return Ok(data);
+        }
+        #endregion        
         #region CreateBooking
         // LEAVE ROUTE BALK BLANK SO IT PINPOINTS ABSOLUTE BASE URL ROUTE ("api/bookings")
         [HttpPost("")]
@@ -84,18 +100,34 @@ namespace HotelRestaurant.Api.Controllers
 
                 // 3. Build the Reservation entity
                 var notesSummary = $"Type: {dto.BookingType} | Ref: {dto.BookingReference} | Sold By: {dto.SoldBy} | Plan: {dto.MealPlan} | Profile: {dto.CustomerProfile} | Visit Purpose: {dto.PurposeOfVisit} | Remarks: {dto.Remarks}".Trim();
-
+                var bookingNumber =
+                    $"RES-{DateTime.Now:yyyyMMddHHmmss}";
                 var reservation = new Reservation
                 {
+                    BookingNumber = bookingNumber,
+
                     GuestId = guest.Id,
+
                     RoomId = roomEntity.Id,
-                    CheckInDate = dto.CheckIn == DateTime.MinValue ? DateTime.UtcNow : dto.CheckIn,
-                    CheckOutDate = dto.CheckOut == DateTime.MinValue ? DateTime.UtcNow.AddDays(1) : dto.CheckOut,
+
+                    CheckInDate = dto.CheckIn == DateTime.MinValue
+         ? DateTime.UtcNow
+         : dto.CheckIn,
+
+                    CheckOutDate = dto.CheckOut == DateTime.MinValue
+         ? DateTime.UtcNow.AddDays(1)
+         : dto.CheckOut,
+
                     Adults = dto.Adults <= 0 ? 1 : dto.Adults,
+
                     Children = dto.Children,
+
                     TotalAmount = dto.TotalAmount,
+
                     Status = ReservationStatus.Pending,
-                    Notes = notesSummary
+
+                    Notes = notesSummary,
+                    Pax = (dto.Adults + dto.Children).ToString(),
                 };
 
                 await _unitOfWork.Reservations.AddAsync(reservation);
@@ -113,14 +145,25 @@ namespace HotelRestaurant.Api.Controllers
                 var invoice = new Invoice
                 {
                     ReservationId = reservation.Id,
-                    InvoiceDate = DateTime.UtcNow,
-                    Subtotal = dto.TotalAmount,
-                    Tax = computedTax,
-                    Total = computedTotal,
-                    PaymentStatus = dto.AdvanceAmount >= computedTotal ? PaymentStatus.Paid :
-                                    dto.AdvanceAmount > 0 ? PaymentStatus.PartiallyPaid : PaymentStatus.Unpaid
-                };
 
+                    InvoiceDate = DateTime.UtcNow,
+
+                    Subtotal = dto.TotalAmount,
+
+                    Tax = computedTax,
+
+                    Total = computedTotal,
+
+                    PaidAmount = dto.AdvanceAmount,
+
+                    DueAmount = computedTotal - dto.AdvanceAmount,
+
+                    PaymentStatus = dto.AdvanceAmount >= computedTotal
+        ? PaymentStatus.Paid
+        : dto.AdvanceAmount > 0
+            ? PaymentStatus.PartiallyPaid
+            : PaymentStatus.Unpaid
+                };
                 await _unitOfWork.Invoices.AddAsync(invoice);
 
                 // Final database commit transaction
@@ -171,7 +214,7 @@ namespace HotelRestaurant.Api.Controllers
 
                     mealPlan = "Room Only",
 
-                    pax = r.Adults + r.Children,
+                    pax = r.Pax,
 
                     name = r.Guest != null
                         ? $"{r.Guest.FirstName} {r.Guest.LastName}"
@@ -201,33 +244,6 @@ namespace HotelRestaurant.Api.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-        // [HttpGet("{id}")]
-        // public async Task<IActionResult> GetBookingById(int id)
-        // {
-        //     var reservation = await _unitOfWork.Reservations.GetByIdAsync(id);
-        //     if (reservation == null)
-        //         return NotFound($"No booking found with ID {id}.");
-
-        //     var guest = await _unitOfWork.Guests.GetByIdAsync(reservation.GuestId);
-        //     var room = await _unitOfWork.Rooms.GetByIdAsync(reservation.RoomId);
-        //     var invoice = await _unitOfWork.Invoices.GetAllAsync();
-        //     var invoiceForReservation = invoice.FirstOrDefault(i => i.ReservationId == reservation.Id);
-
-        //     var bookingDetails = new
-        //     {
-        //         ReservationId = reservation.Id,
-        //         GuestName = $"{guest?.FirstName} {guest?.LastName}",
-        //         RoomNumber = room?.RoomNumber,
-        //         CheckInDate = reservation.CheckInDate,
-        //         CheckOutDate = reservation.CheckOutDate,
-        //         TotalAmount = reservation.TotalAmount,
-        //         InvoiceTotal = invoiceForReservation?.Total ?? 0,
-        //         PaymentStatus = invoiceForReservation?.PaymentStatus.ToString() ?? "N/A",
-        //         Notes = reservation.Notes
-        //     };
-
-        //     return Ok(bookingDetails);
-        // }
         #endregion
     }
 }

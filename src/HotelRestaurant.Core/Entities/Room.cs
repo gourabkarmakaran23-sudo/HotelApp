@@ -32,5 +32,7 @@ namespace HotelRestaurant.Core.Entities
         public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
         // Navigation Property for AutoMapper to resolve room type names easily
         public RoomTypes? RoomTypes { get; set; }
+
+       
     }
 }

@@ -156,30 +156,7 @@ export class BookingListComponent implements OnInit {
 
     });
 }
-//   loadRoomTypes(): void {
 
-//   this.http.get<any>('http://localhost:5287/api/RoomType')
-//     .subscribe({
-
-//       next: (response) => {
-
-//         console.log('ROOM TYPE API:', response);
-
-//         // FIX
-//         this.roomTypes = response.items || [];
-
-//         console.log('ROOM TYPES ARRAY:', this.roomTypes);
-
-//         // Load bookings AFTER room types loaded
-//         this.fetchBookingsFromApi();
-//       },
-
-//       error: (err) => {
-//         console.error(err);
-//       }
-
-//     });
-// }
   onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
     this.gridApi.sizeColumnsToFit();
@@ -236,21 +213,7 @@ export class BookingListComponent implements OnInit {
   });
 
 }
-  // fetchBookingsFromApi(): void {
-  //   this.http.get<Booking[]>(this.apiUrl).subscribe({
-  //     next: (data) => {
-  //       console.log('API DATA:', data);
-  //       this.allData = data;
-  //       this.rowData = data;
-  //       this.filteredRowCount = data.length;
-  //     },
-  //     error: (err) => {
-  //       console.error('Failed fetching data from database:', err);
-  //       alert('Could not pull real reservations. Verify your local database engine is running.');
-  //     }
-  //   });
-  // }
-
+ 
   // Hook filters to apply seamlessly against live context rows
   applyFilters(): void {
     let data = [...this.allData];

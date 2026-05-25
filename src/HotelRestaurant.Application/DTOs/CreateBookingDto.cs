@@ -12,6 +12,7 @@ namespace HotelRestaurant.Application.DTOs
         public string? CustomerProfile { get; set; }
         public string? PurposeOfVisit { get; set; }
         public string? Remarks { get; set; }
+        public string Pax { get; set; } = string.Empty;
         public DateTime CheckIn { get; set; }
         public DateTime CheckOut { get; set; }
         

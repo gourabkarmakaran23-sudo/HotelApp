@@ -15,4 +15,7 @@ export class BookingService {
   createReservation(bookingFormPayload: any): Observable<any> {
     return this.http.post<any>(this.baseUrl, bookingFormPayload);
   }
+   getCheckInList(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/checkin-list`);
+  }
 }

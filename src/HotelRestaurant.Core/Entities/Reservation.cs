@@ -2,6 +2,7 @@ namespace HotelRestaurant.Core.Entities
 {
     public class Reservation : BaseEntity
     {
+        public string BookingNumber { get; set; } = string.Empty;
         public int GuestId { get; set; }
         public int RoomId { get; set; }
         public DateTime CheckInDate { get; set; }
@@ -11,7 +12,7 @@ namespace HotelRestaurant.Core.Entities
         public int Children { get; set; }
         public decimal TotalAmount { get; set; }
         public string Notes { get; set; } = string.Empty;
-
+        public string Pax { get; set; } = string.Empty;
         public Guest? Guest { get; set; }
         public Room? Room { get; set; }
         public ICollection<Order> Orders { get; set; } = new List<Order>();
