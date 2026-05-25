@@ -277,18 +277,32 @@ export class BookingEngineComponent implements OnInit {
         }, 1000);
       },
       error: (err) => {
+
         this.isLoading = false;
 
-        const detail =
-          err?.error?.message ??
-          err?.message ??
-          'Unknown network error';
+        console.log('BOOKING ERROR:', err);
 
-        this.alertService.error(
-          `Failed to save booking.\n\n${detail}\n\nCheck F12 console for details.`
-        );
+        // Backend custom validation message
+        let errorMessage = 'Failed to save booking.';
 
-        console.error('Booking API error:', err);
+        if (err.error?.message) {
+
+          errorMessage = err.error.message;
+
+        }
+        else if (err.error?.errors?.length > 0) {
+
+          errorMessage = err.error.errors[0];
+
+        }
+        else if (typeof err.error === 'string') {
+
+          errorMessage = err.error;
+
+        }
+
+        this.alertService.error(errorMessage);
+
       }
     });
   }

@@ -55,6 +55,30 @@ namespace HotelRestaurant.Api.Controllers
                 if (roomEntity == null)
                     return NotFound($"Database validation failed: Assigned Room number '{dto.RoomNo}' was not found.");
 
+                // CHECK ROOM ALREADY BOOKED FOR DATE RANGE
+
+                var alreadyBooked = await _unitOfWork.Reservations
+                    .GetAllQueryable()
+                    .AnyAsync(x =>
+
+                        x.RoomId == roomEntity.Id
+
+                        // OVERLAP CHECK
+                        && dto.CheckIn < x.CheckOutDate
+                        && dto.CheckOut > x.CheckInDate
+
+                        // OPTIONAL:
+                        // Ignore cancelled bookings
+                        && x.Status != ReservationStatus.Cancelled
+                    );
+
+                if (alreadyBooked)
+                {
+                    return BadRequest(new
+                    {
+                        message = "This room is already booked for the selected date range."
+                    });
+                }
                 // Persist midpoint data so EF Core materializes the new auto-incremented Guest.Id
                 await _unitOfWork.SaveChangesAsync();
 
