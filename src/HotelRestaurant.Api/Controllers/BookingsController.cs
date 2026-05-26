@@ -63,28 +63,53 @@ namespace HotelRestaurant.Api.Controllers
                 };
 
                 await _unitOfWork.Guests.AddAsync(guest);
+                await _unitOfWork.SaveChangesAsync();
 
-                // 2. Find matching Room record
-                var roomsList = await _unitOfWork.Rooms.GetAllAsync();
-                var roomEntity = roomsList.FirstOrDefault(r => r.RoomNumber.Trim() == dto.RoomNo.Trim());
 
-                if (roomEntity == null)
-                    return NotFound($"Database validation failed: Assigned Room number '{dto.RoomNo}' was not found.");
+                // =========================
+                // CREATE BOOKING MASTER
+                // =========================
 
-                // CHECK ROOM ALREADY BOOKED FOR DATE RANGE
+                var bookingNumber =
+                    $"RES-{DateTime.Now:yyyyMMddHHmmss}";
 
-                var alreadyBooked = await _unitOfWork.Reservations
+                var booking = new Booking
+                {
+                    BookingNumber = bookingNumber,
+                    GuestId = guest.Id,
+                    BookingDate = DateTime.UtcNow,
+                    TotalAmount = dto.TotalAmount,
+                    Status = BookingStatus.Confirmed
+                };
+
+                await _unitOfWork.Bookings.AddAsync(booking);
+
+                var room =
+            await _unitOfWork.Rooms
+            .GetAllQueryable()
+            .FirstOrDefaultAsync(x =>
+                x.RoomNumber == dto.RoomNo);
+
+                if (room == null)
+                {
+                    return BadRequest("Room not found");
+                }
+
+                // =========================
+                // CHECK ROOM ALREADY BOOKED
+                // =========================
+
+                var alreadyBooked =
+                    await _unitOfWork.ReservationRooms
                     .GetAllQueryable()
                     .AnyAsync(x =>
 
-                        x.RoomId == roomEntity.Id
+                        x.RoomId == room.Id
 
-                        // OVERLAP CHECK
                         && dto.CheckIn < x.CheckOutDate
+
                         && dto.CheckOut > x.CheckInDate
 
-                        // OPTIONAL:
-                        // Ignore cancelled bookings
                         && x.Status != ReservationStatus.Cancelled
                     );
 
@@ -92,90 +117,94 @@ namespace HotelRestaurant.Api.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "This room is already booked for the selected date range."
+                        message =
+                        "This room is already booked for the selected date range."
                     });
                 }
-                // Persist midpoint data so EF Core materializes the new auto-incremented Guest.Id
+
+                // =========================
+                // CREATE RESERVATION ROOM
+                // =========================
+
+                var notesSummary =
+                    $"Plan: {dto.MealPlan}";
+
+                var reservationRoom =
+                    new ReservationRoom
+                    {
+                        BookingId = booking.Id,
+
+                        RoomId = room.Id,
+
+                        CheckInDate = dto.CheckIn,
+
+                        CheckOutDate = dto.CheckOut,
+
+                        Adults = dto.Adults,
+
+                        Children = dto.Children,
+
+                        RoomAmount = dto.TotalAmount,
+
+                        Status = ReservationStatus.Pending,
+
+                        Notes = notesSummary,
+
+                        Pax =
+                            (dto.Adults + dto.Children).ToString()
+                    };
+                await _unitOfWork.ReservationRooms.AddAsync(reservationRoom);
+                room.Status = RoomStatus.Reserved;
+
                 await _unitOfWork.SaveChangesAsync();
+                // =========================
+                // CREATE INVOICE
+                // =========================
 
-                // 3. Build the Reservation entity
-                var notesSummary = $"Type: {dto.BookingType} | Ref: {dto.BookingReference} | Sold By: {dto.SoldBy} | Plan: {dto.MealPlan} | Profile: {dto.CustomerProfile} | Visit Purpose: {dto.PurposeOfVisit} | Remarks: {dto.Remarks}".Trim();
-                var bookingNumber =
-                    $"RES-{DateTime.Now:yyyyMMddHHmmss}";
-                var reservation = new Reservation
-                {
-                    BookingNumber = bookingNumber,
+                decimal tax =
+                    dto.TotalAmount * 0.05m;
 
-                    GuestId = guest.Id,
-
-                    RoomId = roomEntity.Id,
-
-                    CheckInDate = dto.CheckIn == DateTime.MinValue
-         ? DateTime.UtcNow
-         : dto.CheckIn,
-
-                    CheckOutDate = dto.CheckOut == DateTime.MinValue
-         ? DateTime.UtcNow.AddDays(1)
-         : dto.CheckOut,
-
-                    Adults = dto.Adults <= 0 ? 1 : dto.Adults,
-
-                    Children = dto.Children,
-
-                    TotalAmount = dto.TotalAmount,
-
-                    Status = ReservationStatus.Pending,
-
-                    Notes = notesSummary,
-                    Pax = (dto.Adults + dto.Children).ToString(),
-                };
-
-                await _unitOfWork.Reservations.AddAsync(reservation);
-
-                // Transition room availability status
-                roomEntity.Status = RoomStatus.Reserved;
-
-                // Save reservation to materialize its auto-incremented Reservation.Id
-                await _unitOfWork.SaveChangesAsync();
-
-                // 4. Compute Invariant tax allocations and create checking Invoice entity record
-                decimal computedTax = dto.TotalAmount * 0.05m;
-                decimal computedTotal = dto.TotalAmount + computedTax;
+                decimal total =
+                    dto.TotalAmount + tax;
 
                 var invoice = new Invoice
                 {
-                    ReservationId = reservation.Id,
+                    BookingId = booking.Id,
 
                     InvoiceDate = DateTime.UtcNow,
 
                     Subtotal = dto.TotalAmount,
 
-                    Tax = computedTax,
+                    Tax = tax,
 
-                    Total = computedTotal,
+                    Total = total,
 
                     PaidAmount = dto.AdvanceAmount,
 
-                    DueAmount = computedTotal - dto.AdvanceAmount,
+                    DueAmount = total - dto.AdvanceAmount,
 
-                    PaymentStatus = dto.AdvanceAmount >= computedTotal
-        ? PaymentStatus.Paid
-        : dto.AdvanceAmount > 0
-            ? PaymentStatus.PartiallyPaid
-            : PaymentStatus.Unpaid
+                    PaymentStatus =
+                        dto.AdvanceAmount >= total
+                        ? PaymentStatus.Paid
+                        : dto.AdvanceAmount > 0
+                            ? PaymentStatus.PartiallyPaid
+                            : PaymentStatus.Unpaid
                 };
+
                 await _unitOfWork.Invoices.AddAsync(invoice);
 
-                // Final database commit transaction
                 await _unitOfWork.SaveChangesAsync();
 
                 return Ok(new
                 {
                     success = true,
-                    bookingId = reservation.Id,
+                    bookingId = booking.Id,
+                    bookingNumber = booking.BookingNumber,
                     guestId = guest.Id,
                     invoiceId = invoice.Id
                 });
+
+
             }
             catch (Exception ex)
             {

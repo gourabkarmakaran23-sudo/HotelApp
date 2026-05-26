@@ -25,61 +25,153 @@ namespace HotelRestaurant.Application.Services.Implementations
             _mapper = mapper;
             _logger = logger;
         }
-        public async Task<List<CheckInListDto>> GetCheckInListAsync()
+
+        #region CheckIn List
+        // public async Task<List<CheckInListDto>> GetCheckInListAsync()
+        // {
+        //     var reservations = await _unitOfWork.Reservations
+        //         .GetAllQueryable()
+        //         .Include(g => g.Guest)
+        //         .Include(x => x.Room)
+        //         .ThenInclude(r => r.RoomTypes)
+        //         .Include(x => x.Invoice)
+        //         .ToListAsync();
+
+        //     return reservations.Select(x => new CheckInListDto
+        //     {
+        //         ReservationId = x.Id,
+
+        //         BookingNumber = x.BookingNumber,
+
+        //         CustomerName =
+        //             x.Guest != null
+        //                 ? x.Guest.FirstName + " " + x.Guest.LastName
+        //                 : "",
+
+        //         GuestName =
+        //             x.Guest != null
+        //                 ? x.Guest.FirstName + " " + x.Guest.LastName
+        //                 : "",
+
+        //         RoomNo = x.Room != null
+        //             ? x.Room.RoomNumber
+        //             : "",
+
+        //         RoomType = x.Room?.RoomTypes?.Name ?? "",
+        //         MealPlan = ExtractMealPlan(x.Notes),
+        //         Pax = x.Pax,
+        //         Mobile = x.Guest != null
+        //         ? x.Guest.Phone
+        //         : "",
+
+        //         PaidAmount = x.Invoice != null
+        //             ? x.Invoice.PaidAmount
+        //             : 0,
+
+        //         DueAmount = x.Invoice != null
+        //             ? x.Invoice.DueAmount
+        //             : 0,
+
+        //         CheckInDate = x.CheckInDate,
+
+        //         CheckOutDate = x.CheckOutDate,
+
+        //         BookingStatus = x.Status.ToString()
+
+        //     }).ToList();
+
+        // }
+
+        // private string ExtractMealPlan(string notes)
+        // {
+        //     if (string.IsNullOrWhiteSpace(notes))
+        //         return "";
+
+        //     var planKey = "Plan:";
+
+        //     var startIndex = notes.IndexOf(planKey);
+
+        //     if (startIndex == -1)
+        //         return "";
+
+        //     startIndex += planKey.Length;
+
+        //     var endIndex = notes.IndexOf("|", startIndex);
+
+        //     if (endIndex == -1)
+        //         endIndex = notes.Length;
+
+        //     return notes.Substring(startIndex, endIndex - startIndex).Trim();
+        // }
+        #endregion
+        #region   CheckIn List N
+        public async Task<List<CheckInListDto>>
+            GetCheckInListAsync()
         {
-            var reservations = await _unitOfWork.Reservations
+            var bookings =
+                await _unitOfWork.Bookings
                 .GetAllQueryable()
-                .Include(g => g.Guest)
-                .Include(x => x.Room)
-                .ThenInclude(r => r.RoomTypes)
-                .Include(x => x.Invoice)
+
+                .Include(x => x.Guest)
+
+                .Include(x => x.ReservationRooms)
+                    .ThenInclude(r => r.Room)
+                        .ThenInclude(rt => rt.RoomTypes)
+
+                .Include(x => x.Invoices)
+
                 .ToListAsync();
 
-            return reservations.Select(x => new CheckInListDto
-            {
-                ReservationId = x.Id,
+            return bookings.SelectMany(b =>
+                b.ReservationRooms.Select(r => new CheckInListDto
+                {
+                    ReservationId = r.Id,
 
-                BookingNumber = x.BookingNumber,
+                    BookingNumber = b.BookingNumber,
 
-                CustomerName =
-                    x.Guest != null
-                        ? x.Guest.FirstName + " " + x.Guest.LastName
-                        : "",
+                    CustomerName =
+                        b.Guest.FirstName + " " +
+                        b.Guest.LastName,
 
-                GuestName =
-                    x.Guest != null
-                        ? x.Guest.FirstName + " " + x.Guest.LastName
-                        : "",
+                    GuestName =
+                        b.Guest.FirstName + " " +
+                        b.Guest.LastName,
 
-                RoomNo = x.Room != null
-                    ? x.Room.RoomNumber
-                    : "",
+                    RoomNo =
+                        r.Room.RoomNumber,
 
-                RoomType = x.Room?.RoomTypes?.Name ?? "",
-                MealPlan = ExtractMealPlan(x.Notes),
-                Pax = x.Pax,
-                Mobile = x.Guest != null
-                ? x.Guest.Phone
-                : "",
+                    RoomType =
+                        r.Room.RoomTypes.Name,
 
-                PaidAmount = x.Invoice != null
-                    ? x.Invoice.PaidAmount
-                    : 0,
+                    MealPlan =
+                        ExtractMealPlan(r.Notes),
 
-                DueAmount = x.Invoice != null
-                    ? x.Invoice.DueAmount
-                    : 0,
+                    Pax =
+                        r.Pax,
 
-                CheckInDate = x.CheckInDate,
+                    Mobile =
+                        b.Guest.Phone,
 
-                CheckOutDate = x.CheckOutDate,
+                    PaidAmount =
+                        b.Invoices.Sum(i => i.PaidAmount),
 
-                BookingStatus = x.Status.ToString()
+                    DueAmount =
+                        b.Invoices.Sum(i => i.DueAmount),
 
-            }).ToList();
+                    CheckInDate =
+                        r.CheckInDate,
 
+                    CheckOutDate =
+                        r.CheckOutDate,
+
+                    BookingStatus =
+                        r.Status.ToString()
+                })
+            ).ToList();
         }
+        #endregion
 
+        #region Extract Meal Plan
         private string ExtractMealPlan(string notes)
         {
             if (string.IsNullOrWhiteSpace(notes))
@@ -101,5 +193,8 @@ namespace HotelRestaurant.Application.Services.Implementations
 
             return notes.Substring(startIndex, endIndex - startIndex).Trim();
         }
+        #endregion
+
+
     }
 }

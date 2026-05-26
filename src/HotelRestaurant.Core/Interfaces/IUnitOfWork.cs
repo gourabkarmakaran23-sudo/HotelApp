@@ -9,6 +9,8 @@ namespace HotelRestaurant.Core.Interfaces
         IGenericRepository<Room> Rooms { get; }
         IGenericRepository<Guest> Guests { get; }
         IGenericRepository<Reservation> Reservations { get; }
+        IGenericRepository<Booking> Bookings { get; }
+        IGenericRepository<ReservationRoom> ReservationRooms { get; }
         IGenericRepository<Employee> Employees { get; }
         IGenericRepository<MenuItem> MenuItems { get; }
         IGenericRepository<Order> Orders { get; }

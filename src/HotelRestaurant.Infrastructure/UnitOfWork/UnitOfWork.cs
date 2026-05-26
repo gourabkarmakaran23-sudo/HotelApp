@@ -25,6 +25,9 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             InventoryItems = new GenericRepository<InventoryItem>(_context);
         }
 
+         public IGenericRepository<Booking> Bookings { get; }
+         public IGenericRepository<ReservationRoom> ReservationRooms { get; }
+
           private IUserRepository?      _users;
         public IGenericRepository<Hotel> Hotels { get; }
         public IGenericRepository<Room> Rooms { get; }
