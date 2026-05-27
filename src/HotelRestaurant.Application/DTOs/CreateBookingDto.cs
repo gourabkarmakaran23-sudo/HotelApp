@@ -17,17 +17,7 @@ namespace HotelRestaurant.Application.DTOs
         public DateTime CheckOut { get; set; }
         
         // Target Identification Fields
-        public string RoomType { get; set; } = string.Empty;
-        public string RoomNo { get; set; } = string.Empty;
-        public string MealPlan { get; set; } = string.Empty;
-        public int ExtraChildAge { get; set; }
-        public int Adults { get; set; }
-        public int Children { get; set; }
         
-        // Ledger Tallies
-        public decimal RentPerNight { get; set; }
-        public decimal ComplimentaryPerNight { get; set; }
-        public decimal ExtraCharge { get; set; }
         public decimal TotalAmount { get; set; } // Map to Subtotal
 
         // Customer Profile Information (Billing Info)
@@ -40,6 +30,8 @@ namespace HotelRestaurant.Application.DTOs
         public string? Gstin { get; set; }
 
         // Financial Settlement Variables
+        public List<RoomBookingDto> Rooms { get; set; }
+    = new();
         public string PaymentMode { get; set; } = string.Empty;
         public decimal AdvanceAmount { get; set; }
         public string? AdvanceRemarks { get; set; }

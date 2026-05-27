@@ -142,18 +142,20 @@ namespace HotelRestaurant.Infrastructure.Data
             });
 
             modelBuilder.Entity<Order>(entity =>
-            {
-                entity.Property(o => o.TotalAmount).HasPrecision(12, 2);
-                entity.HasOne(o => o.Reservation)
-                    .WithMany(r => r.Orders)
-                    .HasForeignKey(o => o.ReservationId)
-                    .OnDelete(DeleteBehavior.SetNull);
+   {
+            entity.Property(o => o.TotalAmount)
+            .HasPrecision(12, 2);
 
-                entity.HasOne(o => o.Guest)
-                    .WithMany()
-                    .HasForeignKey(o => o.GuestId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            });
+            entity.HasOne(o => o.Booking)
+           .WithMany()
+           .HasForeignKey(o => o.BookingId)
+           .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(o => o.Guest)
+           .WithMany()
+           .HasForeignKey(o => o.GuestId)
+           .OnDelete(DeleteBehavior.SetNull);
+   });
 
             modelBuilder.Entity<OrderItem>(entity =>
             {

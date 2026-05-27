@@ -83,89 +83,85 @@ namespace HotelRestaurant.Api.Controllers
                 };
 
                 await _unitOfWork.Bookings.AddAsync(booking);
+                await _unitOfWork.SaveChangesAsync();
 
-                var room =
-            await _unitOfWork.Rooms
-            .GetAllQueryable()
-            .FirstOrDefaultAsync(x =>
-                x.RoomNumber == dto.RoomNo);
-
-                if (room == null)
-                {
-                    return BadRequest("Room not found");
-                }
-
-                // =========================
-                // CHECK ROOM ALREADY BOOKED
-                // =========================
-
-                var alreadyBooked =
-                    await _unitOfWork.ReservationRooms
-                    .GetAllQueryable()
-                    .AnyAsync(x =>
-
-                        x.RoomId == room.Id
-
-                        && dto.CheckIn < x.CheckOutDate
-
-                        && dto.CheckOut > x.CheckInDate
-
-                        && x.Status != ReservationStatus.Cancelled
-                    );
-
-                if (alreadyBooked)
-                {
-                    return BadRequest(new
-                    {
-                        message =
-                        "This room is already booked for the selected date range."
-                    });
-                }
 
                 // =========================
                 // CREATE RESERVATION ROOM
                 // =========================
+                var roomsList = await _unitOfWork.Rooms.GetAllAsync();
+                foreach (var roomDto in dto.Rooms)
+                {
+                    var room = roomsList.FirstOrDefault(r =>
+                        r.RoomNumber.Trim() ==
+                        roomDto.RoomNo.Trim());
 
-                var notesSummary =
-                    $"Plan: {dto.MealPlan}";
+                    if (room == null)
+                        continue;
 
-                var reservationRoom =
-                    new ReservationRoom
+                    // CHECK ROOM ALREADY BOOKED
+
+                    var alreadyBooked = await _unitOfWork.ReservationRooms
+                        .GetAllQueryable()
+                        .AnyAsync(x =>
+
+                            x.RoomId == room.Id
+
+                            && dto.CheckIn < x.CheckOutDate
+
+                            && dto.CheckOut > x.CheckInDate
+
+                            && x.Status != BookingStatus.Cancelled
+                        );
+
+                    if (alreadyBooked)
                     {
-                        BookingId = booking.Id,
+                        return BadRequest(new
+                        {
+                            message =
+                                $"Room {room.RoomNumber} is already booked for selected dates."
+                        });
+                    }
 
-                        RoomId = room.Id,
+                    var notesSummary =
+                        $"Plan: {roomDto.MealPlan}";
 
-                        CheckInDate = dto.CheckIn,
+                    var reservationRoom =
+                        new ReservationRoom
+                        {
+                            BookingId = booking.Id,
 
-                        CheckOutDate = dto.CheckOut,
+                            RoomId = room.Id,
 
-                        Adults = dto.Adults,
+                            CheckInDate = dto.CheckIn,
 
-                        Children = dto.Children,
+                            CheckOutDate = dto.CheckOut,
 
-                        RoomAmount = dto.TotalAmount,
+                            Adults = roomDto.Adults,
 
-                        Status = ReservationStatus.Pending,
+                            Children = roomDto.Children,
 
-                        Notes = notesSummary,
+                            RoomAmount = roomDto.TotalAmount,
 
-                        Pax =
-                            (dto.Adults + dto.Children).ToString()
-                    };
-                await _unitOfWork.ReservationRooms.AddAsync(reservationRoom);
-                room.Status = RoomStatus.Reserved;
+                            Status = BookingStatus.Pending,
+
+                            Notes = notesSummary,
+
+                            Pax =
+                                (roomDto.Adults + roomDto.Children)
+                                .ToString()
+                        };
+
+                    await _unitOfWork.ReservationRooms
+                        .AddAsync(reservationRoom);
+
+                    room.Status = RoomStatus.Reserved;
+                }
 
                 await _unitOfWork.SaveChangesAsync();
                 // =========================
                 // CREATE INVOICE
                 // =========================
-
-                decimal tax =
-                    dto.TotalAmount * 0.05m;
-
-                decimal total =
-                    dto.TotalAmount + tax;
 
                 var invoice = new Invoice
                 {
@@ -175,20 +171,21 @@ namespace HotelRestaurant.Api.Controllers
 
                     Subtotal = dto.TotalAmount,
 
-                    Tax = tax,
+                    Tax = dto.TotalAmount * 0.05m,
 
-                    Total = total,
+                    Total = dto.TotalAmount * 1.05m,
 
                     PaidAmount = dto.AdvanceAmount,
 
-                    DueAmount = total - dto.AdvanceAmount,
+                    DueAmount =
+                        (dto.TotalAmount * 1.05m) - dto.AdvanceAmount,
 
                     PaymentStatus =
-                        dto.AdvanceAmount >= total
-                        ? PaymentStatus.Paid
-                        : dto.AdvanceAmount > 0
-                            ? PaymentStatus.PartiallyPaid
-                            : PaymentStatus.Unpaid
+                        dto.AdvanceAmount >= dto.TotalAmount
+                            ? PaymentStatus.Paid
+                            : dto.AdvanceAmount > 0
+                                ? PaymentStatus.PartiallyPaid
+                                : PaymentStatus.Unpaid
                 };
 
                 await _unitOfWork.Invoices.AddAsync(invoice);
@@ -215,64 +212,102 @@ namespace HotelRestaurant.Api.Controllers
         #endregion
 
         #region GetBookingById
+
         [HttpGet]
         public async Task<IActionResult> GetAllBookings()
         {
             try
             {
-                var reservations = await _unitOfWork.Reservations
+                var bookings = await _unitOfWork.Bookings
                     .GetAllQueryable()
-                    .Include(r => r.Guest)
-                    .Include(r => r.Room)
-                    .Include(r => r.Invoice)
-                    .OrderByDescending(r => r.CreatedAt)
+
+                    .Include(b => b.Guest)
+
+                    .Include(b => b.ReservationRooms)
+                        .ThenInclude(rr => rr.Room)
+                            .ThenInclude(r => r.RoomTypes)
+
+                    .Include(b => b.Invoices)
+
+                    .OrderByDescending(b => b.CreatedAt)
+
                     .ToListAsync();
 
-                var result = reservations.Select(r => new
+                var result = bookings.Select(b =>
                 {
-                    id = r.Id,
-                    bookingNumber = r.Notes != null && r.Notes.Contains("REF-")
-                        ? r.Notes
-                        : $"RES-{r.Id}",
+                    var firstRoom = b.ReservationRooms.FirstOrDefault();
 
-                    bookingDate = r.CreatedAt.ToString("yyyy-MM-dd"),
+                    var invoice = b.Invoices.FirstOrDefault();
 
-                    // roomType = r.Room?.RoomType.ToString() ?? "Standard",
-                    roomType = r.Room?.RoomTypesId.ToString() ?? "N/A",
-                    roomNo = r.Room?.RoomNumber ?? "N/A",
+                    return new
+                    {
+                        id = b.Id,
 
-                    mealPlan = "Room Only",
+                        bookingNumber = b.BookingNumber,
 
-                    pax = r.Pax,
+                        bookingDate = b.BookingDate
+                            .ToString("yyyy-MM-dd"),
 
-                    name = r.Guest != null
-                        ? $"{r.Guest.FirstName} {r.Guest.LastName}"
-                        : "Unknown Guest",
+                        roomType = string.Join(", ",
+                        b.ReservationRooms
+                         .Select(rr => rr.Room.RoomTypes.Name)),
+                        //roomType = firstRoom?.Room?.RoomTypes?.Name ?? "N/A",
 
-                    mobile = r.Guest?.Phone ?? string.Empty,
+                        roomNo = string.Join(", ",
+                            b.ReservationRooms
+                                .Select(x => x.Room?.RoomNumber)
+                                .Where(x => !string.IsNullOrEmpty(x))),
 
-                    guestName = r.Guest != null
-                        ? $"{r.Guest.FirstName} {r.Guest.LastName}"
-                        : "Unknown Guest",
+                        mealPlan = string.Join(", ",
+                            b.ReservationRooms
+                                .Select(x => x.MealPlan)
+                                .Where(x => !string.IsNullOrEmpty(x))),
 
-                    guestPhone = r.Guest?.Phone ?? string.Empty,
+                        pax = string.Join(", ",
+                            b.ReservationRooms
+                                .Select(x => x.Pax)),
 
-                    checkIn = r.CheckInDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+                        name = b.Guest != null
+                            ? $"{b.Guest.FirstName} {b.Guest.LastName}"
+                            : "Unknown Guest",
 
-                    checkOut = r.CheckOutDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+                        mobile = b.Guest?.Phone ?? string.Empty,
 
-                    paymentStatus = r.Invoice?.PaymentStatus.ToString() ?? "Unpaid",
+                        guestName = b.Guest != null
+                            ? $"{b.Guest.FirstName} {b.Guest.LastName}"
+                            : "Unknown Guest",
 
-                    amount = r.TotalAmount
+                        guestPhone = b.Guest?.Phone ?? string.Empty,
+
+                        checkIn = firstRoom != null
+                            ? firstRoom.CheckInDate
+                                .ToString("yyyy-MM-ddTHH:mm:ss")
+                            : "",
+
+                        checkOut = firstRoom != null
+                            ? firstRoom.CheckOutDate
+                                .ToString("yyyy-MM-ddTHH:mm:ss")
+                            : "",
+
+                        paymentStatus = invoice != null
+                            ? invoice.PaymentStatus.ToString()
+                            : "Unpaid",
+
+                        amount = b.TotalAmount,
+
+                        bookingStatus = b.Status.ToString()
+                    };
                 });
 
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+                return StatusCode(500,
+                    $"Internal Server Error: {ex.Message}");
             }
         }
+
         #endregion
     }
 }

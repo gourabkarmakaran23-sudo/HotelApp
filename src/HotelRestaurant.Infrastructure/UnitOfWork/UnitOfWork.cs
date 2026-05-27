@@ -16,7 +16,9 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             Rooms = new GenericRepository<Room>(_context);
             RoomTypes = new GenericRepository<RoomTypes>(_context);
             Guests = new GenericRepository<Guest>(_context);
-            Reservations = new GenericRepository<Reservation>(_context);
+            Bookings = new GenericRepository<Booking>(_context);
+            ReservationRooms = new GenericRepository<ReservationRoom>(_context);
+            // Reservations = new GenericRepository<Reservation>(_context);
             Employees = new GenericRepository<Employee>(_context);
             MenuItems = new GenericRepository<MenuItem>(_context);
             Orders = new GenericRepository<Order>(_context);

@@ -35,7 +35,7 @@ namespace HotelRestaurant.Infrastructure.Repositories
                 && checkOut > x.CheckInDate
 
                 // Optional:
-                && x.Status != ReservationStatus.Cancelled
+                && x.Status != BookingStatus.Cancelled
             );
         }
 

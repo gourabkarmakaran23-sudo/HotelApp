@@ -39,6 +39,7 @@ namespace HotelRestaurant.Core.Entities
         CheckedIn,
         CheckedOut,
         Cancelled,
+        Completed,
         NoShow
     }
     public enum ReservationStatus

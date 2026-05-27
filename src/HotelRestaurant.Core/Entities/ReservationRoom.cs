@@ -21,7 +21,7 @@ namespace HotelRestaurant.Core.Entities
 
         public decimal RoomAmount { get; set; }
 
-        public ReservationStatus Status { get; set; }
+        public BookingStatus Status { get; set; }
 
         public string Notes { get; set; } = string.Empty;
         public string Pax { get; set; } = string.Empty;

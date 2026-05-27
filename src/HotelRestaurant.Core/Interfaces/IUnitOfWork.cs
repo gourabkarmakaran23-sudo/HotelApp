@@ -8,7 +8,7 @@ namespace HotelRestaurant.Core.Interfaces
         IGenericRepository<RoomTypes> RoomTypes { get; }
         IGenericRepository<Room> Rooms { get; }
         IGenericRepository<Guest> Guests { get; }
-        IGenericRepository<Reservation> Reservations { get; }
+        //IGenericRepository<Reservation> Reservations { get; }
         IGenericRepository<Booking> Bookings { get; }
         IGenericRepository<ReservationRoom> ReservationRooms { get; }
         IGenericRepository<Employee> Employees { get; }

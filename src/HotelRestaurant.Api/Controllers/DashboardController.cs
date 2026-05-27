@@ -22,44 +22,60 @@ namespace HotelRestaurant.API.Controllers
         {
             try
             {
-                var reservations = await _unitOfWork.Reservations
+                var bookings = await _unitOfWork.Bookings
                     .GetAllQueryable()
-                    .Include(r => r.Room)
-                    .Include(r => r.Invoice)
+                    .Include(b => b.ReservationRooms)
+                    .Include(b => b.Invoices)
                     .ToListAsync();
 
                 var rooms = await _unitOfWork.Rooms
                     .GetAllAsync();
 
-                var totalBookings = reservations.Count;
+                // TOTAL BOOKINGS
+                var totalBookings = bookings.Count;
 
-                var completedBookings = reservations.Count(r =>
-                    r.Status.ToString().ToLower() == "completed");
+                // STATUS COUNTS
+                var completedBookings = bookings.Count(b =>
+                    b.Status == BookingStatus.Completed);
 
-                var cancelledBookings = reservations.Count(r =>
-                    r.Status.ToString().ToLower() == "cancelled");
+                var cancelledBookings = bookings.Count(b =>
+                    b.Status == BookingStatus.Cancelled);
 
-                var pendingBookings = reservations.Count(r =>
-                    r.Status.ToString().ToLower() == "pending");
+                var pendingBookings = bookings.Count(b =>
+                    b.Status == BookingStatus.Pending);
 
-                var totalRevenue = reservations.Sum(r => r.TotalAmount);
+                // TOTAL REVENUE
+                var totalRevenue = bookings.Sum(b =>
+                    b.TotalAmount);
 
-                var occupiedRooms = reservations.Count(r =>
-                    r.Status.ToString().ToLower() == "checkedin");
+                // OCCUPIED ROOMS
+                var occupiedRooms = bookings
+                    .SelectMany(b => b.ReservationRooms)
+                    .Count(rr =>
+                        rr.Status == BookingStatus.CheckedIn);
 
+                // TOTAL ROOMS
                 var totalRooms = rooms.Count();
 
+                // AVAILABLE ROOMS
                 var availableRooms = totalRooms - occupiedRooms;
 
                 var stats = new DashboardStatsDto
                 {
                     TotalBookings = totalBookings,
+
                     CompletedBookings = completedBookings,
+
                     CancelledBookings = cancelledBookings,
+
                     PendingBookings = pendingBookings,
+
                     TotalRevenue = totalRevenue,
+
                     TotalRooms = totalRooms,
+
                     OccupiedRooms = occupiedRooms,
+
                     AvailableRooms = availableRooms
                 };
 
@@ -71,7 +87,6 @@ namespace HotelRestaurant.API.Controllers
             }
         }
 
-        
 
     }
 }
