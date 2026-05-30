@@ -30,54 +30,54 @@
         <div class="form-group">
           <label>Check In <span class="req">*</span></label>
           <input type="datetime-local" [(ngModel)]="form.checkIn" name="checkIn" (change)="recalculateAllRooms()"
-            [class.input-error]="bookingForm.submitted && !form.checkIn" />
+            [class.input-error]="bookingForm.submitted && !form.checkIn" [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group">
           <label>Check Out <span class="req">*</span></label>
           <input type="datetime-local" [(ngModel)]="form.checkOut" name="checkOut" (change)="recalculateAllRooms()"
-            [class.input-error]="bookingForm.submitted && !form.checkOut" />
+            [class.input-error]="bookingForm.submitted && !form.checkOut" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Arrival From <span class="req">*</span></label>
-          <input type="text" placeholder="Arrival From" [(ngModel)]="form.arrivalFrom" name="arrivalFrom" />
+          <input type="text" placeholder="Arrival From" [(ngModel)]="form.arrivalFrom" name="arrivalFrom" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Booking Type</label>
-          <select [(ngModel)]="form.bookingType" name="bookingType">
+          <select [(ngModel)]="form.bookingType" name="bookingType" [disabled]="mode === 'view'">
             <option *ngFor="let type of bookingTypes" [value]="type">{{ type }}</option>
           </select>
         </div>
 
         <div class="form-group">
           <label>Booking Reference</label>
-          <select [(ngModel)]="form.bookingReference" name="bookingReference">
+          <select [(ngModel)]="form.bookingReference" name="bookingReference" [disabled]="mode === 'view'">
             <option *ngFor="let ref of bookingReferences" [value]="ref">{{ ref }}</option>
           </select>
         </div>
 
         <div class="form-group">
           <label>Sold By</label>
-          <select [(ngModel)]="form.soldBy" name="soldBy">
+          <select [(ngModel)]="form.soldBy" name="soldBy" [disabled]="mode === 'view'">
             <option *ngFor="let sold of soldByNames" [value]="sold">{{ sold }}</option>
           </select>
         </div>
 
         <div class="form-group full-width">
           <label>Customer Profile</label>
-          <input type="text" placeholder="Customer Profile" [(ngModel)]="form.customerProfile" name="customerProfile" />
+          <input type="text" placeholder="Customer Profile" [(ngModel)]="form.customerProfile" name="customerProfile" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group full-width">
           <label>Purpose of Visit</label>
-          <input type="text" placeholder="Purpose of Visit" [(ngModel)]="form.purposeOfVisit" name="purposeOfVisit" />
+          <input type="text" placeholder="Purpose of Visit" [(ngModel)]="form.purposeOfVisit" name="purposeOfVisit" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group full-width">
           <label>Remarks</label>
-          <textarea placeholder="Remarks" [(ngModel)]="form.remarks" name="remarks"></textarea>
+          <textarea placeholder="Remarks" [(ngModel)]="form.remarks" name="remarks" [disabled]="mode === 'view'"></textarea>
         </div>
       </div>
     </section>

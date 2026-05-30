@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System;
 using Microsoft.EntityFrameworkCore;
 using HotelRestaurant.Application.Services.Interfaces;
+using HotelRestaurant.Application.DTOs.Reservation;
 
 namespace HotelRestaurant.Api.Controllers
 {
@@ -79,7 +80,14 @@ namespace HotelRestaurant.Api.Controllers
                     GuestId = guest.Id,
                     BookingDate = DateTime.UtcNow,
                     TotalAmount = dto.TotalAmount,
-                    Status = BookingStatus.Confirmed
+                    Status = BookingStatus.Confirmed,
+                    BookingType = dto.BookingType,
+                    BookingReference = dto.BookingReference,
+                    SoldBy = dto.SoldBy,
+                    ArrivalFrom = dto.ArrivalFrom ?? "",
+                    CustomerProfile = dto.CustomerProfile ?? "",
+                    PurposeOfVisit = dto.PurposeOfVisit ?? "",
+                    Remarks = dto.Remarks ?? ""
                 };
 
                 await _unitOfWork.Bookings.AddAsync(booking);
@@ -211,7 +219,7 @@ namespace HotelRestaurant.Api.Controllers
         }
         #endregion
 
-        #region GetBookingById
+        #region GetAllBookings
 
         [HttpGet]
         public async Task<IActionResult> GetAllBookings()
@@ -306,6 +314,36 @@ namespace HotelRestaurant.Api.Controllers
                 return StatusCode(500,
                     $"Internal Server Error: {ex.Message}");
             }
+        }
+
+        #endregion
+
+        #region Upcoming CheckIns
+
+        [HttpGet("upcoming-checkins")]
+        public async Task<IActionResult> GetUpcomingCheckIns()
+        {
+            var result =
+                await _reservationService
+                    .GetUpcomingCheckInsAsync();
+
+            return Ok(result);
+        }
+
+        #endregion
+        #region GetBookingById
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBookingById(int id)
+        {
+            var result =
+                await _reservationService
+                    .GetBookingForEditAsync(id);
+
+            if (result == null)
+                return NotFound("Booking not found.");
+
+            return Ok(result);
         }
 
         #endregion

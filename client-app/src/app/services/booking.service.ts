@@ -18,4 +18,36 @@ export class BookingService {
    getCheckInList(): Observable<any> {
     return this.http.get(`${this.baseUrl}/checkin-list`);
   }
+  getUpcomingCheckIns() {
+  return this.http.get<any[]>(
+    `${this.baseUrl}/upcoming-checkins`
+  );
+  
+}
+getBookingById(id: number) {
+
+  return this.http.get<any>(
+    `${this.baseUrl}/${id}`
+  );
+
+}
+getUpcomingCheckins(): Observable<any[]> {
+  return this.http.get<any[]>(
+    `${this.baseUrl}/upcoming-checkins`
+  );
+}
+
+checkInBooking(id: number): Observable<any> {
+  return this.http.post(
+    `${this.baseUrl}/${id}/checkin`,
+    {}
+  );
+}
+
+getBookingForEdit(id: number): Observable<any> {
+  return this.http.get(
+    `${this.baseUrl}/${id}/edit`
+  );
+}
+
 }

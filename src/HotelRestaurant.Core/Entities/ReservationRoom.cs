@@ -18,6 +18,11 @@ namespace HotelRestaurant.Core.Entities
         public int Adults { get; set; }
 
         public int Children { get; set; }
+        public string? ChildAge { get; set; }
+        public decimal RentPerNight { get; set; }
+        public decimal ComplimentaryNight { get; set; }
+         public decimal ExtraChildCharge { get; set; }
+
 
         public decimal RoomAmount { get; set; }
 

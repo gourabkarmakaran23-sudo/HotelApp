@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { CustomAlertService } from '../../services/custom-alert.service';
 import { CustomAlertComponent } from '../shared/custom-alert/custom-alert.component';
@@ -63,6 +63,13 @@ export class BookingEngineComponent implements OnInit {
   isLoading = false;
   roomTypesList: any[] = [];
 
+  isEditMode = false;
+  bookingId = 0;
+
+  mode = 'create';
+  selectedBooking: any = null;
+
+  showViewModal = false;
   // ── Dropdown data ─────────────────────────────────────────────────────────
   bookingTypes = [
     'Book Online',
@@ -186,6 +193,7 @@ export class BookingEngineComponent implements OnInit {
   };
   constructor(
     private readonly router: Router,
+    private route: ActivatedRoute,
     private readonly bookingService: BookingService,
     private roomTypeService: RoomTypeService,
     private roomService: RoomService,
@@ -197,76 +205,198 @@ export class BookingEngineComponent implements OnInit {
   }
   ngOnInit(): void {
     this.loadRoomTypes();
+   
+    // const id = this.route.snapshot.paramMap.get('id');
+
+    // if (id) {
+
+    //   this.isEditMode = true;
+
+    //   this.bookingId = Number(id);
+
+    //   this.loadBookingForEdit(this.bookingId);
+
+    // }
+     this.route.queryParams.subscribe(params => {
+
+    const id = params['id'];
+
+    const mode = params['mode'];
+
+    if (id && mode === 'edit') {
+
+      this.loadBookingForEdit(id);
+    }
+  });
 
   };
+  closeModal(): void {
 
- addRoom(): void {
+    this.showViewModal = false;
 
-  this.form.rooms.push({
-
-    roomTypeId: 0,
-
-    roomType: null,
-
-    roomNo: '',
-
-    mealPlan: 'Room Only',
-
-    extraChildAge: 0,
-
-    adults: 2,
-
-    children: 0,
-
-    rentPerNight: 0,
-
-    complimentaryPerNight: 0,
-
-    extraCharge: 0,
-
-    totalAmount: 0,
-
-    roomNoOptions: []
-  });
-}
-
-removeRoom(index: number): void {
-
-  this.form.rooms.splice(index, 1);
-
-  this.calculateGrandTotal();
-}
-  onRoomTypeChange(index: number): void {
-
-  const room = this.form.rooms[index];
-
-  if (!room.roomTypeId) {
-
-    room.roomNoOptions = [];
-
-    room.roomNo = '';
-
-    return;
   }
+  editBooking(id: number): void {
 
-  this.roomService
-    .getRoomsByRoomType(room.roomTypeId)
+    this.router.navigate(['/booking-engine', id]);
+
+  }
+  viewBooking(row: any): void {
+
+    this.bookingService
+      .getBookingForEdit(row.id)
+      .subscribe({
+
+        next: (data) => {
+
+          this.selectedBooking = data;
+
+          this.showViewModal = true;
+
+        }
+
+      });
+
+  }
+ loadBookingForEdit(id: number): void {
+
+  this.bookingService
+    .getBookingById(id)
     .subscribe({
 
-      next: (rooms: any[]) => {
+      next: (res) => {
 
-        room.roomNoOptions = rooms;
+        console.log('EDIT DATA:', res);
 
-        room.roomNo = '';
+        this.form.bookingType =
+          res.bookingType;
+
+        this.form.bookingReference =
+          res.bookingReference;
+
+        this.form.soldBy =
+          res.soldBy;
+
+        this.form.arrivalFrom =
+          res.arrivalFrom;
+
+        this.form.customerProfile =
+          res.customerProfile;
+
+        this.form.purposeOfVisit =
+          res.purposeOfVisit;
+
+        this.form.remarks =
+          res.remarks;
+
+        this.form.checkIn =
+          res.checkInDate;
+
+        this.form.checkOut =
+          res.checkOutDate;
+
+        this.form.billingFirstName =
+          res.billingFirstName;
+
+        this.form.billingLastName =
+          res.billingLastName;
+
+        this.form.billingMobile =
+          res.billingMobile;
+
+        this.form.email =
+          res.email;
+
+        this.form.rooms =
+          res.rooms;
       },
 
-      error: () => {
+      error: (err) => {
 
-        room.roomNoOptions = [];
+        console.error(err);
 
+        this.alertService.error(
+          'Failed to load booking.'
+        );
       }
     });
 }
+
+  formatDateForInput(date: string): string {
+
+    const d = new Date(date);
+
+    const pad = (n: number) => n.toString().padStart(2, '0');
+
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+  }
+  addRoom(): void {
+
+    this.form.rooms.push({
+
+      roomTypeId: 0,
+
+      roomType: null,
+
+      roomNo: '',
+
+      mealPlan: 'Room Only',
+
+      extraChildAge: 0,
+
+      adults: 2,
+
+      children: 0,
+
+      rentPerNight: 0,
+
+      complimentaryPerNight: 0,
+
+      extraCharge: 0,
+
+      totalAmount: 0,
+
+      roomNoOptions: []
+    });
+  }
+
+  removeRoom(index: number): void {
+
+    this.form.rooms.splice(index, 1);
+
+    this.calculateGrandTotal();
+  }
+  onRoomTypeChange(index: number): void {
+
+    const room = this.form.rooms[index];
+
+    if (!room.roomTypeId) {
+
+      room.roomNoOptions = [];
+
+      room.roomNo = '';
+
+      return;
+    }
+
+    this.roomService
+      .getRoomsByRoomType(room.roomTypeId)
+      .subscribe({
+
+        next: (rooms: any[]) => {
+
+          room.roomNoOptions = rooms;
+
+          room.roomNo = '';
+        },
+
+        error: () => {
+
+          room.roomNoOptions = [];
+
+        }
+      });
+  }
 
   loadRoomNumbers(roomTypeId: number): void {
 
@@ -529,7 +659,7 @@ removeRoom(index: number): void {
   // ── Room & Charge Helpers ─────────────────────────────────────────────────
 
 
-  
+
   updateCharges(index: number): void {
 
     const room = this.form.rooms[index];
@@ -562,15 +692,15 @@ removeRoom(index: number): void {
     this.calculateGrandTotal();
   }
 
- calculateGrandTotal(): void {
+  calculateGrandTotal(): void {
 
-  this.form.totalAmount =
-    this.form.rooms.reduce(
-      (sum, room) =>
-        sum + (Number(room.totalAmount) || 0),
-      0
-    );
-}
+    this.form.totalAmount =
+      this.form.rooms.reduce(
+        (sum, room) =>
+          sum + (Number(room.totalAmount) || 0),
+        0
+      );
+  }
   calculateNights(): number {
     if (!this.form.checkIn || !this.form.checkOut) return 1;
     const diff = new Date(this.form.checkOut).getTime() -
@@ -578,33 +708,33 @@ removeRoom(index: number): void {
     return diff > 0 ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : 1;
   }
 
-  
- 
-onMealPlanChange(index: number): void {
 
-  this.updateCharges(index);
-  this.calculateGrandTotal();
-}
-onChildAgeChange(index: number): void {
 
-  this.updateCharges(index);
-  this.calculateGrandTotal();
-}
-recalculate(index: number): void {
-
-  this.updateCharges(index);
-  this.calculateGrandTotal();
-}
-recalculateAllRooms(): void {
-
-  this.form.rooms.forEach((_, index) => {
+  onMealPlanChange(index: number): void {
 
     this.updateCharges(index);
+    this.calculateGrandTotal();
+  }
+  onChildAgeChange(index: number): void {
 
-  });
+    this.updateCharges(index);
+    this.calculateGrandTotal();
+  }
+  recalculate(index: number): void {
 
-  this.calculateGrandTotal();
-}
+    this.updateCharges(index);
+    this.calculateGrandTotal();
+  }
+  recalculateAllRooms(): void {
+
+    this.form.rooms.forEach((_, index) => {
+
+      this.updateCharges(index);
+
+    });
+
+    this.calculateGrandTotal();
+  }
 
   onSameAsCustomerChange(): void {
     if (this.form.sameAsCustomer) {

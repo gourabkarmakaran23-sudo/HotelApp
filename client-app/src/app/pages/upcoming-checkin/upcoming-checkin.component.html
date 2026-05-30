@@ -1,0 +1,243 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <h2>Upcoming CheckIns</h2>
+
+  </div>
+
+  <div class="toolbar">
+
+    <div class="left-tools">
+
+      <label>
+        Show
+
+        <select>
+          <option>10</option>
+        </select>
+
+        entries
+      </label>
+
+      <button class="toolbar-btn">
+        ⬇ CSV
+      </button>
+
+      <button class="toolbar-btn">
+        🖨 Print
+      </button>
+
+    </div>
+
+    <div class="right-tools">
+
+      <input
+        type="text"
+        placeholder="Search..."
+        (input)="onSearch($event)"
+      />
+
+    </div>
+
+  </div>
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Booking No</th>
+          <th>Guest</th>
+          <th>Room</th>
+          <th>CheckIn</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let row of filteredBookings">
+
+          <td>
+            {{ row.bookingNumber }}
+          </td>
+
+          <td>
+            {{ row.guestName }}
+          </td>
+
+          <td>
+            {{ row.roomNo }}
+          </td>
+
+          <td>
+            {{ row.checkInDate | date:'dd-MM-yyyy' }}
+          </td>
+
+          <td>
+
+            <span class="status pending">
+
+              {{ row.status }}
+
+            </span>
+
+          </td>
+
+          <td>
+
+            <div class="action-buttons">
+
+              <button
+                class="checkin-btn"
+                (click)="onCheckIn(row)">
+
+                CheckIn
+
+              </button>
+
+              <button
+                class="view-btn"
+                (click)="onView(row)">
+
+                View
+
+              </button>
+
+              <button
+                class="edit-btn"
+                (click)="onEdit(row)">
+
+                Edit
+
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+
+<!-- PASTE MODAL HERE -->
+<!-- VIEW MODAL -->
+<div
+  class="modal-overlay"
+  *ngIf="showViewModal">
+
+  <div class="view-modal">
+
+    <button
+      class="close-btn"
+      (click)="closeModal()">
+
+      ×
+
+    </button>
+
+    <h2>Reservation Details</h2>
+
+    <div class="modal-grid">
+
+      <div>
+        <label>Booking Number</label>
+
+        <p>
+          {{ selectedBooking?.bookingNumber }}
+        </p>
+      </div>
+
+      <div>
+        <label>Status</label>
+
+        <p>
+          {{ selectedBooking?.status }}
+        </p>
+      </div>
+
+      <div>
+        <label>Guest Name</label>
+
+        <p>
+          {{ selectedBooking?.guestName }}
+        </p>
+      </div>
+
+      <div>
+        <label>Mobile</label>
+
+        <p>
+          {{ selectedBooking?.mobile }}
+        </p>
+      </div>
+
+      <div>
+        <label>Room Numbers</label>
+
+        <p>
+          {{ selectedBooking?.roomNumbers }}
+        </p>
+      </div>
+
+      <div>
+        <label>Room Types</label>
+
+        <p>
+          {{ selectedBooking?.roomTypes }}
+        </p>
+      </div>
+
+      <div>
+        <label>Check-In</label>
+
+        <p>
+          {{ selectedBooking?.checkInDate | date:'dd-MM-yyyy' }}
+        </p>
+      </div>
+
+      <div>
+        <label>Check-Out</label>
+
+        <p>
+          {{ selectedBooking?.checkOutDate | date:'dd-MM-yyyy' }}
+        </p>
+      </div>
+
+      <div>
+        <label>Total Amount</label>
+
+        <p>
+          ₹{{ selectedBooking?.totalAmount }}
+        </p>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button
+        class="edit-btn"
+        (click)="editBooking(selectedBooking?.bookingId)">
+
+        Edit Booking
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
