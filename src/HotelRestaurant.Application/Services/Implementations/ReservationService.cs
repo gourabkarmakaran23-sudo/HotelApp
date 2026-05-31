@@ -154,6 +154,27 @@ namespace HotelRestaurant.Application.Services.Implementations
                 BookingId = x.Id,
 
                 BookingNumber = x.BookingNumber,
+                BookingDate =x.CreatedAt.Date,
+                RoomTypes =
+                    string.Join(", ",
+                        x.ReservationRooms
+                            .Select(r => r.Room.RoomTypes.Name)
+                    ),
+
+                  RoomNumbers =
+                    string.Join(", ",
+                        x.ReservationRooms
+                            .Select(r => r.Room.RoomNumber)
+                    ),
+                MealPlan =
+                    string.Join(", ",
+                        x.ReservationRooms
+                            .Select(r => ExtractMealPlan(r.Notes))
+                            .Where(mp => !string.IsNullOrEmpty(mp))
+                            .Distinct()
+                    ),
+                Pax =
+                    x.ReservationRooms.Sum(r => Convert.ToInt32(r.Pax)),
 
                 GuestName =
                     x.Guest.FirstName + " " +
@@ -162,17 +183,7 @@ namespace HotelRestaurant.Application.Services.Implementations
                 Mobile =
                     x.Guest.Phone,
 
-                RoomNumbers =
-                    string.Join(", ",
-                        x.ReservationRooms
-                            .Select(r => r.Room.RoomNumber)
-                    ),
-
-                RoomTypes =
-                    string.Join(", ",
-                        x.ReservationRooms
-                            .Select(r => r.Room.RoomTypes.Name)
-                    ),
+ 
 
                 CheckInDate =
                     x.ReservationRooms.Min(r => r.CheckInDate),

@@ -1,243 +1,98 @@
 <div class="page-container">
-
   <div class="page-header">
-
     <h2>Upcoming CheckIns</h2>
-
   </div>
 
   <div class="toolbar">
-
     <div class="left-tools">
-
       <label>
         Show
-
-        <select>
+        <select class="form-select-sm">
           <option>10</option>
+          <option>25</option>
+          <option>50</option>
         </select>
-
         entries
       </label>
-
-      <button class="toolbar-btn">
-        ⬇ CSV
-      </button>
-
-      <button class="toolbar-btn">
-        🖨 Print
-      </button>
-
+      <button class="toolbar-btn">⬇ CSV</button>
+      <button class="toolbar-btn">🖨 Print</button>
     </div>
 
     <div class="right-tools">
-
       <input
         type="text"
-        placeholder="Search..."
+        placeholder="Search bookings..."
+        [(ngModel)]="searchText"
         (input)="onSearch($event)"
+        class="search-input"
       />
-
     </div>
-
   </div>
 
   <div class="table-wrapper">
-
-    <table>
-
+    <table class="pms-table">
       <thead>
-
         <tr>
           <th>Booking No</th>
-          <th>Guest</th>
-          <th>Room</th>
-          <th>CheckIn</th>
+          <th>Booking Date</th>
+          <th>Guest Name</th>
+          <th>Mobile</th>
+          <th>Room Type</th>
+          <th>Room No</th>
+          <th>Meal Plan</th>
+          <th>Pax (A/C)</th>
+          <th>CheckIn Date</th>
+          <th>CheckOut Date</th>
           <th>Status</th>
-          <th>Actions</th>
+          <th class="text-center">Actions</th>
         </tr>
-
       </thead>
-
       <tbody>
-
-        <tr *ngFor="let row of filteredBookings">
-
-          <td>
-            {{ row.bookingNumber }}
+        <tr *ngFor="let row of filteredBookings; let i = index">
+          <td class="bold-text vertical-top">{{ row.bookingNumber }}</td>
+          <td class="vertical-top">{{ row.bookingDate | date:'dd-MM-yyyy' }}</td>
+          <td class="vertical-top font-wrap-bound">
+            <span class="guest-name bold-text">{{ row.guestName }}</span>
           </td>
-
-          <td>
-            {{ row.guestName }}
+          <td class="vertical-top">{{ row.mobile }}</td>
+          <td class="vertical-top font-wrap-bound">
+            <span class="badge-type">{{ row.roomTypes || 'N/A' }}</span>
           </td>
-
-          <td>
-            {{ row.roomNo }}
-          </td>
-
-          <td>
-            {{ row.checkInDate | date:'dd-MM-yyyy' }}
-          </td>
-
-          <td>
-
-            <span class="status pending">
-
-              {{ row.status }}
-
+          <td class="bold-text text-primary vertical-top">{{ row.roomNo || 'Assign' }}</td>
+          <td class="vertical-top"><span class="badge-meal">{{ row.mealPlan || 'EP' }}</span></td>
+          <td class="vertical-top">{{ row.pax || '2 / 0' }}</td>
+          <td class="vertical-top"><span class="date-in">{{ row.checkInDate | date:'dd-MM-yyyy' }}</span></td>
+          <td class="vertical-top"><span class="date-out">{{ row.checkOutDate | date:'dd-MM-yyyy' }}</span></td>
+          <td class="vertical-top">
+            <span class="status-pill" [ngClass]="row.bookingStatus?.toLowerCase() || 'pending'">
+              {{ row.bookingStatus || 'Confirmed' }}
             </span>
-
           </td>
-
-          <td>
-
-            <div class="action-buttons">
-
-              <button
-                class="checkin-btn"
-                (click)="onCheckIn(row)">
-
-                CheckIn
-
+          <td class="text-center vertical-top">
+            <div class="action-dropdown-container">
+              <button class="btn-action-trigger" (click)="toggleActionMenu($event, i)">
+                Actions ▾
               </button>
-
-              <button
-                class="view-btn"
-                (click)="onView(row)">
-
-                View
-
-              </button>
-
-              <button
-                class="edit-btn"
-                (click)="onEdit(row)">
-
-                Edit
-
-              </button>
-
+              
+              <div class="action-menu-panel" [class.show]="activeMenuIndex === i">
+                <button (click)="onAction('update', row)"><i class="fa fa-edit"></i> Update Reservation</button>
+                <button (click)="onAction('addGuest', row)"><i class="fa fa-user-plus"></i> Add Guest</button>
+                <button (click)="onCheckIn(row)" class="highlight-action"><i class="fa fa-check-circle"></i> Check In</button>
+                <button (click)="onView(row)"><i class="fa fa-eye"></i> View</button>
+                <button (click)="onAction('print', row)"><i class="fa fa-print"></i> Print</button>
+                <button (click)="onAction('payment', row)"><i class="fa fa-credit-card"></i> Payment</button>
+                <button (click)="onAction('grc', row)"><i class="fa fa-file-text"></i> GRC Form</button>
+                <button (click)="onAction('draft', row)"><i class="fa fa-file-code-o"></i> Print(Draft)</button>
+                <div class="dropdown-divider"></div>
+                <button (click)="onAction('cancel', row)" class="danger-action"><i class="fa fa-times-circle"></i> Cancel Reservation</button>
+              </div>
             </div>
-
           </td>
-
         </tr>
-
+        <tr *ngIf="filteredBookings.length === 0">
+          <td colspan="12" class="no-records">No upcoming check-ins found.</td>
+        </tr>
       </tbody>
-
     </table>
-
   </div>
-
-</div>
-
-
-<!-- PASTE MODAL HERE -->
-<!-- VIEW MODAL -->
-<div
-  class="modal-overlay"
-  *ngIf="showViewModal">
-
-  <div class="view-modal">
-
-    <button
-      class="close-btn"
-      (click)="closeModal()">
-
-      ×
-
-    </button>
-
-    <h2>Reservation Details</h2>
-
-    <div class="modal-grid">
-
-      <div>
-        <label>Booking Number</label>
-
-        <p>
-          {{ selectedBooking?.bookingNumber }}
-        </p>
-      </div>
-
-      <div>
-        <label>Status</label>
-
-        <p>
-          {{ selectedBooking?.status }}
-        </p>
-      </div>
-
-      <div>
-        <label>Guest Name</label>
-
-        <p>
-          {{ selectedBooking?.guestName }}
-        </p>
-      </div>
-
-      <div>
-        <label>Mobile</label>
-
-        <p>
-          {{ selectedBooking?.mobile }}
-        </p>
-      </div>
-
-      <div>
-        <label>Room Numbers</label>
-
-        <p>
-          {{ selectedBooking?.roomNumbers }}
-        </p>
-      </div>
-
-      <div>
-        <label>Room Types</label>
-
-        <p>
-          {{ selectedBooking?.roomTypes }}
-        </p>
-      </div>
-
-      <div>
-        <label>Check-In</label>
-
-        <p>
-          {{ selectedBooking?.checkInDate | date:'dd-MM-yyyy' }}
-        </p>
-      </div>
-
-      <div>
-        <label>Check-Out</label>
-
-        <p>
-          {{ selectedBooking?.checkOutDate | date:'dd-MM-yyyy' }}
-        </p>
-      </div>
-
-      <div>
-        <label>Total Amount</label>
-
-        <p>
-          ₹{{ selectedBooking?.totalAmount }}
-        </p>
-      </div>
-
-    </div>
-
-    <div class="modal-footer">
-
-      <button
-        class="edit-btn"
-        (click)="editBooking(selectedBooking?.bookingId)">
-
-        Edit Booking
-
-      </button>
-
-    </div>
-
-  </div>
-
 </div>

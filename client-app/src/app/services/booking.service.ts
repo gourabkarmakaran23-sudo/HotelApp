@@ -36,6 +36,9 @@ getUpcomingCheckins(): Observable<any[]> {
     `${this.baseUrl}/upcoming-checkins`
   );
 }
+getUpcomingCheckIn(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/upcoming-checkins`);
+  }
 
 checkInBooking(id: number): Observable<any> {
   return this.http.post(

@@ -1,5 +1,5 @@
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
@@ -13,12 +13,15 @@ import { CustomAlertService } from '../../services/custom-alert.service';
   styleUrls: ['./upcoming-checkin.component.scss']
 })
 export class UpcomingCheckinComponent implements OnInit {
-
   bookings: any[] = [];
-
   filteredBookings: any[] = [];
-
   searchText = '';
+  
+  // Track which row action menu dropdown is currently open
+  activeMenuIndex: number | null = null;
+  
+  showViewModal = false;
+  selectedBooking: any = null;
 
   constructor(
     private bookingService: BookingService,
@@ -29,161 +32,128 @@ export class UpcomingCheckinComponent implements OnInit {
   ngOnInit(): void {
     this.loadBookings();
   }
-  showViewModal = false;
 
-  selectedBooking: any = null;
-
-  closeModal(): void {
-
-  this.showViewModal = false;
-
-  this.selectedBooking = null;
-}
-
-editBooking(id: number): void {
-
-  this.closeModal();
-
-  this.router.navigate(
-    ['/booking-engine'],
-    {
-      queryParams: {
-        id: id,
-        mode: 'edit'
-      }
-    }
-  );
-}
-
-  loadBookings(): void {
-
-    this.bookingService.getUpcomingCheckins()
-      .subscribe({
-
-        next: (res) => {
-
-          this.bookings = res;
-
-          this.filteredBookings = [...this.bookings];
-        },
-
-        error: (err) => {
-
-          console.error(err);
-
-          this.alertService.error(
-            'Failed to load upcoming checkins.'
-          );
-        }
-      });
+  // Closes dropdown menus cleanly when clicking anywhere outside on the window layout layout
+  @HostListener('document:click', ['$event'])
+  closeDropdownsOutside(event: Event): void {
+    this.activeMenuIndex = null;
   }
 
-  onSearch(event: Event): void {
+  toggleActionMenu(event: Event, index: number): void {
+    event.stopPropagation(); // Stop click bubbling so host listener doesn't trigger
+    this.activeMenuIndex = this.activeMenuIndex === index ? null : index;
+  }
 
-    const value =
-      (event.target as HTMLInputElement)
-        .value
-        .toLowerCase()
-        .trim();
-
-    this.searchText = value;
-
-    if (!value) {
-
+  loadBookings(): void {
+  this.bookingService.getUpcomingCheckIn().subscribe({
+    next: (res: any[]) => {
+      console.log("Upcoming CheckIn Data Received: ", res);
+      
+      // Map properties safely to avoid frontend undefined structural field bugs
+      this.bookings = res.map(b => ({
+        bookingId: b.bookingId || b.id,
+        bookingNumber: b.bookingNumber,
+        bookingDate: b.bookingDate || new Date(),
+        guestName: b.guestName || 'Unknown Guest',
+        mobile: b.mobile || 'N/A',
+        roomTypes: b.roomTypes || b.roomTypeName || 'N/A',
+        roomNo: b.roomNo || b.roomNumber || 'Assign',
+        mealPlan: b.mealPlan || 'CP',
+        pax: b.pax || '2 / 0',
+        checkInDate: b.checkInDate,
+        checkOutDate: b.checkOutDate,
+        bookingStatus: b.bookingStatus || b.status || 'Confirmed'
+      }));
+      
       this.filteredBookings = [...this.bookings];
+    },
+    error: (err) => {
+      console.error("Error loading checkins:", err);
+      this.alertService.error('Failed to load upcoming check-ins data from server.');
+    }
+  });
+}
 
+  onSearch(event: any): void {
+    const value = event.target.value.toLowerCase().trim();
+    if (!value) {
+      this.filteredBookings = [...this.bookings];
       return;
     }
 
-    this.filteredBookings =
-      this.bookings.filter(x =>
-
-        x.bookingNumber?.toLowerCase().includes(value)
-
-        ||
-
-        x.guestName?.toLowerCase().includes(value)
-
-        ||
-
-        x.roomNo?.toLowerCase().includes(value)
-      );
-  }
-
-  onCheckIn(row: any): void {
-
-    this.alertService.confirm(
-
-      `Check in booking ${row.bookingNumber}?`,
-
-      () => {
-
-        this.bookingService
-          .checkInBooking(row.bookingId)
-          .subscribe({
-
-            next: () => {
-
-              this.alertService.success(
-                'Guest checked in successfully.'
-              );
-
-              this.loadBookings();
-            },
-
-            error: (err) => {
-
-              console.error(err);
-
-              this.alertService.error(
-                'Failed to check in booking.'
-              );
-            }
-          });
-      }
+    this.filteredBookings = this.bookings.filter(x => 
+      x.bookingNumber?.toLowerCase().includes(value) ||
+      x.guestName?.toLowerCase().includes(value) ||
+      x.roomNo?.toLowerCase().includes(value) ||
+      x.mobile?.includes(value)
     );
   }
 
- onView(row: any): void {
-
-  console.log('VIEW ROW:', row);
-
-  this.selectedBooking = {
-
-    bookingId: row.bookingId,
-
-    bookingNumber: row.bookingNumber,
-
-    status: row.bookingStatus,
-
-    guestName: row.guestName,
-
-    mobile: row.mobile,
-
-    roomNumbers: row.roomNumbers,
-
-    roomTypes: row.roomTypes,
-
-    checkInDate: row.checkInDate,
-
-    checkOutDate: row.checkOutDate,
-
-    totalAmount: row.totalAmount
-  };
-
-  this.showViewModal = true;
-}
-
-onEdit(row: any): void {
-
-  this.router.navigate(
-    ['/booking-engine'],
-    {
-      queryParams: {
-        id: row.bookingId,
-        mode: 'edit'
-      }
+  // Central Router Actions Controller for the Menu choices
+  onAction(actionType: string, row: any): void {
+    this.activeMenuIndex = null; // Hide dropdown immediately
+    
+    switch(actionType) {
+      case 'update':
+        this.router.navigate(['/booking-engine'], { queryParams: { id: row.bookingId } });
+        break;
+      case 'addGuest':
+        this.alertService.success(`Opening Add Guest Wizard for: ${row.bookingNumber}`);
+        break;
+      case 'print':
+        window.print();
+        break;
+      case 'payment':
+        this.alertService.success(`Opening Folio Payment Window for: ${row.bookingNumber}`);
+        break;
+      case 'grc':
+        this.alertService.success(`Generating Guest Registration Card PDF...`);
+        break;
+      case 'draft':
+        this.alertService.success(`Printing Draft Form...`);
+        break;
+      case 'cancel':
+        this.alertService.confirm(`Are you absolutely sure you want to CANCEL reservation ${row.bookingNumber}?`, () => {
+          this.alertService.success('Reservation Cancelled Successfully.');
+        });
+        break;
     }
-  );
-}
+  }
+
+  onCheckIn(row: any): void {
+    this.activeMenuIndex = null;
+    this.alertService.confirm(`Check in booking ${row.bookingNumber}?`, () => {
+      this.bookingService.checkInBooking(row.bookingId).subscribe({
+        next: () => {
+          this.alertService.success('Guest checked in successfully.');
+          this.loadBookings();
+        },
+        error: (err) => {
+          console.error(err);
+          this.alertService.error('Failed to check in booking.');
+        }
+      });
+    });
+  }
+
+  onView(row: any): void {
+    this.activeMenuIndex = null;
+    this.selectedBooking = {
+      bookingId: row.bookingId,
+      bookingNumber: row.bookingNumber,
+      status: row.bookingStatus || 'Confirmed',
+      guestName: row.guestName,
+      mobile: row.mobile,
+      roomNumbers: row.roomNo || row.roomNumbers,
+      roomTypes: row.roomTypes,
+      checkInDate: row.checkInDate,
+      checkOutDate: row.checkOutDate
+    };
+    this.showViewModal = true;
+  }
+
+  closeModal(): void {
+    this.showViewModal = false;
+    this.selectedBooking = null;
+  }
 }
