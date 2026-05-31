@@ -52,5 +52,19 @@ getBookingForEdit(id: number): Observable<any> {
     `${this.baseUrl}/${id}/edit`
   );
 }
+// Assuming your base URL or API mapping environment configuration is managed here
+  //private readonly apiUrl = 'api/bookingdocuments';
+     private readonly apiUrl = `${apiBaseUrl}/bookingdocuments`;
+/**
+   * Uploads a guest identification document to the backend data server
+   * @param formData The multipart form data payload containing the file and booking context parameters
+   */
+  uploadBookingDocument(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/upload`, formData);
+  }
+  updateBookingOccupants(bookingId: number, occupants: any[]): Observable<any> {
+  // Matches your backend endpoint route. Replace with your exact route string if different
+  return this.http.put(`${this.baseUrl}/${bookingId}/occupants`, occupants);
+}
 
 }

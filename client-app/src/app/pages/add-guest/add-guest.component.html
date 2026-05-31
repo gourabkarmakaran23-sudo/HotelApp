@@ -4,9 +4,9 @@
       <button class="btn back-btn" (click)="router.navigate(['/upcoming-checkin'])">
         <i class="fa fa-arrow-left"></i> Back
       </button>
-      <button class="btn">Print</button>
-      <button class="btn">Print (Draft)</button>
-      <button class="btn">Payment</button>
+      <button class="btn" (click)="triggerPrint()">Print</button>
+      <button class="btn" (click)="triggerPrint()">Print (Draft)</button>
+      <button class="btn" (click)="navigateToPayment()">Payment</button>
     </div>
     <div class="toolbar-right">
       <button class="btn primary-action-btn" (click)="openAddGuestModal()">
@@ -16,15 +16,15 @@
   </div>
 
   <div class="page-header" *ngIf="bookingDetails">
-    Guest Details of Booking No: <span class="highlight">{{ bookingDetails.bookingNumber || '---' }}</span> 
-    | Main Client: <span class="highlight">{{ bookingDetails.guestName }}</span> 
+    Guest Details of Booking No: <span class="highlight">{{ bookingDetails.bookingNumber || '---' }}</span>
+    | Main Client: <span class="highlight">{{ bookingDetails.guestName }}</span>
     | Phone Contact: <span class="highlight">{{ bookingDetails.mobile }}</span>
   </div>
 
-  <div class="main-content-layout">
-    <div class="table-container-card">
+  <div class="main-content-layout" style="display: block;">
+    <div class="table-container-card" style="width: 100%;">
       <div class="table-sub-header">
-        <label>Show 
+        <label>Show
           <select class="inline-select">
             <option>10</option>
             <option>25</option>
@@ -54,6 +54,20 @@
             <td><span class="badge">{{ guest.idType }}</span></td>
             <td>{{ guest.idNumber || '---' }}</td>
             <td class="text-center actions-cell">
+              <input type="file" #rowFileInput style="display: none;" (change)="onRowFileSelected($event, guest, i)"
+                accept="image/*,application/pdf" />
+
+              <button *ngIf="!guest.uploadedFileName" class="action-badge-btn upload-proof-btn"
+                style="background-color: #28a745; color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; margin-right: 4px; font-weight: 500;"
+                (click)="rowFileInput.click()">
+                <i class="fa fa-cloud-upload"></i> Upload ID Proof
+              </button>
+
+              <span *ngIf="guest.uploadedFileName" class="file-attached-badge"
+                style="color: #28a745; font-weight: bold; margin-right: 12px; font-size: 13px; display: inline-block; vertical-align: middle;">
+                <i class="fa fa-check-circle"></i> {{ guest.uploadedFileName }}
+              </span>
+
               <button class="action-badge-btn edit" (click)="editGuest(i)">
                 <i class="fa fa-pencil"></i> Edit
               </button>
@@ -68,23 +82,9 @@
         </tbody>
       </table>
     </div>
-
-    <div class="right-sidebar-column">
-      <div class="upload-dashboard-card">
-        <h3>Shared Documents Repository</h3>
-        <p class="section-instruction">Attach verified identification images onto this client file context folder reference module.</p>
-        <div class="upload-drag-box">
-          <label class="file-custom-facade">
-            <i class="fa fa-cloud-upload upload-icon"></i>
-            <div>Browse Local Machine</div>
-          </label>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
-<!-- Add / Edit Guest Modal Window -->
 <div class="modal-overlay-layer" *ngIf="showAddGuestModal">
   <div class="pms-fluid-modal">
     <div class="pms-modal-header">
@@ -94,16 +94,14 @@
 
     <div class="pms-modal-body">
       <div class="pms-grid-form">
-        
-        <!-- ROOM FIELD DROPDOWN SELECTION SYSTEM -->
+
         <div class="form-field-wrapper full-width">
           <label class="pms-required">Assign to Specific Room</label>
-          
           <select *ngIf="availableRooms.length > 0" [(ngModel)]="guestForm.roomNo" class="pms-select">
             <option *ngFor="let rm of availableRooms" [value]="rm">Room {{ rm }}</option>
           </select>
-
-          <input *ngIf="availableRooms.length === 0" type="text" [(ngModel)]="guestForm.roomNo" placeholder="Enter room number" class="pms-input" />
+          <input *ngIf="availableRooms.length === 0" type="text" [(ngModel)]="guestForm.roomNo"
+            placeholder="Enter room number" class="pms-input" />
         </div>
 
         <div class="form-field-wrapper">
@@ -157,7 +155,8 @@
 
         <div class="form-field-wrapper dual-span">
           <label>Id Number</label>
-          <input type="text" [(ngModel)]="guestForm.idNumber" placeholder="Document Number ID string" class="pms-input" />
+          <input type="text" [(ngModel)]="guestForm.idNumber" placeholder="Document Number ID string"
+            class="pms-input" />
         </div>
 
       </div>

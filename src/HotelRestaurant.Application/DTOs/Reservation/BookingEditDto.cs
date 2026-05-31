@@ -184,6 +184,8 @@ namespace HotelRestaurant.Application.DTOs.Reservation
 
     public class BookingGuestEditDto
     {
+        public int Id { get; set; }
+        public int BookingId { get; set; }
         public string RoomNo { get; set; } = "";
         public string Title { get; set; } = "Mr.";
         public string GuestFirstName { get; set; } = "";
@@ -193,5 +195,7 @@ namespace HotelRestaurant.Application.DTOs.Reservation
         public int? Age { get; set; }
         public string IdType { get; set; } = "Aadhar Card";
         public string IdNumber { get; set; } = "";
+        // ADD THIS TO YOUR C# DTO:// Purely for frontend transportation
+        public string UploadedFileName { get; set; } = string.Empty;
     }
 }

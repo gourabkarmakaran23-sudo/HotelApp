@@ -165,39 +165,78 @@ namespace HotelRestaurant.Application.Services.Implementations
         {
             if (guestDtos == null) return false;
 
-            // Fetch structural entity container tracking mappings
+            // 1. Fetch the booking along with its existing guests from the database tracking layers
             var booking = await _unitOfWork.Bookings.GetAllQueryable()
                 .Include(b => b.BookingGuests)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
 
             if (booking == null) return false;
 
-            // Wipe prior occupants array state safely via our Unit Of Work tracking layers
-            if (booking.BookingGuests != null && booking.BookingGuests.Any())
+            // Ensure the collection is initialized
+            booking.BookingGuests ??= new List<BookingGuest>();
+
+            // 2. Identify which guests to delete: Exist in DB but missing from the incoming DTO request list
+            var incomingIds = guestDtos.Where(d => d.Id.HasValue && d.Id.Value > 0).Select(d => d.Id!.Value).ToList();
+            var guestsToDelete = booking.BookingGuests.Where(g => !incomingIds.Contains(g.Id)).ToList();
+
+            if (guestsToDelete.Any())
             {
-                _unitOfWork.BookingGuests.DeleteRange(booking.BookingGuests);
+                _unitOfWork.BookingGuests.DeleteRange(guestsToDelete);
             }
 
-            // Insert fresh mapping profiles
+            // 3. Process the incoming list loop
             foreach (var dto in guestDtos)
             {
-                var occupant = new BookingGuest
+                // Case A: Existing Guest -> Look up the existing tracked record and update it
+                if (dto.Id.HasValue && dto.Id.Value > 0)
                 {
-                    BookingId = bookingId,
-                    RoomNo = dto.RoomNo?.Trim() ?? string.Empty,
-                    Title = dto.Title ?? "Mr.",
-                    FirstName = dto.GuestFirstName?.Trim() ?? string.Empty,
-                    LastName = dto.GuestLastName?.Trim() ?? string.Empty,
-                    Mobile = dto.Mobile?.Trim() ?? string.Empty,
-                    Gender = dto.Gender ?? "Male",
-                    Age = dto.Age,
-                    IdType = dto.IdType ?? "Aadhar Card",
-                    IdNumber = dto.IdNumber?.Trim() ?? string.Empty,
-                    UpdatedAt = DateTime.UtcNow
-                };
-                await _unitOfWork.BookingGuests.AddAsync(occupant);
+                    var existingGuest = booking.BookingGuests.FirstOrDefault(g => g.Id == dto.Id.Value);
+                    if (existingGuest != null)
+                    {
+                        existingGuest.RoomNo = dto.RoomNo?.Trim() ?? string.Empty;
+                        existingGuest.Title = dto.Title ?? "Mr.";
+
+                        // Note: Ensure your backend property names match your schema mapping (FirstName or GuestFirstName)
+                        existingGuest.FirstName = dto.GuestFirstName?.Trim() ?? string.Empty;
+                        existingGuest.LastName = dto.GuestLastName?.Trim() ?? string.Empty;
+
+                        existingGuest.Mobile = dto.Mobile?.Trim() ?? string.Empty;
+                        existingGuest.Gender = dto.Gender ?? "Male";
+                        existingGuest.Age = dto.Age;
+                        existingGuest.IdType = dto.IdType ?? "Aadhar Card";
+
+                        // CRITICAL FIX: Only overwrite IdNumber if the incoming DTO provides a new non-empty value.
+                        // This prevents your file-upload status tracker from being cleared out when saving names!
+                        if (!string.IsNullOrWhiteSpace(dto.IdNumber))
+                        {
+                            existingGuest.IdNumber = dto.IdNumber.Trim();
+                        }
+
+                        existingGuest.UpdatedAt = DateTime.UtcNow;
+                    }
+                }
+                // Case B: New Guest Entry -> Create a fresh database entity row mapping
+                else
+                {
+                    var newOccupant = new BookingGuest
+                    {
+                        BookingId = bookingId,
+                        RoomNo = dto.RoomNo?.Trim() ?? string.Empty,
+                        Title = dto.Title ?? "Mr.",
+                        FirstName = dto.GuestFirstName?.Trim() ?? string.Empty,
+                        LastName = dto.GuestLastName?.Trim() ?? string.Empty,
+                        Mobile = dto.Mobile?.Trim() ?? string.Empty,
+                        Gender = dto.Gender ?? "Male",
+                        Age = dto.Age,
+                        IdType = dto.IdType ?? "Aadhar Card",
+                        IdNumber = dto.IdNumber?.Trim() ?? string.Empty,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    await _unitOfWork.BookingGuests.AddAsync(newOccupant);
+                }
             }
 
+            // 4. Commit all tracking updates securely to your permanent relational database storage
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
@@ -466,9 +505,11 @@ namespace HotelRestaurant.Application.Services.Implementations
                 .GetAllQueryable()
                 .Include(x => x.Guest)
                 .Include(x => x.Invoices)
+                 .Include(x => x.BookingGuests) // <-- CRITICAL: Include the backend navigation property here
                 .Include(x => x.ReservationRooms)
+
                     .ThenInclude(x => x.Room)
-                .Include(x => x.BookingGuests) // <-- CRITICAL: Include the backend navigation property here
+
                 .FirstOrDefaultAsync(x => x.Id == bookingId);
 
             if (booking == null)
@@ -477,6 +518,11 @@ namespace HotelRestaurant.Application.Services.Implementations
             var invoice = booking.Invoices
                 .OrderByDescending(x => x.Id)
                 .FirstOrDefault();
+            // 1. Fetch any files attached to this reservation from the context
+            var relatedDocuments = await _unitOfWork.BookingDocuments
+                .GetAllQueryable()
+                .Where(d => d.BookingId == bookingId)
+                .ToListAsync();
 
             var firstRoom = booking.ReservationRooms.FirstOrDefault();
 
@@ -538,18 +584,38 @@ namespace HotelRestaurant.Application.Services.Implementations
 
                 // ADD THIS MAPPING BLOCK: 
                 BookingGuests = booking.BookingGuests
-                    .Select(bg => new BookingGuestEditDto
+                    .Select(bg =>
                     {
-                        // Fallback to room logic or mapping fields explicitly based on your DB schema properties
-                        RoomNo = bg.RoomNo ?? bg.RoomNo ?? "",
-                        Title = bg.Title ?? "Mr.",
-                        GuestFirstName = bg.FirstName ?? bg.FirstName ?? "",
-                        GuestLastName = bg.LastName ?? bg.LastName ?? "",
-                        Mobile = bg.Mobile ?? "",
-                        Gender = bg.Gender ?? "Male",
-                        Age = bg.Age,
-                        IdType = bg.IdType ?? "Aadhar Card",
-                        IdNumber = bg.IdNumber ?? ""
+                        // // Find a matching document context record using unique identifiers passed up during uploading
+                        // var matchingDoc = relatedDocuments.FirstOrDefault(d =>
+                        //     d.FileName.Contains(bg.FirstName) &&
+                        //     d.FileName.Contains(bg.RoomNo)
+                        // );
+                        // FIX: Be careful with column name mappings here! 
+                        // We match by comparing the database 'FirstName' with the Document metadata safely
+                        var matchingDoc = relatedDocuments.FirstOrDefault(d =>
+                            d.BookingGuestId == bg.Id
+                        );
+
+                        return new BookingGuestEditDto
+                        {
+
+                            // Fallback to room logic or mapping fields explicitly based on your DB schema properties
+                            Id = bg.Id,
+                            BookingId = bg.BookingId,
+                            RoomNo = bg.RoomNo ?? bg.RoomNo ?? "",
+                            Title = bg.Title ?? "Mr.",
+                            GuestFirstName = bg.FirstName ?? bg.FirstName ?? "",
+                            GuestLastName = bg.LastName ?? bg.LastName ?? "",
+                            Mobile = bg.Mobile ?? "",
+                            Gender = bg.Gender ?? "Male",
+                            Age = bg.Age,
+                            IdType = bg.IdType ?? "Aadhar Card",
+                            IdNumber = bg.IdNumber ?? "",
+                            // MAP IT HERE (Assuming your entity or a linked table tracks the filename)
+                            // Match found? Use its original file title. Otherwise, default to blank.
+                            UploadedFileName = matchingDoc != null ? matchingDoc.FileName : ""
+                        };
                     })
                     .ToList()
             };

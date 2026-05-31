@@ -7,6 +7,8 @@ namespace HotelRestaurant.Application.DTOs.Reservation
 {
     public class BookingGuestUpdateDto
     {
+        // CRITICAL FIX: Add this property to track the primary key ID from the database
+        public int? Id { get; set; }
         public string RoomNo { get; set; } = string.Empty;
         public string Title { get; set; } = "Mr.";
         public string GuestFirstName { get; set; } = string.Empty;

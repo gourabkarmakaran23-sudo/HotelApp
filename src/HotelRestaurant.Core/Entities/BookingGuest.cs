@@ -48,5 +48,8 @@ namespace HotelRestaurant.Core.Entities
         public bool IsPrimary { get; set; } = false;
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        
+        
     }
 }
