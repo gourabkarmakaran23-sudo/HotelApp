@@ -76,7 +76,7 @@
               
               <div class="action-menu-panel" [class.show]="activeMenuIndex === i">
                 <button (click)="onAction('update', row)"><i class="fa fa-edit"></i> Update Reservation</button>
-                <button (click)="onAction('addGuest', row)"><i class="fa fa-user-plus"></i> Add Guest</button>
+                <button (click)="addGuestRow(row)"><i class="fa fa-user-plus"></i> Add Guest</button>
                 <button (click)="onCheckIn(row)" class="highlight-action"><i class="fa fa-check-circle"></i> Check In</button>
                 <button (click)="onView(row)"><i class="fa fa-eye"></i> View</button>
                 <button (click)="onAction('print', row)"><i class="fa fa-print"></i> Print</button>
@@ -96,3 +96,62 @@
     </table>
   </div>
 </div>
+
+<div class="modal-overlay" *ngIf="showViewModal">
+  <div class="view-modal">
+    <button class="close-btn" (click)="closeModal()">&times;</button>
+    <h3>Reservation Details</h3>
+    <hr />
+    
+    <div class="modal-grid">
+      <div>
+        <label>Booking Number</label>
+        <p class="bold-text">{{ selectedBooking?.bookingNumber }}</p>
+      </div>
+      <div>
+        <label>Status</label>
+        <p><span class="status-pill confirmed">{{ selectedBooking?.status }}</span></p>
+      </div>
+      <div>
+        <label>Guest Name</label>
+        <p class="bold-text">{{ selectedBooking?.guestName }}</p>
+      </div>
+      <div>
+        <label>Mobile Number</label>
+        <p>{{ selectedBooking?.mobile }}</p>
+      </div>
+      <div>
+        <label>Assigned Room No</label>
+        <p class="text-primary bold-text">{{ selectedBooking?.roomNumbers || 'Assign' }}</p>
+      </div>
+      <div>
+        <label>Room Category Types</label>
+        <p>{{ selectedBooking?.roomTypes }}</p>
+      </div>
+      <div>
+        <label>Arrival Check-In</label>
+        <p class="date-in">{{ selectedBooking?.checkInDate | date:'dd-MM-yyyy' }}</p>
+      </div>
+      <div>
+        <label>Departure Check-Out</label>
+        <p class="date-out">{{ selectedBooking?.checkOutDate | date:'dd-MM-yyyy' }}</p>
+      </div>
+      <div>
+        <label>Meal Arrangement</label>
+        <p>{{ selectedBooking?.mealPlan || 'EP' }}</p>
+      </div>
+      <div>
+        <label>Total Pax (Adults/Children)</label>
+        <p>{{ selectedBooking?.pax || '2 / 0' }}</p>
+      </div>
+    </div>
+
+    <div class="modal-actions-footer">
+      <button class="btn-modal-edit" (click)="editBooking(selectedBooking?.bookingId)">
+        <i class="fa fa-edit"></i> Edit Booking
+      </button>
+      <button class="btn-modal-close" (click)="closeModal()">Close Window</button>
+    </div>
+  </div>
+</div>
+

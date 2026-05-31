@@ -5,6 +5,29 @@ import { Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { CustomAlertService } from '../../services/custom-alert.service';
 
+interface GuestRow {
+  id: number;
+  bookingNumber: string;
+  roomType: string;
+  roomNo: string;
+  mealPlan: string;
+  pax: string;
+  name: string;
+  mobile: string;
+  checkIn: string;
+  checkOut: string;
+  paidAmt: number;
+  dueAmt: number;
+  bookingStatus: string;
+  showActions?: boolean;
+  menuAlign?: 'left' | 'right';
+  menuTop?: string;
+  menuLeft?: string;
+  menuFixed?: boolean;
+}
+
+
+
 @Component({
   selector: 'app-upcoming-checkin',
   standalone: true,
@@ -13,6 +36,7 @@ import { CustomAlertService } from '../../services/custom-alert.service';
   styleUrls: ['./upcoming-checkin.component.scss']
 })
 export class UpcomingCheckinComponent implements OnInit {
+    guestRows: GuestRow[] = [];
   bookings: any[] = [];
   filteredBookings: any[] = [];
   searchText = '';
@@ -43,6 +67,28 @@ export class UpcomingCheckinComponent implements OnInit {
     event.stopPropagation(); // Stop click bubbling so host listener doesn't trigger
     this.activeMenuIndex = this.activeMenuIndex === index ? null : index;
   }
+
+  addGuestRow(row: GuestRow): void {
+
+    this.closeAllMenus();
+
+    this.router.navigateByUrl('/add-guest');
+
+  }
+
+  
+  closeAllMenus(): void {
+
+    this.guestRows.forEach(r => {
+
+      r.showActions = false;
+
+      r.menuFixed = false;
+
+    });
+
+  }
+
 
   loadBookings(): void {
   this.bookingService.getUpcomingCheckIn().subscribe({
@@ -135,8 +181,14 @@ export class UpcomingCheckinComponent implements OnInit {
       });
     });
   }
-
+// FIXED: Consolidated Edit Routing Context Method
+  editBooking(id: number): void {
+    this.closeModal();
+    this.activeMenuIndex = null;
+    this.router.navigate(['/booking-engine'], { queryParams: { id: id } });
+  }
   onView(row: any): void {
+    console.log('Viewing booking:', row);
     this.activeMenuIndex = null;
     this.selectedBooking = {
       bookingId: row.bookingId,
@@ -147,9 +199,13 @@ export class UpcomingCheckinComponent implements OnInit {
       roomNumbers: row.roomNo || row.roomNumbers,
       roomTypes: row.roomTypes,
       checkInDate: row.checkInDate,
-      checkOutDate: row.checkOutDate
+      checkOutDate: row.checkOutDate,
+      mealPlan: row.mealPlan,
+      pax: row.pax
     };
-    this.showViewModal = true;
+    
+    // ADD THIS LINE RIGHT HERE:
+    this.showViewModal = true; 
   }
 
   closeModal(): void {
