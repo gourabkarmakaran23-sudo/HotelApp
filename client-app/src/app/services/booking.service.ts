@@ -25,7 +25,7 @@ export class BookingService {
   
 }
 getBookingById(id: number) {
-
+   console.log('Fetching booking details for ID:', id);
   return this.http.get<any>(
     `${this.baseUrl}/${id}`
   );

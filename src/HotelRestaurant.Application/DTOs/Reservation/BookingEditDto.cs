@@ -58,8 +58,12 @@ namespace HotelRestaurant.Application.DTOs.Reservation
         public string PrimaryMobile { get; set; } = string.Empty;
         public decimal BalanceDue { get; set; }
 
-        public List<BookingRoomEditDto> Rooms { get; set; }
-            = new();
+
+        public List<BookingRoomEditDto> Rooms { get; set; } = new();
+
+        // ADD THIS PROPERTY:
+        public List<BookingGuestEditDto> BookingGuests { get; set; } = new();
+
     }
     // public class BookingEditDto
     // {
@@ -168,11 +172,26 @@ namespace HotelRestaurant.Application.DTOs.Reservation
         public decimal RentPerNight { get; set; }
 
         public decimal ComplimentaryNight { get; set; }
-        
+
 
         public decimal ExtraChildCharge { get; set; }
 
         public decimal TotalAmount { get; set; }
         public decimal BalanceDue { get; set; }
+    }
+
+
+
+    public class BookingGuestEditDto
+    {
+        public string RoomNo { get; set; } = "";
+        public string Title { get; set; } = "Mr.";
+        public string GuestFirstName { get; set; } = "";
+        public string GuestLastName { get; set; } = "";
+        public string Mobile { get; set; } = "";
+        public string Gender { get; set; } = "Male";
+        public int? Age { get; set; }
+        public string IdType { get; set; } = "Aadhar Card";
+        public string IdNumber { get; set; } = "";
     }
 }

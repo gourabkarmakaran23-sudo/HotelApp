@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using HotelRestaurant.Application.DTOs.Reservation;
 using HotelRestaurant.Core.Entities;
+using HotelRestaurant.Application.DTOs;
 
 namespace HotelRestaurant.Application.Services.Implementations
 {
@@ -29,6 +30,178 @@ namespace HotelRestaurant.Application.Services.Implementations
         }
 
 
+        #region Create Booking Core Logic (Refactored from Controller)
+        public async Task<BookingResultDto> CreateBookingAsync(CreateBookingDto dto)
+        {
+            if (dto == null) throw new ArgumentNullException(nameof(dto), "Payload cannot be empty.");
+
+            // 1. Process String Fallbacks
+            string validatedFirstName = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingFirstName : dto.PrimaryFirstName) ? "WalkIn" : (dto.SameAsCustomer ? dto.BillingFirstName : dto.PrimaryFirstName);
+            string validatedLastName = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingLastName : dto.PrimaryLastName) ? "Guest" : (dto.SameAsCustomer ? dto.BillingLastName : dto.PrimaryLastName);
+            string validatedPhone = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingMobile : dto.PrimaryMobile) ? "0000000000" : (dto.SameAsCustomer ? dto.BillingMobile : dto.PrimaryMobile);
+
+            // 2. Create the Primary Guest Account Profile (Main Booker/Billing entity)
+            var guest = new Guest
+            {
+                FirstName = validatedFirstName,
+                LastName = validatedLastName,
+                Phone = validatedPhone,
+                Email = string.IsNullOrWhiteSpace(dto.Email) ? "no-email@hotel.com" : dto.Email,
+                Address = string.IsNullOrWhiteSpace(dto.BillingAddress) ? "Not Provided" : dto.BillingAddress,
+                NationalId = "PENDING_ID_SCAN",
+                DateOfBirth = new DateTime(1990, 1, 1)
+            };
+
+            await _unitOfWork.Guests.AddAsync(guest);
+            await _unitOfWork.SaveChangesAsync();
+
+            // 3. Create Booking Container
+            var bookingNumber = $"RES-{DateTime.Now:yyyyMMddHHmmss}";
+            var booking = new Booking
+            {
+                BookingNumber = bookingNumber,
+                GuestId = guest.Id,
+                BookingDate = DateTime.UtcNow,
+                TotalAmount = dto.TotalAmount,
+                Status = BookingStatus.Confirmed,
+                BookingType = dto.BookingType,
+                BookingReference = dto.BookingReference,
+                SoldBy = dto.SoldBy,
+                ArrivalFrom = dto.ArrivalFrom ?? "",
+                CustomerProfile = dto.CustomerProfile ?? "",
+                PurposeOfVisit = dto.PurposeOfVisit ?? "",
+                Remarks = dto.Remarks ?? ""
+            };
+
+            await _unitOfWork.Bookings.AddAsync(booking);
+            await _unitOfWork.SaveChangesAsync();
+
+            // 4. Create Reservation Rooms & Seed Initial BookingGuests Entries
+            var roomsList = await _unitOfWork.Rooms.GetAllAsync();
+            foreach (var roomDto in dto.Rooms)
+            {
+                var room = roomsList.FirstOrDefault(r => r.RoomNumber.Trim() == roomDto.RoomNo.Trim());
+                if (room == null) continue;
+
+                // Check Room Availability State
+                var alreadyBooked = await _unitOfWork.ReservationRooms.GetAllQueryable()
+                    .AnyAsync(x => x.RoomId == room.Id
+                              && dto.CheckIn < x.CheckOutDate
+                              && dto.CheckOut > x.CheckInDate
+                              && x.Status != BookingStatus.Cancelled);
+
+                if (alreadyBooked)
+                {
+                    throw new InvalidOperationException($"Room {room.RoomNumber} is already booked for selected dates.");
+                }
+
+                var reservationRoom = new ReservationRoom
+                {
+                    BookingId = booking.Id,
+                    RoomId = room.Id,
+                    CheckInDate = dto.CheckIn,
+                    CheckOutDate = dto.CheckOut,
+                    Adults = roomDto.Adults,
+                    Children = roomDto.Children,
+                    RoomAmount = roomDto.TotalAmount,
+                    Status = BookingStatus.Pending,
+                    Notes = $"Plan: {roomDto.MealPlan}",
+                    Pax = (roomDto.Adults + roomDto.Children).ToString()
+                };
+
+                await _unitOfWork.ReservationRooms.AddAsync(reservationRoom);
+                room.Status = RoomStatus.Reserved;
+
+                // CRITICAL ADDITION: Create occupant profile tracking records for EVERY single room allocated
+                var initialOccupantRow = new BookingGuest
+                {
+                    BookingId = booking.Id,
+                    RoomNo = roomDto.RoomNo.Trim(),
+                    Title = "Mr.",
+                    FirstName = validatedFirstName,  // Defaults to Rahul for room 101 AND 102
+                    LastName = validatedLastName,
+                    Mobile = validatedPhone,
+                    Gender = "Male",
+                    Age = null,
+                    IdType = "Aadhar Card",
+                    IdNumber = "",
+                    IsPrimary = (booking.ReservationRooms.Count == 0), // true only for the first room item processed
+                    UpdatedAt = DateTime.UtcNow
+                };
+                await _unitOfWork.BookingGuests.AddAsync(initialOccupantRow);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            // 5. Create Invoice Log Context
+            var invoice = new Invoice
+            {
+                BookingId = booking.Id,
+                InvoiceDate = DateTime.UtcNow,
+                Subtotal = dto.TotalAmount,
+                Tax = dto.TotalAmount * 0.05m,
+                Total = dto.TotalAmount * 1.05m,
+                PaidAmount = dto.AdvanceAmount,
+                DueAmount = (dto.TotalAmount * 1.05m) - dto.AdvanceAmount,
+                PaymentStatus = dto.AdvanceAmount >= dto.TotalAmount ? PaymentStatus.Paid : dto.AdvanceAmount > 0 ? PaymentStatus.PartiallyPaid : PaymentStatus.Unpaid
+            };
+
+            await _unitOfWork.Invoices.AddAsync(invoice);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new BookingResultDto
+            {
+                Success = true,
+                BookingId = booking.Id,
+                BookingNumber = booking.BookingNumber,
+                GuestId = guest.Id,
+                InvoiceId = invoice.Id
+            };
+        }
+        #endregion
+
+        #region Update Specific Room Occupants List
+        public async Task<bool> UpdateBookingOccupantsAsync(int bookingId, List<BookingGuestUpdateDto> guestDtos)
+        {
+            if (guestDtos == null) return false;
+
+            // Fetch structural entity container tracking mappings
+            var booking = await _unitOfWork.Bookings.GetAllQueryable()
+                .Include(b => b.BookingGuests)
+                .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+            if (booking == null) return false;
+
+            // Wipe prior occupants array state safely via our Unit Of Work tracking layers
+            if (booking.BookingGuests != null && booking.BookingGuests.Any())
+            {
+                _unitOfWork.BookingGuests.DeleteRange(booking.BookingGuests);
+            }
+
+            // Insert fresh mapping profiles
+            foreach (var dto in guestDtos)
+            {
+                var occupant = new BookingGuest
+                {
+                    BookingId = bookingId,
+                    RoomNo = dto.RoomNo?.Trim() ?? string.Empty,
+                    Title = dto.Title ?? "Mr.",
+                    FirstName = dto.GuestFirstName?.Trim() ?? string.Empty,
+                    LastName = dto.GuestLastName?.Trim() ?? string.Empty,
+                    Mobile = dto.Mobile?.Trim() ?? string.Empty,
+                    Gender = dto.Gender ?? "Male",
+                    Age = dto.Age,
+                    IdType = dto.IdType ?? "Aadhar Card",
+                    IdNumber = dto.IdNumber?.Trim() ?? string.Empty,
+                    UpdatedAt = DateTime.UtcNow
+                };
+                await _unitOfWork.BookingGuests.AddAsync(occupant);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+        #endregion
         #region   CheckIn List N
         public async Task<List<CheckInListDto>>
             GetCheckInListAsync()
@@ -154,14 +327,14 @@ namespace HotelRestaurant.Application.Services.Implementations
                 BookingId = x.Id,
 
                 BookingNumber = x.BookingNumber,
-                BookingDate =x.CreatedAt.Date,
+                BookingDate = x.CreatedAt.Date,
                 RoomTypes =
                     string.Join(", ",
                         x.ReservationRooms
                             .Select(r => r.Room.RoomTypes.Name)
                     ),
 
-                  RoomNumbers =
+                RoomNumbers =
                     string.Join(", ",
                         x.ReservationRooms
                             .Select(r => r.Room.RoomNumber)
@@ -183,7 +356,7 @@ namespace HotelRestaurant.Application.Services.Implementations
                 Mobile =
                     x.Guest.Phone,
 
- 
+
 
                 CheckInDate =
                     x.ReservationRooms.Min(r => r.CheckInDate),
@@ -290,34 +463,29 @@ namespace HotelRestaurant.Application.Services.Implementations
         public async Task<BookingEditDto?> GetBookingForEditAsync(int bookingId)
         {
             var booking = await _unitOfWork.Bookings
-                     .GetAllQueryable()
-
-             .Include(x => x.Guest)
-             .Include(x => x.Invoices)
-
-             .Include(x => x.ReservationRooms)
-                 .ThenInclude(x => x.Room)
-
-             .FirstOrDefaultAsync(x => x.Id == bookingId);
+                .GetAllQueryable()
+                .Include(x => x.Guest)
+                .Include(x => x.Invoices)
+                .Include(x => x.ReservationRooms)
+                    .ThenInclude(x => x.Room)
+                .Include(x => x.BookingGuests) // <-- CRITICAL: Include the backend navigation property here
+                .FirstOrDefaultAsync(x => x.Id == bookingId);
 
             if (booking == null)
                 return null;
+
             var invoice = booking.Invoices
-    .OrderByDescending(x => x.Id)
-    .FirstOrDefault();
+                .OrderByDescending(x => x.Id)
+                .FirstOrDefault();
 
             var firstRoom = booking.ReservationRooms.FirstOrDefault();
 
             return new BookingEditDto
             {
                 Id = booking.Id,
-
                 BookingNumber = booking.BookingNumber,
-
                 CheckIn = booking.ReservationRooms.Min(x => x.CheckInDate),
-
                 CheckOut = booking.ReservationRooms.Max(x => x.CheckOutDate),
-
                 TotalAmount = booking.TotalAmount,
 
                 // Reservation Details
@@ -335,7 +503,6 @@ namespace HotelRestaurant.Application.Services.Implementations
                 BillingMobile = booking.Guest?.Phone ?? "",
                 BillingAddress = booking.Guest?.Address ?? "",
                 Email = booking.Guest?.Email ?? "",
-                //Gstin = booking.Guest?.Gstin ?? "",
                 Title = booking.Guest?.Title ?? "",
 
                 // Primary Guest
@@ -345,151 +512,48 @@ namespace HotelRestaurant.Application.Services.Implementations
                 GuestMobile = booking.Guest?.Phone ?? "",
                 Nationality = booking.Guest?.Nationality ?? "Indian",
 
-                // Billing
                 // Billing (FROM INVOICE)
                 BookingCharge = invoice?.Subtotal ?? 0,
                 GstAmount = invoice?.Tax ?? 0,
                 GrandTotal = invoice?.Total ?? 0,
-
                 AdvanceAmount = invoice?.PaidAmount ?? 0,
                 BalanceDue = invoice?.DueAmount ?? 0,
+
                 Rooms = booking.ReservationRooms
                     .Select(r => new BookingRoomEditDto
                     {
                         RoomId = r.RoomId,
-
                         RoomTypeId = r.Room?.RoomTypesId ?? 0,
-
                         RoomNo = r.Room?.RoomNumber ?? "",
-
                         MealPlan = ExtractMealPlan(r.Notes),
-
                         Adults = r.Adults,
-
                         Children = r.Children,
-
                         ChildAge = r.ChildAge ?? "",
-
                         RentPerNight = r.RentPerNight,
-
                         ComplimentaryNight = r.ComplimentaryNight,
-
                         ExtraChildCharge = r.ExtraChildCharge,
-
                         TotalAmount = r.RoomAmount
+                    })
+                    .ToList(),
+
+                // ADD THIS MAPPING BLOCK: 
+                BookingGuests = booking.BookingGuests
+                    .Select(bg => new BookingGuestEditDto
+                    {
+                        // Fallback to room logic or mapping fields explicitly based on your DB schema properties
+                        RoomNo = bg.RoomNo ?? bg.RoomNo ?? "",
+                        Title = bg.Title ?? "Mr.",
+                        GuestFirstName = bg.FirstName ?? bg.FirstName ?? "",
+                        GuestLastName = bg.LastName ?? bg.LastName ?? "",
+                        Mobile = bg.Mobile ?? "",
+                        Gender = bg.Gender ?? "Male",
+                        Age = bg.Age,
+                        IdType = bg.IdType ?? "Aadhar Card",
+                        IdNumber = bg.IdNumber ?? ""
                     })
                     .ToList()
             };
         }
-
-        // public async Task<BookingEditDto?> GetBookingForEditAsync(int bookingId)
-        // {
-        //     var booking = await _unitOfWork.Bookings
-        //         .GetAllQueryable()
-
-        //         .Include(x => x.Guest)
-
-        //         .Include(x => x.ReservationRooms)
-        //             .ThenInclude(x => x.Room)
-        //                 .ThenInclude(x => x.RoomTypes)
-
-        //         .FirstOrDefaultAsync(x => x.Id == bookingId);
-
-        //     if (booking == null)
-        //         return null;
-
-        //     var firstRoom =
-        //         booking.ReservationRooms.FirstOrDefault();
-
-        //     return new BookingEditDto
-        //     {
-        //         BookingId = booking.Id,
-
-        //         BookingNumber = booking.BookingNumber,
-
-        //         BookingType = booking.BookingType,
-        //         BookingReference = booking.BookingReference,
-        //         SoldBy = booking.SoldBy,
-        //         ArrivalFrom = booking.ArrivalFrom,
-        //         CustomerProfile = booking.CustomerProfile,
-        //         PurposeOfVisit = booking.PurposeOfVisit,
-        //         Remarks = booking.Remarks,
-
-        //         CheckIn =
-        //             booking.ReservationRooms.Min(x => x.CheckInDate),
-
-        //         CheckOut =
-        //             booking.ReservationRooms.Max(x => x.CheckOutDate),
-
-        //         TotalAmount = booking.TotalAmount,
-
-        //         BillingTitle = "",
-
-        //         BillingFirstName =
-        //             booking.Guest?.FirstName ?? "",
-
-        //         BillingLastName =
-        //             booking.Guest?.LastName ?? "",
-
-        //         BillingMobile =
-        //             booking.Guest?.Phone ?? "",
-
-        //         BillingAddress =
-        //             booking.Guest?.Address ?? "",
-
-        //         Email =
-        //             booking.Guest?.Email ?? "",
-
-        //         Gstin = "",
-
-        //         PaymentMode = "Cash",
-
-        //         AdvanceAmount =
-        //             booking.Invoices.FirstOrDefault()?.PaidAmount ?? 0,
-
-        //         AdvanceRemarks = "",
-
-        //         SameAsCustomer = true,
-
-        //         PrimaryTitle = "",
-
-        //         PrimaryFirstName =
-        //             booking.Guest?.FirstName ?? "",
-
-        //         PrimaryLastName =
-        //             booking.Guest?.LastName ?? "",
-
-        //         PrimaryMobile =
-        //             booking.Guest?.Phone ?? "",
-
-        //         Nationality = "Indian",
-
-        //         Rooms = booking.ReservationRooms
-        //             .Select(r => new BookingRoomEditDto
-        //             {
-        //                 ReservationRoomId = r.Id,
-
-        //                 RoomId = r.RoomId,
-
-        //                 RoomTypeId =
-        //                     r.Room?.RoomTypesId ?? 0,
-
-        //                 RoomNo =
-        //                     r.Room?.RoomNumber ?? "",
-
-        //                 MealPlan =
-        //                     ExtractMealPlan(r.Notes),
-
-        //                 Adults = r.Adults,
-
-        //                 Children = r.Children,
-
-        //                 TotalAmount = r.RoomAmount
-
-        //             }).ToList()
-        //     };
-        // }
-
         #endregion
     }
 }

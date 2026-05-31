@@ -16,6 +16,7 @@ namespace HotelRestaurant.Infrastructure.Data
 
         public DbSet<RoomTypeFacility> RoomTypeFacility { get; set; }
         public DbSet<Guest> Guests => Set<Guest>();
+        public DbSet<BookingGuest> BookingGuests { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         //public DbSet<Reservation> Reservations => Set<Reservation>();
         public DbSet<Booking> Bookings => Set<Booking>();

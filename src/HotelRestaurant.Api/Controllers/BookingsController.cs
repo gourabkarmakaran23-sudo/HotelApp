@@ -35,189 +35,27 @@ namespace HotelRestaurant.Api.Controllers
 
             return Ok(data);
         }
-        #endregion        
-        #region CreateBooking
-        // LEAVE ROUTE BALK BLANK SO IT PINPOINTS ABSOLUTE BASE URL ROUTE ("api/bookings")
+        #endregion
+        #region Create Reservation (Clean SOLID approach)
         [HttpPost("")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto dto)
         {
-            if (dto == null)
-                return BadRequest("Payload data cannot be empty.");
-
             try
             {
-                // Validate string fields to protect against database NOT NULL column constraints
-                string validatedFirstName = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingFirstName : dto.PrimaryFirstName) ? "WalkIn" : (dto.SameAsCustomer ? dto.BillingFirstName : dto.PrimaryFirstName);
-                string validatedLastName = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingLastName : dto.PrimaryLastName) ? "Guest" : (dto.SameAsCustomer ? dto.BillingLastName : dto.PrimaryLastName);
-                string validatedPhone = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingMobile : dto.PrimaryMobile) ? "0000000000" : (dto.SameAsCustomer ? dto.BillingMobile : dto.PrimaryMobile);
-
-                // 1. Create the Guest Entity
-                var guest = new Guest
-                {
-                    FirstName = validatedFirstName,
-                    LastName = validatedLastName,
-                    Phone = validatedPhone,
-                    Email = string.IsNullOrWhiteSpace(dto.Email) ? "no-email@hotel.com" : dto.Email,
-                    Address = string.IsNullOrWhiteSpace(dto.BillingAddress) ? "Not Provided" : dto.BillingAddress,
-                    NationalId = "PENDING_ID_SCAN",
-                    DateOfBirth = new DateTime(1990, 1, 1)
-                };
-
-                await _unitOfWork.Guests.AddAsync(guest);
-                await _unitOfWork.SaveChangesAsync();
-
-
-                // =========================
-                // CREATE BOOKING MASTER
-                // =========================
-
-                var bookingNumber =
-                    $"RES-{DateTime.Now:yyyyMMddHHmmss}";
-
-                var booking = new Booking
-                {
-                    BookingNumber = bookingNumber,
-                    GuestId = guest.Id,
-                    BookingDate = DateTime.UtcNow,
-                    TotalAmount = dto.TotalAmount,
-                    Status = BookingStatus.Confirmed,
-                    BookingType = dto.BookingType,
-                    BookingReference = dto.BookingReference,
-                    SoldBy = dto.SoldBy,
-                    ArrivalFrom = dto.ArrivalFrom ?? "",
-                    CustomerProfile = dto.CustomerProfile ?? "",
-                    PurposeOfVisit = dto.PurposeOfVisit ?? "",
-                    Remarks = dto.Remarks ?? ""
-                };
-
-                await _unitOfWork.Bookings.AddAsync(booking);
-                await _unitOfWork.SaveChangesAsync();
-
-
-                // =========================
-                // CREATE RESERVATION ROOM
-                // =========================
-                var roomsList = await _unitOfWork.Rooms.GetAllAsync();
-                foreach (var roomDto in dto.Rooms)
-                {
-                    var room = roomsList.FirstOrDefault(r =>
-                        r.RoomNumber.Trim() ==
-                        roomDto.RoomNo.Trim());
-
-                    if (room == null)
-                        continue;
-
-                    // CHECK ROOM ALREADY BOOKED
-
-                    var alreadyBooked = await _unitOfWork.ReservationRooms
-                        .GetAllQueryable()
-                        .AnyAsync(x =>
-
-                            x.RoomId == room.Id
-
-                            && dto.CheckIn < x.CheckOutDate
-
-                            && dto.CheckOut > x.CheckInDate
-
-                            && x.Status != BookingStatus.Cancelled
-                        );
-
-                    if (alreadyBooked)
-                    {
-                        return BadRequest(new
-                        {
-                            message =
-                                $"Room {room.RoomNumber} is already booked for selected dates."
-                        });
-                    }
-
-                    var notesSummary =
-                        $"Plan: {roomDto.MealPlan}";
-
-                    var reservationRoom =
-                        new ReservationRoom
-                        {
-                            BookingId = booking.Id,
-
-                            RoomId = room.Id,
-
-                            CheckInDate = dto.CheckIn,
-
-                            CheckOutDate = dto.CheckOut,
-
-                            Adults = roomDto.Adults,
-
-                            Children = roomDto.Children,
-
-                            RoomAmount = roomDto.TotalAmount,
-
-                            Status = BookingStatus.Pending,
-
-                            Notes = notesSummary,
-
-                            Pax =
-                                (roomDto.Adults + roomDto.Children)
-                                .ToString()
-                        };
-
-                    await _unitOfWork.ReservationRooms
-                        .AddAsync(reservationRoom);
-
-                    room.Status = RoomStatus.Reserved;
-                }
-
-                await _unitOfWork.SaveChangesAsync();
-                // =========================
-                // CREATE INVOICE
-                // =========================
-
-                var invoice = new Invoice
-                {
-                    BookingId = booking.Id,
-
-                    InvoiceDate = DateTime.UtcNow,
-
-                    Subtotal = dto.TotalAmount,
-
-                    Tax = dto.TotalAmount * 0.05m,
-
-                    Total = dto.TotalAmount * 1.05m,
-
-                    PaidAmount = dto.AdvanceAmount,
-
-                    DueAmount =
-                        (dto.TotalAmount * 1.05m) - dto.AdvanceAmount,
-
-                    PaymentStatus =
-                        dto.AdvanceAmount >= dto.TotalAmount
-                            ? PaymentStatus.Paid
-                            : dto.AdvanceAmount > 0
-                                ? PaymentStatus.PartiallyPaid
-                                : PaymentStatus.Unpaid
-                };
-
-                await _unitOfWork.Invoices.AddAsync(invoice);
-
-                await _unitOfWork.SaveChangesAsync();
-
-                return Ok(new
-                {
-                    success = true,
-                    bookingId = booking.Id,
-                    bookingNumber = booking.BookingNumber,
-                    guestId = guest.Id,
-                    invoiceId = invoice.Id
-                });
-
-
+                var result = await _reservationService.CreateBookingAsync(dto);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                var internalMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-                return StatusCode(500, $"Internal Database Error: {internalMessage}");
+                return StatusCode(500, $"Internal Database Error processing stay: {ex.Message}");
             }
         }
         #endregion
+
 
         #region GetAllBookings
 
@@ -347,5 +185,29 @@ namespace HotelRestaurant.Api.Controllers
         }
 
         #endregion
+
+        #region Update Specific Room Occupant Companions
+        [HttpPut("{id}/occupants")]
+        public async Task<IActionResult> UpdateBookingOccupants(int id, [FromBody] List<BookingGuestUpdateDto> guestDtos)
+        {
+            try
+            {
+                if (guestDtos == null || guestDtos.Count == 0)
+                    return BadRequest("Occupants updates target dataset compilation collection cannot be left empty.");
+
+                var success = await _reservationService.UpdateBookingOccupantsAsync(id, guestDtos);
+
+                if (!success)
+                    return NotFound($"Unable to process changes. Target stay identity index #{id} was not tracked inside our registers.");
+
+                return Ok(new { success = true, message = "Occupants listing state collection updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Tracking exception matching records: {ex.Message}");
+            }
+        }
+        #endregion
+
     }
 }

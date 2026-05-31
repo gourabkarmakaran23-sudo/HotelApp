@@ -35,6 +35,9 @@ namespace HotelRestaurant.Core.Entities
 
         public ICollection<ReservationRoom> ReservationRooms { get; set; }
             = new List<ReservationRoom>();
+        
+        public ICollection<BookingGuest> BookingGuests { get; set; }
+            = new List<BookingGuest>();
 
         public ICollection<Invoice> Invoices { get; set; }
             = new List<Invoice>();

@@ -68,13 +68,13 @@ export class UpcomingCheckinComponent implements OnInit {
     this.activeMenuIndex = this.activeMenuIndex === index ? null : index;
   }
 
-  addGuestRow(row: GuestRow): void {
-
-    this.closeAllMenus();
-
-    this.router.navigateByUrl('/add-guest');
-
-  }
+ addGuestRow(row: any): void {
+  this.activeMenuIndex = null;
+  // Pass bookingId explicitly in the query parameters
+  this.router.navigate(['/add-guest'], { 
+    queryParams: { bookingId: row.bookingId } 
+  });
+}
 
   
   closeAllMenus(): void {
