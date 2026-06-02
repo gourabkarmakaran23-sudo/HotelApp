@@ -9,6 +9,7 @@ import { AddGuestComponent } from './pages/add-guest/add-guest.component';
 import { GuestDetailsComponent } from './pages/guest-details/guest-details.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { UpcomingCheckinComponent } from './pages/upcoming-checkin/upcoming-checkin.component';
+import { PaymentListComponent } from './pages/payment-list/payment-list.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -43,6 +44,16 @@ export const routes: Routes = [
   {
     path: 'checkout',
     component: CheckoutComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'payment',
+    component: PaymentListComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'payment-list/:id',
+    component: PaymentListComponent,
     canActivate: [AuthGuard]
   },
   {

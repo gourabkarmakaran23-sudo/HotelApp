@@ -12,12 +12,12 @@ namespace HotelRestaurant.Infrastructure.Data
 
         public DbSet<Hotel> Hotels => Set<Hotel>();
         public DbSet<Room> Rooms => Set<Room>();
-        public DbSet<RoomTypes> RoomTypes { get; set; }
+        public DbSet<RoomTypes> RoomTypes => Set<RoomTypes>();
 
-        public DbSet<RoomTypeFacility> RoomTypeFacility { get; set; }
+        public DbSet<RoomTypeFacility> RoomTypeFacility => Set<RoomTypeFacility>();
         public DbSet<Guest> Guests => Set<Guest>();
-        public DbSet<BookingGuest> BookingGuests { get; set; }
-        public DbSet<BookingDocument> BookingDocuments { get; set; }
+        public DbSet<BookingGuest> BookingGuests => Set<BookingGuest>();
+        public DbSet<BookingDocument> BookingDocuments => Set<BookingDocument>();
         public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         //public DbSet<Reservation> Reservations => Set<Reservation>();
         public DbSet<Booking> Bookings => Set<Booking>();
@@ -27,7 +27,18 @@ namespace HotelRestaurant.Infrastructure.Data
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         public DbSet<Invoice> Invoices => Set<Invoice>();
+        public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<InventoryItem> InventoryItems => Set<InventoryItem>();
+
+        #region Master Data Context Configuration
+        public DbSet<Currency> Currencies => Set<Currency>();
+        public DbSet<PaymentMethods> PaymentMethods => Set<PaymentMethods>();
+        public DbSet<CommissionAgent> CommissionAgents => Set<CommissionAgent>();
+    
+         public DbSet<FinancialYear> FinancialYears => Set<FinancialYear>();
+         public DbSet<AgentCommission> AgentCommissions => Set<AgentCommission>();
+   
+        #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -201,6 +212,22 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.Property(i => i.ReorderLevel).HasPrecision(12, 2);
                 entity.Property(i => i.CostPrice).HasPrecision(12, 2);
                 entity.Property(i => i.Unit).HasConversion<string>().HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.Property(p => p.Amount).HasPrecision(12, 2);
+                entity.Property(p => p.ReceiptNo).HasMaxLength(100);
+
+                entity.HasOne(p => p.Booking)
+                    .WithMany(b => b.Payments)
+                    .HasForeignKey(p => p.BookingId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(p => p.Invoice)
+                    .WithMany(i => i.Payments)
+                    .HasForeignKey(p => p.InvoiceId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
         }
     }

@@ -12,6 +12,8 @@ using HotelRestaurant.Application.DTOs.Reservation;
 using HotelRestaurant.Core.Entities;
 using HotelRestaurant.Application.DTOs;
 
+#pragma warning disable CS8602
+
 namespace HotelRestaurant.Application.Services.Implementations
 {
     public class ReservationService : IReservationService
@@ -149,6 +151,24 @@ namespace HotelRestaurant.Application.Services.Implementations
             await _unitOfWork.Invoices.AddAsync(invoice);
             await _unitOfWork.SaveChangesAsync();
 
+            // If advance payment exists, create a Payment record linked to the invoice
+            if (dto.AdvanceAmount > 0)
+            {
+                var payment = new HotelRestaurant.Core.Entities.Payment
+                {
+                    BookingId = booking.Id,
+                    InvoiceId = invoice.Id,
+                    Amount = dto.AdvanceAmount,
+                    Method = Enum.TryParse<PaymentMethod>(dto.PaymentMode, out var pm) ? pm : PaymentMethod.Cash,
+                    PaymentDate = DateTime.UtcNow,
+                    ReceiptNo = $"REC-ADV-{booking.Id}",
+                    Remarks = dto.AdvanceRemarks ?? "Advance payment"
+                };
+
+                await _unitOfWork.Payments.AddAsync(payment);
+                await _unitOfWork.SaveChangesAsync();
+            }
+
             return new BookingResultDto
             {
                 Success = true,
@@ -253,7 +273,7 @@ namespace HotelRestaurant.Application.Services.Implementations
 
                 .Include(x => x.ReservationRooms)
                     .ThenInclude(r => r.Room)
-                        .ThenInclude(rt => rt.RoomTypes)
+                        .ThenInclude(rt => rt.RoomTypes!)
 
                 .Include(x => x.Invoices)
 
@@ -267,18 +287,16 @@ namespace HotelRestaurant.Application.Services.Implementations
                     BookingNumber = b.BookingNumber,
 
                     CustomerName =
-                        b.Guest.FirstName + " " +
-                        b.Guest.LastName,
+                        $"{b.Guest?.FirstName ?? string.Empty} {b.Guest?.LastName ?? string.Empty}".Trim(),
 
                     GuestName =
-                        b.Guest.FirstName + " " +
-                        b.Guest.LastName,
+                        $"{b.Guest?.FirstName ?? string.Empty} {b.Guest?.LastName ?? string.Empty}".Trim(),
 
                     RoomNo =
-                        r.Room.RoomNumber,
+                        r.Room?.RoomNumber ?? string.Empty,
 
                     RoomType =
-                        r.Room.RoomTypes.Name,
+                        r.Room?.RoomTypes?.Name ?? string.Empty,
 
                     MealPlan =
                         ExtractMealPlan(r.Notes),
@@ -287,7 +305,7 @@ namespace HotelRestaurant.Application.Services.Implementations
                         r.Pax,
 
                     Mobile =
-                        b.Guest.Phone,
+                        b.Guest?.Phone ?? string.Empty,
 
                     PaidAmount =
                         b.Invoices.Sum(i => i.PaidAmount),
@@ -347,7 +365,7 @@ namespace HotelRestaurant.Application.Services.Implementations
 
                 .Include(x => x.ReservationRooms)
                     .ThenInclude(r => r.Room)
-                        .ThenInclude(rt => rt.RoomTypes)
+                        .ThenInclude(rt => rt.RoomTypes!)
 
                 .Where(x =>
                     x.ReservationRooms.Any(r =>
@@ -370,13 +388,15 @@ namespace HotelRestaurant.Application.Services.Implementations
                 RoomTypes =
                     string.Join(", ",
                         x.ReservationRooms
-                            .Select(r => r.Room.RoomTypes.Name)
+                            .Select(r => r.Room?.RoomTypes?.Name)
+                            .Where(name => !string.IsNullOrEmpty(name))
                     ),
 
                 RoomNumbers =
                     string.Join(", ",
                         x.ReservationRooms
-                            .Select(r => r.Room.RoomNumber)
+                            .Select(r => r.Room?.RoomNumber ?? string.Empty)
+                            .Where(number => !string.IsNullOrEmpty(number))
                     ),
                 MealPlan =
                     string.Join(", ",
@@ -389,11 +409,10 @@ namespace HotelRestaurant.Application.Services.Implementations
                     x.ReservationRooms.Sum(r => Convert.ToInt32(r.Pax)),
 
                 GuestName =
-                    x.Guest.FirstName + " " +
-                    x.Guest.LastName,
+                    $"{x.Guest?.FirstName ?? string.Empty} {x.Guest?.LastName ?? string.Empty}".Trim(),
 
                 Mobile =
-                    x.Guest.Phone,
+                    x.Guest?.Phone ?? string.Empty,
 
 
 
@@ -453,7 +472,7 @@ namespace HotelRestaurant.Application.Services.Implementations
                 .Include(x => x.Guest)
                 .Include(x => x.ReservationRooms)
                     .ThenInclude(x => x.Room)
-                        .ThenInclude(x => x.RoomTypes)
+                        .ThenInclude(x => x.RoomTypes!)
                 .FirstOrDefaultAsync(x => x.Id == bookingId);
 
             if (booking == null)
@@ -482,11 +501,13 @@ namespace HotelRestaurant.Application.Services.Implementations
 
                 roomNumbers = string.Join(", ",
                     booking.ReservationRooms
-                        .Select(x => x.Room!.RoomNumber)),
+                        .Select(x => x.Room?.RoomNumber ?? string.Empty)
+                        .Where(number => !string.IsNullOrEmpty(number))),
 
                 roomTypes = string.Join(", ",
                     booking.ReservationRooms
-                        .Select(x => x.Room!.RoomTypes!.Name)
+                        .Select(x => x.Room?.RoomTypes?.Name)
+                        .Where(name => !string.IsNullOrEmpty(name))
                         .Distinct()),
 
                 totalAmount = booking.TotalAmount,
@@ -623,3 +644,5 @@ namespace HotelRestaurant.Application.Services.Implementations
         #endregion
     }
 }
+
+#pragma warning restore CS8602

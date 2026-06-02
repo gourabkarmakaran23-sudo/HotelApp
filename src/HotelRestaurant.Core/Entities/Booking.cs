@@ -41,6 +41,7 @@ namespace HotelRestaurant.Core.Entities
 
         public ICollection<Invoice> Invoices { get; set; }
             = new List<Invoice>();
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
 
     // public class BookingStatus

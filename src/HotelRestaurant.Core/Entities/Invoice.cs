@@ -22,5 +22,6 @@ namespace HotelRestaurant.Core.Entities
         // public Reservation? Reservation { get; set; }
         public Booking? Booking { get; set; }
         public Order? Order { get; set; }
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
 }

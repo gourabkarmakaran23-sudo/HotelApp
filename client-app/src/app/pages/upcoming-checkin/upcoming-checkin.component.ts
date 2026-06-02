@@ -150,7 +150,7 @@ export class UpcomingCheckinComponent implements OnInit {
         window.print();
         break;
       case 'payment':
-        this.alertService.success(`Opening Folio Payment Window for: ${row.bookingNumber}`);
+        this.router.navigate(['/payment-list', row.bookingId], { queryParams: { bookingId: row.bookingId } });
         break;
       case 'grc':
         this.alertService.success(`Generating Guest Registration Card PDF...`);
