@@ -312,8 +312,7 @@ var reservationRooms = await context.ReservationRooms
         var currentDate = fromDate.Date;
         while (currentDate <= toDate.Date)
         {
-            var dateKey = currentDate.ToString("yyyy-MM-dd");
-            var dateDisplay = currentDate.ToString("dd-MM-yyyy");
+            var dateKey = currentDate.ToString("dd-MM-yyyy");
             
             // Check if room has reservation for this date
           var reservation = reservationRooms.FirstOrDefault(r =>
@@ -333,7 +332,7 @@ var reservationRooms = await context.ReservationRooms
                     status = "Occupied";
             }
 
-            roomData[dateKey] = new { date = dateDisplay, status = status };
+            roomData[dateKey] = new { date = dateKey, status = status };
             currentDate = currentDate.AddDays(1);
         }
 

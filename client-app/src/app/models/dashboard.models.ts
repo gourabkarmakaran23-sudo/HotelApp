@@ -5,6 +5,17 @@ export interface DashboardSummary {
   pendingRequests: number;
 }
 
+export interface DashboardStats {
+  totalBookings: number;
+  completedBookings: number;
+  cancelledBookings: number;
+  pendingBookings: number;
+  totalRevenue: number;
+  totalRooms: number;
+  occupiedRooms: number;
+  availableRooms: number;
+}
+
 export interface OccupancyRow {
   room: string;
   status: string;

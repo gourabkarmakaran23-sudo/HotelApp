@@ -63,12 +63,16 @@ export class DashboardComponent implements OnInit {
   loading: boolean = false;
   error: string = '';
 
-  // Dummy data for sections
-  activeBookings = 24;
-  totalRevenue = 33.6;
-  occupancyRate = 75;
-  pendingRequests = 8;
-  totalBookings = 156;
+  // Dashboard metrics
+  activeBookings = 0;
+  totalRevenue = 0;
+  occupancyRate = 0;
+  pendingRequests = 0;
+  totalBookings = 0;
+  completedBookings = 0;
+  cancelledBookings = 0;
+  totalRooms = 0;
+  availableRooms = 0;
 
   bookingData: BookingData[] = [
     { id: 1, roomType: 'Premium View', premiumViews: 6, standardViews: 34, executiveViews: 46, executiveNonViews: 60, familyNonViews: 6, total: 14 },
@@ -146,6 +150,10 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.getSummary().subscribe(
       (summary) => {
         this.summary = summary;
+        this.activeBookings = summary.activeBookings;
+        this.totalRevenue = summary.revenue;
+        this.occupancyRate = summary.occupancyRate;
+        this.pendingRequests = summary.pendingRequests;
       },
       (error) => {
         console.error('Error loading summary:', error);
