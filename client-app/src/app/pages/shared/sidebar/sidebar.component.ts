@@ -35,6 +35,13 @@ export class SidebarComponent implements OnInit {
     { icon: '🛒', label: 'Purchase Manage', route: '/purchase' },
     { icon: '📈', label: 'Reports', route: '/reports' },
     { icon: '🏨', label: 'Room Facilities', route: '/facilities' },
+    //Add master pages here like Room Rerrvation and submenu
+    {icon: '⚙️', label: 'Masters', open: false, children: [
+      { label: 'Currency', route: '/currencies' },
+      { label: 'Payment Methods', route: '/payment-methods' },
+      //Add more master pages here
+    ]},
+    
     {
       icon: '📅',
       label: 'Room Reservation',

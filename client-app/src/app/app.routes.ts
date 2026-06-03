@@ -63,6 +63,9 @@ export const routes: Routes = [
   },
   {path: 'room-types', loadComponent: () => import('./pages/room-type/room-type.component').then(m => m.RoomTypeComponent), canActivate: [AuthGuard] }, 
   { path: 'rooms',      loadComponent: () => import('./pages/rooms/room.component').then(m => m.RoomComponent), canActivate: [AuthGuard] },
+  //Add all Master pages here
+  { path: 'currencies', loadComponent: () => import('./pages/masters/currency/currency.component').then(m => m.CurrencyComponent), canActivate: [AuthGuard] },
+  {path: 'payment-methods', loadComponent: () => import('./pages/masters/payment-method/payment-method.component').then(m => m.PaymentMethodComponent), canActivate: [AuthGuard] },
 {
   path: 'upcoming-checkin',
   loadComponent: () =>
