@@ -260,7 +260,8 @@ authGroup.MapPost("/login", async (LoginRequest request, AppDbContext context, I
 
 apiGroup.MapGet("/dashboard/summary", async (AppDbContext context, ClaimsPrincipal user) =>
 {
-    var activeBookings = await context.Reservations.CountAsync();
+    var activeBookings =
+    await context.Bookings.CountAsync();
     var revenue = await context.Invoices.SumAsync(i => (decimal?)i.Total) ?? 0m;
     var totalRooms = await context.Rooms.CountAsync();
     var pendingRequests = await context.Orders.CountAsync();
@@ -290,10 +291,12 @@ apiGroup.MapGet("/dashboard/occupancy", async (
     }
 
     // Get all reservations for the date range
-    var reservations = await context.Reservations
-        .Where(r => r.CheckInDate < toDate && r.CheckOutDate > fromDate)
-        .ToListAsync();
-
+var reservationRooms = await context.ReservationRooms
+    .Include(r => r.Booking)
+    .Where(r =>
+        r.CheckInDate < toDate &&
+        r.CheckOutDate > fromDate)
+    .ToListAsync();
     // Build the occupancy grid
     var occupancyData = new List<object>();
     
@@ -309,15 +312,14 @@ apiGroup.MapGet("/dashboard/occupancy", async (
         var currentDate = fromDate.Date;
         while (currentDate <= toDate.Date)
         {
-            var dateKey = currentDate.ToString("yyyy-MM-dd");
-            var dateDisplay = currentDate.ToString("dd-MM-yyyy");
+            var dateKey = currentDate.ToString("dd-MM-yyyy");
             
             // Check if room has reservation for this date
-            var reservation = reservations.FirstOrDefault(r =>
-                r.RoomId == room.Id &&
-                r.CheckInDate.Date <= currentDate &&
-                r.CheckOutDate.Date > currentDate &&
-                r.Status != ReservationStatus.Cancelled);
+          var reservation = reservationRooms.FirstOrDefault(r =>
+            r.RoomId == room.Id &&
+            r.CheckInDate.Date <= currentDate &&
+            r.CheckOutDate.Date > currentDate &&
+            r.Status != BookingStatus.Cancelled);
 
             string status = "Available";
             if (reservation != null)
@@ -330,7 +332,7 @@ apiGroup.MapGet("/dashboard/occupancy", async (
                     status = "Occupied";
             }
 
-            roomData[dateKey] = new { date = dateDisplay, status = status };
+            roomData[dateKey] = new { date = dateKey, status = status };
             currentDate = currentDate.AddDays(1);
         }
 

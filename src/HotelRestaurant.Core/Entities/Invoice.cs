@@ -3,7 +3,8 @@ namespace HotelRestaurant.Core.Entities
     public class Invoice : BaseEntity
     {
         //New
-        public int? ReservationId { get; set; }
+        // public int? ReservationId { get; set; }
+        public int BookingId { get; set; }
         public int? OrderId { get; set; }
         public DateTime InvoiceDate { get; set; } = DateTime.UtcNow;
 
@@ -18,7 +19,9 @@ namespace HotelRestaurant.Core.Entities
 
         public decimal DueAmount { get; set; }
         // Clear mapping configurations to the updated Reservation
-        public Reservation? Reservation { get; set; }
+        // public Reservation? Reservation { get; set; }
+        public Booking? Booking { get; set; }
         public Order? Order { get; set; }
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
 }

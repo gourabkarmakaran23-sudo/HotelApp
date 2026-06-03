@@ -295,7 +295,7 @@ export class CheckinComponent implements OnInit {
 
     this.closeAllMenus();
 
-    alert(`Payment for ${row.roomNo}`);
+    this.router.navigate(['/payment-list', row.id], { queryParams: { bookingId: row.id } });
 
   }
 
@@ -351,7 +351,7 @@ export class CheckinComponent implements OnInit {
 
   payment(): void {
 
-    alert('Payment action');
+    // Payment is triggered from row context via paymentRow()
 
   }
 
