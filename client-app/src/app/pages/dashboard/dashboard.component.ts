@@ -9,7 +9,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
-import { DashboardSummary, DashboardStats, RoomTypeBookingHistoryRow } from '../../models/dashboard.models';
+import { DashboardSummary } from '../../models/dashboard.models';
 
 interface RoomOccupancy {
   roomNumber: string;
@@ -40,7 +40,6 @@ export class DashboardComponent implements OnInit {
 
   // Dashboard state
   summary: DashboardSummary | null = null;
-  stats: DashboardStats | null = null;
   roomData: RoomOccupancy[] = [];
   columnDefs: ColDef[] = [];
   defaultColDef: ColDef = {
@@ -64,19 +63,12 @@ export class DashboardComponent implements OnInit {
   loading: boolean = false;
   error: string = '';
 
-  // Dashboard metrics
-  activeBookings = 0;
-  totalRevenue = 0;
-  occupancyRate = 0;
-  pendingRequests = 0;
-  totalBookings = 0;
-  completedBookings = 0;
-  cancelledBookings = 0;
-  totalRooms = 0;
-  availableRooms = 0;
-
-  historyDates: string[] = [];
-  roomTypeHistory: RoomTypeBookingHistoryRow[] = [];
+  // Dummy data for sections
+  activeBookings = 24;
+  totalRevenue = 33.6;
+  occupancyRate = 75;
+  pendingRequests = 8;
+  totalBookings = 156;
 
   bookingData: BookingData[] = [
     { id: 1, roomType: 'Premium View', premiumViews: 6, standardViews: 34, executiveViews: 46, executiveNonViews: 60, familyNonViews: 6, total: 14 },
@@ -147,8 +139,6 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadSummary();
-    this.loadStats();
-    this.loadRoomTypeHistory();
     this.loadOccupancyData();
   }
 
@@ -156,45 +146,9 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.getSummary().subscribe(
       (summary) => {
         this.summary = summary;
-        this.activeBookings = summary.activeBookings;
-        this.totalRevenue = summary.revenue;
-        this.occupancyRate = summary.occupancyRate;
-        this.pendingRequests = summary.pendingRequests;
       },
       (error) => {
         console.error('Error loading summary:', error);
-      }
-    );
-  }
-
-  private loadRoomTypeHistory(): void {
-    const from = new Date(this.fromDate);
-    const to = new Date(this.toDate);
-
-    this.dashboardService.getRoomTypeBookingHistory(from, to).subscribe(
-      (response) => {
-        this.historyDates = response.dates;
-        this.roomTypeHistory = response.rows;
-      },
-      (error) => {
-        console.error('Error loading room type booking history:', error);
-        this.historyDates = [];
-        this.roomTypeHistory = [];
-      }
-    );
-  }
-
-  private loadStats(): void {
-    this.dashboardService.getStats().subscribe(
-      (stats) => {
-        this.stats = stats;
-        this.totalBookings = stats.totalBookings;
-        this.completedBookings = stats.completedBookings;
-        this.cancelledBookings = stats.cancelledBookings;
-        this.availableRooms = stats.availableRooms;
-      },
-      (error) => {
-        console.error('Error loading booking statistics:', error);
       }
     );
   }
@@ -420,7 +374,6 @@ export class DashboardComponent implements OnInit {
   }
 
   onFilterClick(): void {
-    this.loadRoomTypeHistory();
     this.loadOccupancyData();
   }
 

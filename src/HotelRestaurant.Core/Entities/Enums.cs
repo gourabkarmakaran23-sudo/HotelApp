@@ -32,16 +32,6 @@ namespace HotelRestaurant.Core.Entities
     //     Double
     // }
 
-    public enum BookingStatus
-    {
-        Pending,
-        Confirmed,
-        CheckedIn,
-        CheckedOut,
-        Cancelled,
-        Completed,
-        NoShow
-    }
     public enum ReservationStatus
     {
         Pending,

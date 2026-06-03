@@ -6,7 +6,7 @@ using HotelRestaurant.Core.Entities;
 
 namespace HotelRestaurant.Core.Interfaces
 {
-    public interface IBookingRepository : IGenericRepository<Booking>
+    public interface IBookingRepository : IGenericRepository<Reservation>
     {
         Task<bool> IsRoomBookedAsync(
     int roomId,

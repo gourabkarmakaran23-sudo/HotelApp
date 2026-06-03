@@ -162,60 +162,7 @@ export class BookingListComponent implements OnInit {
     this.gridApi.sizeColumnsToFit();
   }
 
-//   fetchBookingsFromApi(): void {
-
-//   this.http.get<any>(this.apiUrl).subscribe({
-
-//     next: (response) => {
-
-//       console.log('API DATA:', response);
-
-//       // Handles both direct array and paged API response
-//       const bookings = response.items || response;
-
-//      const mappedBookings = bookings.map((booking: any) => {
-
-//   console.log('BOOKING:', booking);
-//   console.log('ROOM TYPES:', this.roomTypes);
-
-//   const matchedRoomType = this.roomTypes.find(
-//     (x: any) =>
-//       Number(x.id) === Number(booking.roomType) ||
-//       Number(x.id) === Number(booking.roomTypeId)
-//   );
-
-//   return {
-
-//     ...booking,
-
-//     roomType: matchedRoomType
-//       ? matchedRoomType.name
-//       : 'Unknown'
-
-//   };
-
-// });
-   
-//       this.allData = mappedBookings;
-//       this.rowData = mappedBookings;
-//       this.filteredRowCount = mappedBookings.length;
-
-//     },
-
-//     error: (err) => {
-
-//       console.error('Failed fetching data from database:', err);
-
-//       alert('Could not pull real reservations. Verify your local database engine is running.');
-
-//     }
-
-//   });
-
-// }
- 
-
-fetchBookingsFromApi(): void {
+  fetchBookingsFromApi(): void {
 
   this.http.get<any>(this.apiUrl).subscribe({
 
@@ -223,28 +170,50 @@ fetchBookingsFromApi(): void {
 
       console.log('API DATA:', response);
 
+      // Handles both direct array and paged API response
       const bookings = response.items || response;
 
-      this.allData = bookings;
+     const mappedBookings = bookings.map((booking: any) => {
 
-      this.rowData = bookings;
+  console.log('BOOKING:', booking);
+  console.log('ROOM TYPES:', this.roomTypes);
 
-      this.filteredRowCount = bookings.length;
+  const matchedRoomType = this.roomTypes.find(
+    (x: any) =>
+      Number(x.id) === Number(booking.roomType) ||
+      Number(x.id) === Number(booking.roomTypeId)
+  );
+
+  return {
+
+    ...booking,
+
+    roomType: matchedRoomType
+      ? matchedRoomType.name
+      : 'Unknown'
+
+  };
+
+});
+   
+      this.allData = mappedBookings;
+      this.rowData = mappedBookings;
+      this.filteredRowCount = mappedBookings.length;
+
     },
 
     error: (err) => {
 
       console.error('Failed fetching data from database:', err);
 
-      alert(
-        'Could not pull real reservations. Verify your local database engine is running.'
-      );
+      alert('Could not pull real reservations. Verify your local database engine is running.');
 
     }
 
   });
 
 }
+ 
   // Hook filters to apply seamlessly against live context rows
   applyFilters(): void {
     let data = [...this.allData];

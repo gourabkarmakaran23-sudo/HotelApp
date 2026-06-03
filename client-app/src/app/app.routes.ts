@@ -8,8 +8,6 @@ import { CheckinComponent } from './pages/checkin/checkin.component';
 import { AddGuestComponent } from './pages/add-guest/add-guest.component';
 import { GuestDetailsComponent } from './pages/guest-details/guest-details.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
-import { UpcomingCheckinComponent } from './pages/upcoming-checkin/upcoming-checkin.component';
-import { PaymentListComponent } from './pages/payment-list/payment-list.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -47,27 +45,11 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'payment',
-    component: PaymentListComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'payment-list/:id',
-    component: PaymentListComponent,
-    canActivate: [AuthGuard]
-  },
-  {
     path: 'guest/:id',
     component: GuestDetailsComponent,
     canActivate: [AuthGuard]
   },
   {path: 'room-types', loadComponent: () => import('./pages/room-type/room-type.component').then(m => m.RoomTypeComponent), canActivate: [AuthGuard] }, 
   { path: 'rooms',      loadComponent: () => import('./pages/rooms/room.component').then(m => m.RoomComponent), canActivate: [AuthGuard] },
-{
-  path: 'upcoming-checkin',
-  loadComponent: () =>
-    import('./pages/upcoming-checkin/upcoming-checkin.component')
-      .then(m => m.UpcomingCheckinComponent)
-},
   { path: '**',         redirectTo: 'login' }
 ];

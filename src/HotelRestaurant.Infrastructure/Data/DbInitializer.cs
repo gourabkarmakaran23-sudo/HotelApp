@@ -55,41 +55,19 @@ namespace HotelRestaurant.Infrastructure.Data
                 // FIX: Explicitly enforce UTC on the date instance
                 DateOfBirth = DateTime.SpecifyKind(new DateTime(1985, 5, 12), DateTimeKind.Utc)
             };
-            var booking = new Booking
+            var reservation = new Reservation
             {
-                BookingNumber = "BK-1001",
-
                 Guest = guest,
-
-                BookingDate = DateTime.UtcNow,
-
-                TotalAmount = 540m,
-
-                Status = BookingStatus.Confirmed
-            };
-
-            var reservationRoom = new ReservationRoom
-            {
-                Booking = booking,
-
                 Room = rooms[1],
-
                 CheckInDate = DateTime.UtcNow.Date.AddDays(3),
-
                 CheckOutDate = DateTime.UtcNow.Date.AddDays(6),
-
+                Status = ReservationStatus.Confirmed,
                 Adults = 2,
-
                 Children = 1,
-
-                Pax = "3",
-
-                MealPlan = "Room with Breakfast",
-
-                RoomAmount = 540m,
-
-                Status = BookingStatus.Confirmed
+                TotalAmount = 540m,
+                Notes = "Late check-in requested"
             };
+
             var menuItems = new List<MenuItem>
             {
                 new MenuItem { Name = "Grilled Salmon", Category = MenuCategory.MainCourse, Description = "Fresh salmon with lemon butter sauce", Price = 24.50m, IsAvailable = true },
@@ -100,7 +78,7 @@ namespace HotelRestaurant.Infrastructure.Data
 
             var order = new Order
             {
-                Booking = booking,
+                Reservation = reservation,
                 Guest = guest,
                 OrderDate = DateTime.UtcNow,
                 OrderStatus = OrderStatus.Pending,
@@ -127,18 +105,12 @@ namespace HotelRestaurant.Infrastructure.Data
 
             var invoice = new Invoice
             {
-                Booking = booking,
-
+                Reservation = reservation,
                 Order = order,
-
                 InvoiceDate = DateTime.UtcNow,
-
                 Subtotal = 540m + 46.95m,
-
                 Tax = 58.10m,
-
                 Total = 645.05m,
-
                 PaymentStatus = PaymentStatus.Unpaid
             };
 
@@ -152,8 +124,7 @@ namespace HotelRestaurant.Infrastructure.Data
             context.Rooms.AddRange(rooms);
             context.Employees.Add(employee);
             context.Guests.Add(guest);
-            context.Bookings.Add(booking);
-            context.ReservationRooms.Add(reservationRoom);
+            context.Reservations.Add(reservation);
             context.MenuItems.AddRange(menuItems);
             context.Orders.Add(order);
             context.Invoices.Add(invoice);
