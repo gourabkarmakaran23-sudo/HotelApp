@@ -5,6 +5,16 @@ export interface DashboardSummary {
   pendingRequests: number;
 }
 
+export interface RoomTypeBookingHistoryRow {
+  roomType: string;
+  values: { [date: string]: string };
+}
+
+export interface RoomTypeBookingHistoryResponse {
+  dates: string[];
+  rows: RoomTypeBookingHistoryRow[];
+}
+
 export interface DashboardStats {
   totalBookings: number;
   completedBookings: number;

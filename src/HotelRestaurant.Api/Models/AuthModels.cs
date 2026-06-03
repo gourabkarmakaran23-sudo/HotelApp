@@ -4,4 +4,6 @@ namespace HotelRestaurant.Api.Models
     public sealed record RegisterRequest(string Name, string Email, string Password, string ConfirmPassword);
     public sealed record LoginResponse(string Token, int ExpiresIn);
     public sealed record DashboardSummary(int ActiveBookings, decimal Revenue, int OccupancyRate, int PendingRequests);
+    public sealed record RoomTypeHistoryRow(string RoomType, Dictionary<string, string> Values);
+    public sealed record RoomTypeHistoryResponse(IEnumerable<string> Dates, IEnumerable<RoomTypeHistoryRow> Rows);
 }

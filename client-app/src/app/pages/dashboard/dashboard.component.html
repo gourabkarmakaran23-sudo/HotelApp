@@ -133,40 +133,27 @@
         <h2>Room Types - Booking History</h2>
       </div>
 
-      <div class="table-container">
+      <div *ngIf="roomTypeHistory.length > 0" class="table-container">
         <table class="booking-table">
           <thead>
             <tr>
               <th>Room Type</th>
-              <th>Premium View</th>
-              <th>Standard View</th>
-              <th>Executive View</th>
-              <th>Executive Non View</th>
-              <th>Family Non View</th>
-              <th>Total</th>
+              <th *ngFor="let date of historyDates">{{ date }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let room of bookingData">
-              <td>{{ room.roomType }}</td>
-              <td class="number">{{ room.premiumViews }}</td>
-              <td class="number">{{ room.standardViews }}</td>
-              <td class="number">{{ room.executiveViews }}</td>
-              <td class="number">{{ room.executiveNonViews }}</td>
-              <td class="number">{{ room.familyNonViews }}</td>
-              <td class="number total">{{ room.total }}</td>
-            </tr>
-            <tr class="total-row">
-              <td><strong>Total</strong></td>
-              <td class="number total"><strong>{{ totalPremiumViews }}</strong></td>
-              <td class="number total"><strong>{{ totalStandardViews }}</strong></td>
-              <td class="number total"><strong>{{ totalExecutiveViews }}</strong></td>
-              <td class="number total"><strong>{{ totalExecutiveNonViews }}</strong></td>
-              <td class="number total"><strong>{{ totalFamilyNonViews }}</strong></td>
-              <td class="number total"><strong>{{ totalBookingsCount }}</strong></td>
+            <tr *ngFor="let row of roomTypeHistory">
+              <td>{{ row.roomType }}</td>
+              <td class="number" *ngFor="let date of historyDates">
+                {{ row.values[date] || '0/0' }}
+              </td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div *ngIf="!loading && roomTypeHistory.length === 0" class="no-data-message">
+        <p>No room type booking history available.</p>
       </div>
     </section>
 
