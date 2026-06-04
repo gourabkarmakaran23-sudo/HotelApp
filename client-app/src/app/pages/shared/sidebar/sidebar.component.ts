@@ -39,6 +39,9 @@ export class SidebarComponent implements OnInit {
     {icon: '⚙️', label: 'Masters', open: false, children: [
       { label: 'Currency', route: '/currencies' },
       { label: 'Payment Methods', route: '/payment-methods' },
+      { label: 'Commission Agents', route: '/commission-agents' },
+      { label: 'Agent Commissions', route: '/agent-commissions' },
+      { label: 'Financial Years', route: '/financial-years' },
       //Add more master pages here
     ]},
     

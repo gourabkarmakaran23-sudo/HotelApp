@@ -5,6 +5,8 @@ public class CommissionAgentDto
     public int Id { get; set; }
 
     public string AgentName { get; set; } = string.Empty;
+    // Added missing commission rate field (using decimal for financial precision)
+    public decimal CommissionRate { get; set; }
 
     public string? Address { get; set; }
 

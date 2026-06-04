@@ -1,0 +1,92 @@
+<div class="page-container">
+  
+  <div class="page-header">
+    <h2 class="page-title">Financial Year Configuration</h2>
+    <button class="add-btn" (click)="openAddModal()">+ Create Fiscal Horizon</button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert-banner">
+    <span><strong>Configuration Exception:</strong> {{ errorMessage }}</span>
+    <button class="close-alert" (click)="errorMessage = ''">×</button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+    <span>Refreshing internal timeline states...</span>
+  </div>
+
+  <div class="table-container" *ngIf="!isLoading">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th style="width: 80px;">SL</th>
+          <th>Fiscal Period Title</th>
+          <th>Commencement Date</th>
+          <th>Termination Date</th>
+          <th style="width: 120px;" class="text-center">State Status</th>
+          <th style="width: 200px;" class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let year of financialYears; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td class="name-column" style="font-weight: 600; color: #0f172a;">{{ year.title }}</td>
+          <td>{{ year.fromDate | date:'dd MMMM yyyy' }}</td>
+          <td>{{ year.toDate | date:'dd MMMM yyyy' }}</td>
+          <td class="text-center">
+            <span class="status-badge" [ngClass]="{'active': year.isActive}">
+              {{ year.isActive ? 'Active Horizon' : 'Archived' }}
+            </span>
+          </td>
+          <td class="actions-column">
+            <button class="btn-action edit" (click)="openEditModal(year)">Edit Calendar</button>
+            <button class="btn-action delete" (click)="deleteYear(year.id)">Purge</button>
+          </td>
+        </tr>
+        <tr *ngIf="financialYears.length === 0">
+          <td colspan="6" class="empty-state">No timeline boundaries mapped. Choose '+ Create Fiscal Horizon' to add parameters.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-panel-overlay" *ngIf="isFormOpen">
+    <div class="form-panel-card">
+      <div class="form-panel-header">
+        <h5>{{ isEditMode ? 'Modify Operations Boundary Window' : 'Construct New Fiscal Year Mapping Matrix' }}</h5>
+        <button class="btn-close-panel" (click)="closeForm()">×</button>
+      </div>
+      
+      <div class="form-panel-body">
+        <form (ngSubmit)="saveYear()">
+          <div class="form-grid">
+            <div class="form-group" style="grid-column: span 2;">
+              <label>Financial Horizon Code / Title *</label>
+              <input type="text" class="form-input" name="title" [(ngModel)]="selectedYear.title" required placeholder="E.g., FY 2026-2027">
+            </div>
+
+            <div class="form-group">
+              <label>From Date (Start Boundary) *</label>
+              <input type="date" class="form-input" name="fromDate" [(ngModel)]="selectedYear.fromDate" required>
+            </div>
+
+            <div class="form-group">
+              <label>To Date (Terminal Boundary) *</label>
+              <input type="date" class="form-input" name="toDate" [(ngModel)]="selectedYear.toDate" required>
+            </div>
+          </div>
+
+          <div class="form-check-group" style="margin-top: 20px;">
+            <input type="checkbox" id="yearActiveSwitch" name="isActive" [(ngModel)]="selectedYear.isActive">
+            <label for="yearActiveSwitch">Set as Active Concurrent Default Auditing Scope</label>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="closeForm()">Cancel</button>
+            <button type="submit" class="btn-submit">Publish Horizon Config</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

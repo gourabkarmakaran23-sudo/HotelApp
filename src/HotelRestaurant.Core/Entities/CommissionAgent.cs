@@ -9,6 +9,9 @@ namespace HotelRestaurant.Core.Entities
     {
         public string AgentName { get; set; } = "";
 
+        // Added missing commission rate field (using decimal for financial precision)
+        public decimal CommissionRate { get; set; }
+
         public string? Address { get; set; }
 
         public string? Mobile { get; set; }

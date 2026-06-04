@@ -152,6 +152,7 @@ namespace HotelRestaurant.Application.Services.Implementations
             var entity = new CommissionAgent
             {
                 AgentName = dto.AgentName,
+                CommissionRate = dto.CommissionRate,
                 Address = dto.Address,
                 Mobile = dto.Mobile,
                 Email = dto.Email,
@@ -170,6 +171,7 @@ namespace HotelRestaurant.Application.Services.Implementations
             if (entity == null) return false;
 
             entity.AgentName = dto.AgentName;
+            entity.CommissionRate = dto.CommissionRate;
             entity.Address = dto.Address;
             entity.Mobile = dto.Mobile;
             entity.Email = dto.Email;

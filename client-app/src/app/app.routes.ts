@@ -65,7 +65,11 @@ export const routes: Routes = [
   { path: 'rooms',      loadComponent: () => import('./pages/rooms/room.component').then(m => m.RoomComponent), canActivate: [AuthGuard] },
   //Add all Master pages here
   { path: 'currencies', loadComponent: () => import('./pages/masters/currency/currency.component').then(m => m.CurrencyComponent), canActivate: [AuthGuard] },
-  {path: 'payment-methods', loadComponent: () => import('./pages/masters/payment-method/payment-method.component').then(m => m.PaymentMethodComponent), canActivate: [AuthGuard] },
+  { path: 'payment-methods', loadComponent: () => import('./pages/masters/payment-method/payment-method.component').then(m => m.PaymentMethodComponent), canActivate: [AuthGuard] },
+  { path: 'commission-agents', loadComponent: () => import('./pages/masters/commission-agent/commission-agent.component').then(m => m.CommissionAgentComponent), canActivate: [AuthGuard] },
+  {path: 'agent-commissions', loadComponent: () => import('./pages/masters/agent-commission/agent-commission.component').then(m => m.AgentCommissionComponent), canActivate: [AuthGuard] },
+  {path: 'financial-years', loadComponent: () => import('./pages/masters/financial-year/financial-year.component').then(m => m.FinancialYearComponent), canActivate: [AuthGuard] },
+
 {
   path: 'upcoming-checkin',
   loadComponent: () =>
