@@ -42,6 +42,7 @@ export class SidebarComponent implements OnInit {
       { label: 'Commission Agents', route: '/commission-agents' },
       { label: 'Agent Commissions', route: '/agent-commissions' },
       { label: 'Financial Years', route: '/financial-years' },
+      { label: 'Wake Up Calls', route: '/wake-up-calls' },
       //Add more master pages here
     ]},
     

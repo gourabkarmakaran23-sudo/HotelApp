@@ -265,30 +265,113 @@ namespace HotelRestaurant.Application.Services.Implementations
         }
         #endregion
 
-        #region Financial Year Management (Required by IMasterService)
+        #region Financial Year Management
         public async Task<List<FinancialYearDto>> GetFinancialYearsAsync()
         {
-            throw new NotImplementedException();
+            var items = await _unitOfWork.FinancialYears.GetAllAsync();
+            return _mapper.Map<List<FinancialYearDto>>(items.Where(x => !x.IsDeleted).ToList());
         }
 
         public async Task<FinancialYearDto?> GetFinancialYearByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var entity = await _unitOfWork.FinancialYears.GetByIdAsync(id);
+            if (entity == null || entity.IsDeleted) return null;
+            return _mapper.Map<FinancialYearDto>(entity);
         }
 
         public async Task<int> CreateFinancialYearAsync(FinancialYearDto dto)
         {
-            throw new NotImplementedException();
+            var entity = new FinancialYear
+            {
+                Title = dto.Title,
+                FromDate = dto.FromDate,
+                ToDate = dto.ToDate,
+                IsActive = dto.IsActive
+            };
+
+            await _unitOfWork.FinancialYears.AddAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
+            return entity.Id;
         }
 
         public async Task<bool> UpdateFinancialYearAsync(int id, FinancialYearDto dto)
         {
-            throw new NotImplementedException();
+            var entity = await _unitOfWork.FinancialYears.GetByIdAsync(id);
+            if (entity == null) return false;
+
+            entity.Title = dto.Title;
+            entity.FromDate = dto.FromDate;
+            entity.ToDate = dto.ToDate;
+            entity.IsActive = dto.IsActive;
+
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> DeleteFinancialYearAsync(int id)
         {
-            throw new NotImplementedException();
+            var entity = await _unitOfWork.FinancialYears.GetByIdAsync(id);
+            if (entity == null) return false;
+
+            entity.IsDeleted = true;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+        #endregion
+
+        #region Wake Up Call List Management
+        public async Task<List<WakeUpCallDto>> GetWakeUpCallsAsync()
+        {
+            var items = await _unitOfWork.WakeUpCalls.GetAllAsync();
+            return _mapper.Map<List<WakeUpCallDto>>(items.Where(x => !x.IsDeleted).ToList());
+        }
+
+        public async Task<WakeUpCallDto?> GetWakeUpCallByIdAsync(int id)
+        {
+            var entity = await _unitOfWork.WakeUpCalls.GetByIdAsync(id);
+            if (entity == null || entity.IsDeleted) return null;
+            return _mapper.Map<WakeUpCallDto>(entity);
+        }
+
+        public async Task<int> CreateWakeUpCallAsync(WakeUpCallDto dto)
+        {
+            var entity = new WakeUpCall
+            {
+                RoomNumber = dto.RoomNumber,
+                GuestName = dto.GuestName,
+                CallDateTime = dto.CallDateTime,
+                Remarks = dto.Remarks,
+                Status = dto.Status ?? "Pending"
+            };
+
+            await _unitOfWork.WakeUpCalls.AddAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
+            return entity.Id;
+        }
+
+        public async Task<bool> UpdateWakeUpCallAsync(int id, WakeUpCallDto dto)
+        {
+            var entity = await _unitOfWork.WakeUpCalls.GetByIdAsync(id);
+            if (entity == null) return false;
+
+            entity.RoomNumber = dto.RoomNumber;
+            entity.GuestName = dto.GuestName;
+            entity.CallDateTime = dto.CallDateTime;
+            entity.Remarks = dto.Remarks;
+            entity.Status = dto.Status ?? "Pending";
+
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteWakeUpCallAsync(int id)
+        {
+            var entity = await _unitOfWork.WakeUpCalls.GetByIdAsync(id);
+            if (entity == null) return false;
+
+            entity.IsDeleted = true;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
         #endregion
     }

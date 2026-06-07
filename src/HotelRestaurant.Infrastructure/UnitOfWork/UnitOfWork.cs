@@ -18,6 +18,7 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             CommissionAgents = new GenericRepository<CommissionAgent>(_context);
             FinancialYears = new GenericRepository<FinancialYear>(_context);
             AgentCommissions = new GenericRepository<AgentCommission>(_context);
+            WakeUpCalls = new GenericRepository<WakeUpCall>(_context);
             #endregion
             Hotels = new GenericRepository<Hotel>(_context);
             Rooms = new GenericRepository<Room>(_context);
@@ -43,6 +44,7 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         public IGenericRepository<CommissionAgent> CommissionAgents { get; }
         public IGenericRepository<FinancialYear> FinancialYears { get; }
         public IGenericRepository<AgentCommission> AgentCommissions { get; }
+        public IGenericRepository<WakeUpCall> WakeUpCalls { get; }
         #endregion
         public IGenericRepository<Booking> Bookings { get; }
         public IGenericRepository<ReservationRoom> ReservationRooms { get; }

@@ -117,4 +117,22 @@ export class MasterService {
     return this.http.delete<any>(`${this.baseUrl}/financial-years/${id}`);
   }
   //#endregion
+
+//#region Wake Up Call List Service Operations
+  getWakeUpCalls(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/wake-up-calls`);
+  }
+
+  createWakeUpCall(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/wake-up-calls`, payload);
+  }
+
+  updateWakeUpCall(id: number, payload: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/wake-up-calls/${id}`, payload);
+  }
+
+  deleteWakeUpCall(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/wake-up-calls/${id}`);
+  }
+  //#endregion
 }

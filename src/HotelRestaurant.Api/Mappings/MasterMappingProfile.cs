@@ -8,6 +8,8 @@ namespace HotelRestaurant.Api.Mappings
     {
         public MasterMappingProfile()
         {
+            // Add this inside your MappingProfile constructor class setup:
+CreateMap<WakeUpCall, WakeUpCallDto>().ReverseMap();
             // Currency
             CreateMap<Currency, CurrencyDto>().ReverseMap();
 

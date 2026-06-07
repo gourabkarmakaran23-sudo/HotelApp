@@ -231,4 +231,61 @@ public class MasterController : ControllerBase
     }
 
     #endregion
+
+   #region Wake Up Call
+
+    [HttpGet("wake-up-calls")]
+    public async Task<IActionResult> GetWakeUpCalls()
+    {
+        var result = await _masterService.GetWakeUpCallsAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("wake-up-calls/{id}")]
+    public async Task<IActionResult> GetWakeUpCall(int id)
+    {
+        var result = await _masterService.GetWakeUpCallByIdAsync(id);
+
+        if (result == null)
+            return NotFound(new { message = "Record assignment target not located." });
+
+        return Ok(result);
+    }
+
+    [HttpPost("wake-up-calls")]
+    public async Task<IActionResult> CreateWakeUpCall([FromBody] WakeUpCallDto dto)
+    {
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
+
+        var id = await _masterService.CreateWakeUpCallAsync(dto);
+        return Ok(id);
+    }
+
+    [HttpPut("wake-up-calls/{id}")]
+    public async Task<IActionResult> UpdateWakeUpCall(int id, [FromBody] WakeUpCallDto dto)
+    {
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
+
+        var result = await _masterService.UpdateWakeUpCallAsync(id, dto);
+
+        if (!result)
+            return NotFound(new { message = "Record tracking mismatch target identifier error." });
+
+        return Ok(new { success = true });
+    }
+
+    [HttpDelete("wake-up-calls/{id}")]
+    public async Task<IActionResult> DeleteWakeUpCall(int id)
+    {
+        var result = await _masterService.DeleteWakeUpCallAsync(id);
+
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
+
+    #endregion
 }

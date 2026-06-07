@@ -10,6 +10,7 @@ namespace HotelRestaurant.Core.Interfaces
             IGenericRepository<CommissionAgent> CommissionAgents { get; }
             IGenericRepository<FinancialYear> FinancialYears { get; }
             IGenericRepository<AgentCommission> AgentCommissions { get; }
+            IGenericRepository<WakeUpCall> WakeUpCalls { get; }
         #endregion
         IGenericRepository<Hotel> Hotels { get; }
         IGenericRepository<RoomTypes> RoomTypes { get; }

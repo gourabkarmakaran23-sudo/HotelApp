@@ -69,6 +69,7 @@ export const routes: Routes = [
   { path: 'commission-agents', loadComponent: () => import('./pages/masters/commission-agent/commission-agent.component').then(m => m.CommissionAgentComponent), canActivate: [AuthGuard] },
   {path: 'agent-commissions', loadComponent: () => import('./pages/masters/agent-commission/agent-commission.component').then(m => m.AgentCommissionComponent), canActivate: [AuthGuard] },
   {path: 'financial-years', loadComponent: () => import('./pages/masters/financial-year/financial-year.component').then(m => m.FinancialYearComponent), canActivate: [AuthGuard] },
+  {path: 'wake-up-calls', loadComponent: () => import('./pages/masters/wake-up-call/wake-up-call.component').then(m => m.WakeUpCallComponent), canActivate: [AuthGuard] },
 
 {
   path: 'upcoming-checkin',

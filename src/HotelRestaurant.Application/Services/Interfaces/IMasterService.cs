@@ -45,5 +45,16 @@ namespace HotelRestaurant.Application.Services.Interfaces
         Task<bool> UpdateFinancialYearAsync(int id, FinancialYearDto dto);
         Task<bool> DeleteFinancialYearAsync(int id);
         #endregion
+
+        #region Wake Up Call    
+        Task<List<WakeUpCallDto>> GetWakeUpCallsAsync();
+        Task<WakeUpCallDto?> GetWakeUpCallByIdAsync(int id);
+        Task<int> CreateWakeUpCallAsync(WakeUpCallDto dto);
+
+        Task<bool> UpdateWakeUpCallAsync(int id, WakeUpCallDto dto);
+        Task<bool> DeleteWakeUpCallAsync(int id);
+        #endregion
+    
+
     }
 }

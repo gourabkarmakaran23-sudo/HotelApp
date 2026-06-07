@@ -34,15 +34,24 @@ namespace HotelRestaurant.Infrastructure.Data
         public DbSet<Currency> Currencies => Set<Currency>();
         public DbSet<PaymentMethods> PaymentMethods => Set<PaymentMethods>();
         public DbSet<CommissionAgent> CommissionAgents => Set<CommissionAgent>();
-    
-         public DbSet<FinancialYear> FinancialYears => Set<FinancialYear>();
-         public DbSet<AgentCommission> AgentCommissions => Set<AgentCommission>();
-   
+
+        public DbSet<FinancialYear> FinancialYears => Set<FinancialYear>();
+        public DbSet<AgentCommission> AgentCommissions => Set<AgentCommission>();
+
+        public DbSet<WakeUpCall> WakeUpCalls => Set<WakeUpCall>();
+
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<WakeUpCall>(entity =>
+    {
+        // Enforce exact table name configuration mapping rule matching PostgreSQL context
+        entity.ToTable("WakeUpCalls");
+        entity.HasKey(e => e.Id);
+    });
 
             // ⬇️ ADD THIS CONFIGURATION BLOCK HERE
             modelBuilder.Entity<RoomTypeFacility>(entity =>
@@ -156,18 +165,18 @@ namespace HotelRestaurant.Infrastructure.Data
 
             modelBuilder.Entity<Order>(entity =>
    {
-            entity.Property(o => o.TotalAmount)
-            .HasPrecision(12, 2);
+       entity.Property(o => o.TotalAmount)
+       .HasPrecision(12, 2);
 
-            entity.HasOne(o => o.Booking)
-           .WithMany()
-           .HasForeignKey(o => o.BookingId)
-           .OnDelete(DeleteBehavior.SetNull);
+       entity.HasOne(o => o.Booking)
+      .WithMany()
+      .HasForeignKey(o => o.BookingId)
+      .OnDelete(DeleteBehavior.SetNull);
 
-            entity.HasOne(o => o.Guest)
-           .WithMany()
-           .HasForeignKey(o => o.GuestId)
-           .OnDelete(DeleteBehavior.SetNull);
+       entity.HasOne(o => o.Guest)
+      .WithMany()
+      .HasForeignKey(o => o.GuestId)
+      .OnDelete(DeleteBehavior.SetNull);
    });
 
             modelBuilder.Entity<OrderItem>(entity =>
