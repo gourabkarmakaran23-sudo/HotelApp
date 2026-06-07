@@ -11,6 +11,9 @@ namespace HotelRestaurant.Core.Interfaces
             IGenericRepository<FinancialYear> FinancialYears { get; }
             IGenericRepository<AgentCommission> AgentCommissions { get; }
             IGenericRepository<WakeUpCall> WakeUpCalls { get; }
+
+            IGenericRepository<PurchaseItem> PurchaseItems { get; }
+            IGenericRepository<PurchaseReturn> PurchaseReturns { get; }
         #endregion
         IGenericRepository<Hotel> Hotels { get; }
         IGenericRepository<RoomTypes> RoomTypes { get; }

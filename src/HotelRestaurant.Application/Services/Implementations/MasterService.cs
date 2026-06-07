@@ -374,5 +374,101 @@ namespace HotelRestaurant.Application.Services.Implementations
             return true;
         }
         #endregion
+
+        #region Purchase Item Management
+
+        public async Task<List<PurchaseItemDto>> GetPurchaseItemsAsync()
+        {
+            var items = await _unitOfWork.PurchaseItems.GetAllAsync();
+            return _mapper.Map<List<PurchaseItemDto>>(items.Where(x => !x.IsDeleted).OrderByDescending(x => x.PurchaseDate).ToList());
+        }
+
+        public async Task<PurchaseItemDto?> GetPurchaseItemByIdAsync(int id)
+        {
+            var item = await _unitOfWork.PurchaseItems.GetByIdAsync(id);
+            if (item == null || item.IsDeleted) return null;
+            return _mapper.Map<PurchaseItemDto>(item);
+        }
+
+        public async Task<int> CreatePurchaseItemAsync(PurchaseItemDto dto)
+        {
+            var entity = _mapper.Map<PurchaseItem>(dto);
+            entity.TotalAmount = dto.Quantity * dto.Rate;
+            await _unitOfWork.PurchaseItems.AddAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
+            return entity.Id;
+        }
+
+        public async Task<bool> UpdatePurchaseItemAsync(int id, PurchaseItemDto dto)
+        {
+            var entity = await _unitOfWork.PurchaseItems.GetByIdAsync(id);
+            if (entity == null || entity.IsDeleted) return false;
+
+            _mapper.Map(dto, entity);
+            entity.TotalAmount = dto.Quantity * dto.Rate;
+
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeletePurchaseItemAsync(int id)
+        {
+            var entity = await _unitOfWork.PurchaseItems.GetByIdAsync(id);
+            if (entity == null) return false;
+
+            entity.IsDeleted = true;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        #endregion
+
+        #region Purchase Return Management
+
+        public async Task<List<PurchaseReturnDto>> GetPurchaseReturnsAsync()
+        {
+            var items = await _unitOfWork.PurchaseReturns.GetAllAsync();
+            return _mapper.Map<List<PurchaseReturnDto>>(items.Where(x => !x.IsDeleted).OrderByDescending(x => x.ReturnDate).ToList());
+        }
+
+        public async Task<PurchaseReturnDto?> GetPurchaseReturnByIdAsync(int id)
+        {
+            var item = await _unitOfWork.PurchaseReturns.GetByIdAsync(id);
+            if (item == null || item.IsDeleted) return null;
+            return _mapper.Map<PurchaseReturnDto>(item);
+        }
+
+        public async Task<int> CreatePurchaseReturnAsync(PurchaseReturnDto dto)
+        {
+            var entity = _mapper.Map<PurchaseReturn>(dto);
+            entity.TotalRefundAmount = dto.ReturnQuantity * dto.RefundRate;
+            await _unitOfWork.PurchaseReturns.AddAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
+            return entity.Id;
+        }
+
+        public async Task<bool> UpdatePurchaseReturnAsync(int id, PurchaseReturnDto dto)
+        {
+            var entity = await _unitOfWork.PurchaseReturns.GetByIdAsync(id);
+            if (entity == null || entity.IsDeleted) return false;
+
+            _mapper.Map(dto, entity);
+            entity.TotalRefundAmount = dto.ReturnQuantity * dto.RefundRate;
+
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeletePurchaseReturnAsync(int id)
+        {
+            var entity = await _unitOfWork.PurchaseReturns.GetByIdAsync(id);
+            if (entity == null) return false;
+
+            entity.IsDeleted = true;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        #endregion
     }
 }

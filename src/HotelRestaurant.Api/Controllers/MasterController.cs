@@ -288,4 +288,74 @@ public class MasterController : ControllerBase
     }
 
     #endregion
+
+    #region Purchase Items
+
+    [HttpGet("purchase-items")]
+    public async Task<IActionResult> GetPurchaseItems()
+    {
+        return Ok(await _masterService.GetPurchaseItemsAsync());
+    }
+
+    [HttpPost("purchase-items")]
+    public async Task<IActionResult> CreatePurchaseItem([FromBody] PurchaseItemDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var id = await _masterService.CreatePurchaseItemAsync(dto);
+        return Ok(id);
+    }
+
+    [HttpPut("purchase-items/{id}")]
+    public async Task<IActionResult> UpdatePurchaseItem(int id, [FromBody] PurchaseItemDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var result = await _masterService.UpdatePurchaseItemAsync(id, dto);
+        if (!result) return NotFound();
+        return Ok(new { success = true });
+    }
+
+    [HttpDelete("purchase-items/{id}")]
+    public async Task<IActionResult> DeletePurchaseItem(int id)
+    {
+        var result = await _masterService.DeletePurchaseItemAsync(id);
+        if (!result) return NotFound();
+        return Ok();
+    }
+
+    #endregion
+
+    #region Purchase Returns
+
+    [HttpGet("purchase-returns")]
+    public async Task<IActionResult> GetPurchaseReturns()
+    {
+        return Ok(await _masterService.GetPurchaseReturnsAsync());
+    }
+
+    [HttpPost("purchase-returns")]
+    public async Task<IActionResult> CreatePurchaseReturn([FromBody] PurchaseReturnDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var id = await _masterService.CreatePurchaseReturnAsync(dto);
+        return Ok(id);
+    }
+
+    [HttpPut("purchase-returns/{id}")]
+    public async Task<IActionResult> UpdatePurchaseReturn(int id, [FromBody] PurchaseReturnDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var result = await _masterService.UpdatePurchaseReturnAsync(id, dto);
+        if (!result) return NotFound();
+        return Ok(new { success = true });
+    }
+
+    [HttpDelete("purchase-returns/{id}")]
+    public async Task<IActionResult> DeletePurchaseReturn(int id)
+    {
+        var result = await _masterService.DeletePurchaseReturnAsync(id);
+        if (!result) return NotFound();
+        return Ok();
+    }
+
+    #endregion
 }

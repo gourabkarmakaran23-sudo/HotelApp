@@ -135,4 +135,34 @@ export class MasterService {
     return this.http.delete<any>(`${this.baseUrl}/wake-up-calls/${id}`);
   }
   //#endregion
+
+  //#region Purchase Items Service Operations
+  getPurchaseItems(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/purchase-items`);
+  }
+  createPurchaseItem(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/purchase-items`, payload);
+  }
+  updatePurchaseItem(id: number, payload: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/purchase-items/${id}`, payload);
+  }
+  deletePurchaseItem(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/purchase-items/${id}`);
+  }
+  //#endregion
+
+  //#region Purchase Returns Service Operations
+  getPurchaseReturns(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/purchase-returns`);
+  }
+  createPurchaseReturn(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/purchase-returns`, payload);
+  }
+  updatePurchaseReturn(id: number, payload: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/purchase-returns/${id}`, payload);
+  }
+  deletePurchaseReturn(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/purchase-returns/${id}`);
+  }
+  //#endregion
 }

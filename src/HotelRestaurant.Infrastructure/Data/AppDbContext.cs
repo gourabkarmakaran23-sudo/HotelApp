@@ -40,6 +40,9 @@ namespace HotelRestaurant.Infrastructure.Data
 
         public DbSet<WakeUpCall> WakeUpCalls => Set<WakeUpCall>();
 
+        public DbSet<PurchaseItem> PurchaseItems => Set<PurchaseItem>();
+public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
+
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -51,6 +54,23 @@ namespace HotelRestaurant.Infrastructure.Data
         // Enforce exact table name configuration mapping rule matching PostgreSQL context
         entity.ToTable("WakeUpCalls");
         entity.HasKey(e => e.Id);
+    });
+    modelBuilder.Entity<PurchaseItem>(entity =>
+    {
+        entity.ToTable("purchase_items");
+        entity.HasKey(e => e.Id);
+        entity.Property(e => e.TotalAmount).HasPrecision(12, 2);
+        entity.Property(e => e.Rate).HasPrecision(12, 2);
+        entity.Property(e => e.Quantity).HasPrecision(12, 3);
+    });
+
+    modelBuilder.Entity<PurchaseReturn>(entity =>
+    {
+        entity.ToTable("purchase_returns");
+        entity.HasKey(e => e.Id);
+        entity.Property(e => e.TotalRefundAmount).HasPrecision(12, 2);
+        entity.Property(e => e.RefundRate).HasPrecision(12, 2);
+        entity.Property(e => e.ReturnQuantity).HasPrecision(12, 3);
     });
 
             // ⬇️ ADD THIS CONFIGURATION BLOCK HERE

@@ -1,0 +1,122 @@
+<div class="page-container">
+  
+  <div class="form-panel-side">
+    <div class="panel-card shadow-sm">
+      <div class="panel-card-header">
+        <h5 class="m-0 text-dark font-weight-bold" style="color: #b91c1c !important;">{{ isEditMode ? 'Edit Purchase Return' : 'Add Purchase Return' }}</h5>
+      </div>
+      <div class="panel-card-body">
+        <form (ngSubmit)="saveReturn()">
+          <div class="form-vertical-stack">
+            
+            <div class="form-group">
+              <label>Item Name *</label>
+              <input type="text" class="form-input" name="itemName" [(ngModel)]="selectedReturn.itemName" required placeholder="Enter Item Name">
+            </div>
+
+            <div class="form-group">
+              <label>Supplier Name *</label>
+              <input type="text" class="form-input" name="supplierName" [(ngModel)]="selectedReturn.supplierName" required placeholder="Enter Supplier Name">
+            </div>
+
+            <div class="form-group">
+              <label>Ref. Invoice No *</label>
+              <input type="text" class="form-input" name="referenceInvoiceNo" [(ngModel)]="selectedReturn.referenceInvoiceNo" required placeholder="Enter Invoice Reference">
+            </div>
+
+            <div class="form-row-split">
+              <div class="form-group">
+                <label>Return Qty *</label>
+                <input type="number" class="form-input" name="returnQuantity" [(ngModel)]="selectedReturn.returnQuantity" (input)="calculateRefund()" required min="0.001">
+              </div>
+              <div class="form-group">
+                <label>Unit *</label>
+                <select class="form-input" name="unit" [(ngModel)]="selectedReturn.unit" required>
+                  <option value="Pcs">Pcs</option>
+                  <option value="Kg">Kg</option>
+                  <option value="Ltr">Ltr</option>
+                  <option value="Box">Box</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Refund Rate *</label>
+              <input type="number" class="form-input" name="refundRate" [(ngModel)]="selectedReturn.refundRate" (input)="calculateRefund()" required min="0" placeholder="0.00">
+            </div>
+
+            <div class="form-group">
+              <label>Total Refund</label>
+              <input type="text" class="form-input readonly-input-display return-highlight-box" name="totalRefundAmount" [value]="(selectedReturn.totalRefundAmount || 0) | number:'1.2-2'" readonly>
+            </div>
+
+            <div class="form-group">
+              <label>Return Date *</label>
+              <input type="date" class="form-input" name="returnDate" [(ngModel)]="selectedReturn.returnDate" required>
+            </div>
+
+            <div class="form-group">
+              <label>Reason for Return *</label>
+              <textarea class="form-input textarea-input" name="reasonForReturn" [(ngModel)]="selectedReturn.reasonForReturn" required placeholder="Enter Reason for Return" rows="2"></textarea>
+            </div>
+
+          </div>
+
+          <div class="form-actions-row">
+            <button type="button" class="btn-action-form btn-clear" (click)="resetForm()">Clear</button>
+            <button type="submit" class="btn-action-form btn-submit return-btn-color" [disabled]="isLoading">
+              {{ isLoading ? 'Processing...' : 'Save' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-panel-side">
+    <div *ngIf="errorMessage" class="alert-banner">
+      <span class="alert-text"><strong>Error:</strong> {{ errorMessage }}</span>
+      <button class="alert-close-btn" (click)="errorMessage = ''">&times;</button>
+    </div>
+
+    <div class="table-responsive-wrapper shadow-sm">
+      <table class="custom-flat-table">
+        <thead>
+          <tr>
+            <th style="width: 60px; text-align: center;">Sl.No</th>
+            <th>Item Name</th>
+            <th>Supplier Name</th>
+            <th style="width: 120px;">Ref Invoice</th>
+            <th style="width: 100px; text-align: right;">Return Qty</th>
+            <th style="width: 100px; text-align: right;">Refund Rate</th>
+            <th style="width: 120px; text-align: right;">Total Refund</th>
+            <th style="width: 120px; text-align: center;">Return Date</th>
+            <th style="width: 140px; text-align: center;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ret of returns; let i = index" style="border-left: 3px solid #ef4444;">
+            <td style="text-align: center; color: #64748b;">{{ i + 1 }}</td>
+            <td class="font-medium-text" style="color: #b91c1c;">{{ ret.itemName }}</td>
+            <td style="color: #334155;">{{ ret.supplierName }}</td>
+            <td><span class="room-indicator-badge return-badge-tint">{{ ret.referenceInvoiceNo }}</span></td>
+            <td style="text-align: right; font-weight: 500;">{{ ret.returnQuantity }} <span style="font-size: 11px; color:#64748b;">{{ ret.unit }}</span></td>
+            <td style="text-align: right; color: #475569;">{{ ret.refundRate | number:'1.2-2' }}</td>
+            <td style="text-align: right; font-weight: 600; color: #b91c1c;">{{ ret.totalRefundAmount | number:'1.2-2' }}</td>
+            <td style="text-align: center; color: #475569;">{{ ret.returnDate | date:'dd-MM-yyyy' }}</td>
+            <td style="text-align: center;">
+              <div class="actions-inline-group">
+                <button type="button" class="grid-btn btn-edit" (click)="openEditMode(ret)">Edit</button>
+                <button type="button" class="grid-btn btn-delete" (click)="deleteReturn(ret.id)">Delete</button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="returns.length === 0 && !isLoading">
+            <td colspan="9" class="empty-table-state">No recorded stock items returns verified inside database ledger.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

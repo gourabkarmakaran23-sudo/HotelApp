@@ -54,7 +54,21 @@ namespace HotelRestaurant.Application.Services.Interfaces
         Task<bool> UpdateWakeUpCallAsync(int id, WakeUpCallDto dto);
         Task<bool> DeleteWakeUpCallAsync(int id);
         #endregion
-    
+
+        // Purchase Items
+        Task<List<PurchaseItemDto>> GetPurchaseItemsAsync();
+        Task<PurchaseItemDto?> GetPurchaseItemByIdAsync(int id);
+        Task<int> CreatePurchaseItemAsync(PurchaseItemDto dto);
+        Task<bool> UpdatePurchaseItemAsync(int id, PurchaseItemDto dto);
+        Task<bool> DeletePurchaseItemAsync(int id);
+
+        // Purchase Returns
+        Task<List<PurchaseReturnDto>> GetPurchaseReturnsAsync();
+        Task<PurchaseReturnDto?> GetPurchaseReturnByIdAsync(int id);
+        Task<int> CreatePurchaseReturnAsync(PurchaseReturnDto dto);
+        Task<bool> UpdatePurchaseReturnAsync(int id, PurchaseReturnDto dto);
+        Task<bool> DeletePurchaseReturnAsync(int id);
+
 
     }
 }

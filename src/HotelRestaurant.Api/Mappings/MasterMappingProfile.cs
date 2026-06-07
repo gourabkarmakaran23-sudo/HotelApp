@@ -9,7 +9,7 @@ namespace HotelRestaurant.Api.Mappings
         public MasterMappingProfile()
         {
             // Add this inside your MappingProfile constructor class setup:
-CreateMap<WakeUpCall, WakeUpCallDto>().ReverseMap();
+            CreateMap<WakeUpCall, WakeUpCallDto>().ReverseMap();
             // Currency
             CreateMap<Currency, CurrencyDto>().ReverseMap();
 
@@ -24,6 +24,10 @@ CreateMap<WakeUpCall, WakeUpCallDto>().ReverseMap();
 
             // Financial Year
             CreateMap<FinancialYear, FinancialYearDto>().ReverseMap();
+
+            // Add these explicit lines to fix your missing type map configuration errors:
+            CreateMap<PurchaseItemDto, PurchaseItem>().ReverseMap();
+            CreateMap<PurchaseReturnDto, PurchaseReturn>().ReverseMap();
 
             CreateMap<PaymentMethods, PaymentMethodDto>()
     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
