@@ -22,6 +22,11 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             PurchaseItems = new GenericRepository<PurchaseItem>(_context);
             PurchaseReturns = new GenericRepository<PurchaseReturn>(_context);
             #endregion
+            #region Room Settings Repositories
+            BedTypes = new GenericRepository<BedType>(_context);
+            BookingTypes = new GenericRepository<BookingType>(_context);
+            BookingSources = new GenericRepository<BookingSource>(_context);
+            #endregion
             Hotels = new GenericRepository<Hotel>(_context);
             Rooms = new GenericRepository<Room>(_context);
             RoomTypes = new GenericRepository<RoomTypes>(_context);
@@ -49,6 +54,11 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         public IGenericRepository<WakeUpCall> WakeUpCalls { get; }
         public IGenericRepository<PurchaseItem> PurchaseItems { get; }
         public IGenericRepository<PurchaseReturn> PurchaseReturns { get; }
+        #endregion
+        #region Room Settings Repositories
+        public IGenericRepository<BedType> BedTypes { get; }
+        public IGenericRepository<BookingType> BookingTypes { get; }
+        public IGenericRepository<BookingSource> BookingSources { get; }
         #endregion
         public IGenericRepository<Booking> Bookings { get; }
         public IGenericRepository<ReservationRoom> ReservationRooms { get; }

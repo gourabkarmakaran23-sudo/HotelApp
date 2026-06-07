@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using HotelRestaurant.Application.DTOs.Master;
+using HotelRestaurant.Application.DTOs.RoomSettings;
 using HotelRestaurant.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -378,5 +379,24 @@ public class MasterController : ControllerBase
 
     #endregion
 
-    
+    #region Bed Types
+    [HttpGet("bed-types")] public async Task<IActionResult> GetBedTypes() => Ok(await _masterService.GetBedTypesAsync());
+    [HttpPost("bed-types")] public async Task<IActionResult> CreateBedType([FromBody] BedTypeDto d) => Ok(await _masterService.CreateBedTypeAsync(d));
+    [HttpPut("bed-types/{id}")] public async Task<IActionResult> UpdateBedType(int id, [FromBody] BedTypeDto d) => Ok(await _masterService.UpdateBedTypeAsync(id, d));
+    [HttpDelete("bed-types/{id}")] public async Task<IActionResult> DeleteBedType(int id) => Ok(await _masterService.DeleteBedTypeAsync(id));
+    #endregion
+
+    #region Booking Types
+    [HttpGet("booking-types")] public async Task<IActionResult> GetBookingTypes() => Ok(await _masterService.GetBookingTypesAsync());
+    [HttpPost("booking-types")] public async Task<IActionResult> CreateBookingType([FromBody] BookingTypeDto d) => Ok(await _masterService.CreateBookingTypeAsync(d));
+    [HttpPut("booking-types/{id}")] public async Task<IActionResult> UpdateBookingType(int id, [FromBody] BookingTypeDto d) => Ok(await _masterService.UpdateBookingTypeAsync(id, d));
+    [HttpDelete("booking-types/{id}")] public async Task<IActionResult> DeleteBookingType(int id) => Ok(await _masterService.DeleteBookingTypeAsync(id));
+    #endregion
+
+    #region Booking Sources
+    [HttpGet("booking-sources")] public async Task<IActionResult> GetBookingSources() => Ok(await _masterService.GetBookingSourcesAsync());
+    [HttpPost("booking-sources")] public async Task<IActionResult> CreateBookingSource([FromBody] BookingSourceDto d) => Ok(await _masterService.CreateBookingSourceAsync(d));
+    [HttpPut("booking-sources/{id}")] public async Task<IActionResult> UpdateBookingSource(int id, [FromBody] BookingSourceDto d) => Ok(await _masterService.UpdateBookingSourceAsync(id, d));
+    [HttpDelete("booking-sources/{id}")] public async Task<IActionResult> DeleteBookingSource(int id) => Ok(await _masterService.DeleteBookingSourceAsync(id));
+    #endregion
 }

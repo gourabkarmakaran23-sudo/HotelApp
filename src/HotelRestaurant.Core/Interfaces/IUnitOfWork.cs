@@ -15,6 +15,11 @@ namespace HotelRestaurant.Core.Interfaces
             IGenericRepository<PurchaseItem> PurchaseItems { get; }
             IGenericRepository<PurchaseReturn> PurchaseReturns { get; }
         #endregion
+        #region Room Settings Repositories
+            IGenericRepository<BedType> BedTypes { get; }
+            IGenericRepository<BookingType> BookingTypes { get; }
+            IGenericRepository<BookingSource> BookingSources { get; }
+        #endregion
         IGenericRepository<Hotel> Hotels { get; }
         IGenericRepository<RoomTypes> RoomTypes { get; }
         IGenericRepository<Room> Rooms { get; }

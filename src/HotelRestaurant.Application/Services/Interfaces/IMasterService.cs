@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using HotelRestaurant.Application.DTOs.Master;
+using HotelRestaurant.Application.DTOs.RoomSettings;
 
 namespace HotelRestaurant.Application.Services.Interfaces
 {
@@ -72,7 +73,23 @@ namespace HotelRestaurant.Application.Services.Interfaces
         Task<List<StockReportDto>> GetCurrentProductStockReportAsync();
         Task<List<StockLedgerDetailDto>> GetStockLedgerDetailsByItemAsync(string itemName);
 
+        // Bed Type Contracts
+        Task<List<BedTypeDto>> GetBedTypesAsync();
+        Task<int> CreateBedTypeAsync(BedTypeDto dto);
+        Task<bool> UpdateBedTypeAsync(int id, BedTypeDto dto);
+        Task<bool> DeleteBedTypeAsync(int id);
 
+        // Booking Type Contracts
+        Task<List<BookingTypeDto>> GetBookingTypesAsync();
+        Task<int> CreateBookingTypeAsync(BookingTypeDto dto);
+        Task<bool> UpdateBookingTypeAsync(int id, BookingTypeDto dto);
+        Task<bool> DeleteBookingTypeAsync(int id);
+
+        // Booking Source Contracts
+        Task<List<BookingSourceDto>> GetBookingSourcesAsync();
+        Task<int> CreateBookingSourceAsync(BookingSourceDto dto);
+        Task<bool> UpdateBookingSourceAsync(int id, BookingSourceDto dto);
+        Task<bool> DeleteBookingSourceAsync(int id);
 
     }
 }

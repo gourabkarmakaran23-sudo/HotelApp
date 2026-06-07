@@ -74,7 +74,11 @@ export const routes: Routes = [
   {path: 'purchase-returns', loadComponent: () => import('./pages/masters/purchase-return/purchase-return.component').then(m => m.PurchaseReturnComponent), canActivate: [AuthGuard] },
   {path: 'stock-report', loadComponent: () => import('./pages/masters/stock-report/stock-report.component').then(m => m.StockReportComponent), canActivate: [AuthGuard] },
   {path: 'stock-details', loadComponent: () => import('./pages/masters/stock-details/stock-details.component').then(m => m.StockDetailsComponent), canActivate: [AuthGuard] },
-  
+  //#region Room Settings Sub Pages
+  {path: 'booking-type', loadComponent: () => import('./pages/room-settings/booking-type/booking-type.component').then(m => m.BookingTypeComponent), canActivate: [AuthGuard] },
+  {path: 'booking-source', loadComponent: () => import('./pages/room-settings/booking-source/booking-source.component').then(m => m.BookingSourceComponent), canActivate: [AuthGuard] },
+  {path: 'bed-type', loadComponent: () => import('./pages/room-settings/bed-type/bed-type.component').then(m => m.BedTypeComponent), canActivate: [AuthGuard] },
+  //#endregion
 
 {
   path: 'upcoming-checkin',

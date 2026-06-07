@@ -49,7 +49,12 @@ export class SidebarComponent implements OnInit {
       { label: 'Stock Details', route: '/stock-details' }
       //Add more master pages here
     ]},
-    
+    //#region Room Settings Sub Pages
+    {icon: '🛏️', label: 'Room Settings', open: false, children: [
+      { label: 'Booking Type', route: '/booking-type' },
+      { label: 'Booking Source', route: '/booking-source' },
+      { label: 'Bed Type', route: '/bed-type' }
+    ]},
     {
       icon: '📅',
       label: 'Room Reservation',

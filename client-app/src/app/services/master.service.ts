@@ -173,4 +173,24 @@ export class MasterService {
   getStockDetails(itemName: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/stock-details?itemName=${encodeURIComponent(itemName)}`);
   }
+
+  // Bed Type Pipeline Links
+  getBedTypes(): Observable<any[]> { return this.http.get<any[]>(`${this.baseUrl}/bed-types`); }
+  createBedType(payload: any): Observable<number> { return this.http.post<number>(`${this.baseUrl}/bed-types`, payload); }
+  updateBedType(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.baseUrl}/bed-types/${id}`, payload); }
+  deleteBedType(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.baseUrl}/bed-types/${id}`); }
+
+  // Booking Type Pipeline Links
+  getBookingTypes(): Observable<any[]> { return this.http.get<any[]>(`${this.baseUrl}/booking-types`); }
+  createBookingType(payload: any): Observable<number> { return this.http.post<number>(`${this.baseUrl}/booking-types`, payload); }
+  updateBookingType(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.baseUrl}/booking-types/${id}`, payload); }
+  deleteBookingType(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.baseUrl}/booking-types/${id}`); }
+
+  // Booking Source Pipeline Links
+  getBookingSources(): Observable<any[]> { return this.http.get<any[]>(`${this.baseUrl}/booking-sources`); }
+  createBookingSource(payload: any): Observable<number> { return this.http.post<number>(`${this.baseUrl}/booking-sources`, payload); }
+  updateBookingSource(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.baseUrl}/booking-sources/${id}`, payload); }
+  deleteBookingSource(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.baseUrl}/booking-sources/${id}`); }
+
+  
 }

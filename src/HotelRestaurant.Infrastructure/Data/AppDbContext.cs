@@ -45,6 +45,11 @@ namespace HotelRestaurant.Infrastructure.Data
 
         #endregion
 
+        // 1. Expose DbSets
+        public DbSet<BedType> BedTypes => Set<BedType>();
+        public DbSet<BookingType> BookingTypes => Set<BookingType>();
+        public DbSet<BookingSource> BookingSources => Set<BookingSource>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -270,6 +275,25 @@ namespace HotelRestaurant.Infrastructure.Data
                     .WithMany(i => i.Payments)
                     .HasForeignKey(p => p.InvoiceId)
                     .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            // 2. Add properties mappings within OnModelCreating()
+            modelBuilder.Entity<BedType>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.BedName).IsRequired().HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<BookingType>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.TypeName).IsRequired().HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<BookingSource>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.SourceName).IsRequired().HasMaxLength(100);
             });
         }
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using HotelRestaurant.Application.DTOs.Master;
+using HotelRestaurant.Application.DTOs.RoomSettings;
 using HotelRestaurant.Application.Services.Interfaces;
 using HotelRestaurant.Core.Entities;
 using HotelRestaurant.Core.Interfaces;
@@ -559,6 +560,106 @@ namespace HotelRestaurant.Application.Services.Implementations
             }
 
             return ledgerList.OrderByDescending(x => x.TransactionDate).ToList();
+        }
+
+        #endregion
+
+        #region Bed, Booking Type & Source Master Implementations
+
+        // --- BED TYPES ---
+        public async Task<List<BedTypeDto>> GetBedTypesAsync()
+        {
+            var list = await _unitOfWork.BedTypes.GetAllAsync();
+            return _mapper.Map<List<BedTypeDto>>(list.Where(x => !x.IsDeleted).ToList());
+        }
+        public async Task<int> CreateBedTypeAsync(BedTypeDto dto)
+        {
+            var entity = _mapper.Map<BedType>(dto);
+            await _unitOfWork.BedTypes.AddAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
+            return entity.Id;
+        }
+        public async Task<bool> UpdateBedTypeAsync(int id, BedTypeDto dto)
+        {
+            var entity = await _unitOfWork.BedTypes.GetByIdAsync(id);
+            if (entity == null || entity.IsDeleted) return false;
+            entity.BedName = dto.BedName;
+            entity.Description = dto.Description;
+            entity.IsActive = dto.IsActive;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> DeleteBedTypeAsync(int id)
+        {
+            var entity = await _unitOfWork.BedTypes.GetByIdAsync(id);
+            if (entity == null) return false;
+            entity.IsDeleted = true;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        // --- BOOKING TYPES ---
+        public async Task<List<BookingTypeDto>> GetBookingTypesAsync()
+        {
+            var list = await _unitOfWork.BookingTypes.GetAllAsync();
+            return _mapper.Map<List<BookingTypeDto>>(list.Where(x => !x.IsDeleted).ToList());
+        }
+        public async Task<int> CreateBookingTypeAsync(BookingTypeDto dto)
+        {
+            var entity = _mapper.Map<BookingType>(dto);
+            await _unitOfWork.BookingTypes.AddAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
+            return entity.Id;
+        }
+        public async Task<bool> UpdateBookingTypeAsync(int id, BookingTypeDto dto)
+        {
+            var entity = await _unitOfWork.BookingTypes.GetByIdAsync(id);
+            if (entity == null || entity.IsDeleted) return false;
+            entity.TypeName = dto.TypeName;
+            entity.Remarks = dto.Remarks;
+            entity.IsActive = dto.IsActive;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> DeleteBookingTypeAsync(int id)
+        {
+            var entity = await _unitOfWork.BookingTypes.GetByIdAsync(id);
+            if (entity == null) return false;
+            entity.IsDeleted = true;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        // --- BOOKING SOURCES ---
+        public async Task<List<BookingSourceDto>> GetBookingSourcesAsync()
+        {
+            var list = await _unitOfWork.BookingSources.GetAllAsync();
+            return _mapper.Map<List<BookingSourceDto>>(list.Where(x => !x.IsDeleted).ToList());
+        }
+        public async Task<int> CreateBookingSourceAsync(BookingSourceDto dto)
+        {
+            var entity = _mapper.Map<BookingSource>(dto);
+            await _unitOfWork.BookingSources.AddAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
+            return entity.Id;
+        }
+        public async Task<bool> UpdateBookingSourceAsync(int id, BookingSourceDto dto)
+        {
+            var entity = await _unitOfWork.BookingSources.GetByIdAsync(id);
+            if (entity == null || entity.IsDeleted) return false;
+            entity.SourceName = dto.SourceName;
+            entity.Details = dto.Details;
+            entity.IsActive = dto.IsActive;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> DeleteBookingSourceAsync(int id)
+        {
+            var entity = await _unitOfWork.BookingSources.GetByIdAsync(id);
+            if (entity == null) return false;
+            entity.IsDeleted = true;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
 
         #endregion
