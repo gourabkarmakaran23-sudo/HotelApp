@@ -44,7 +44,9 @@ export class SidebarComponent implements OnInit {
       { label: 'Financial Years', route: '/financial-years' },
       { label: 'Wake Up Calls', route: '/wake-up-calls' },
       { label: 'Purchase Items', route: '/purchase' },
-      { label: 'Purchase Returns', route: '/purchase-returns' }
+      { label: 'Purchase Returns', route: '/purchase-returns' },
+      { label: 'Stock Report', route: '/stock-report' },
+      { label: 'Stock Details', route: '/stock-details' }
       //Add more master pages here
     ]},
     

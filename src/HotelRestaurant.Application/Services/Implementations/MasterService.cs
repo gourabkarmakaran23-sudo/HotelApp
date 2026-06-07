@@ -470,5 +470,97 @@ namespace HotelRestaurant.Application.Services.Implementations
         }
 
         #endregion
+
+        #region Stock Report & Ledger Operations
+
+        public async Task<List<StockReportDto>> GetCurrentProductStockReportAsync()
+        {
+            var purchases = await _unitOfWork.PurchaseItems.GetAllAsync();
+            var activePurchases = purchases.Where(x => !x.IsDeleted).ToList();
+
+            var returns = await _unitOfWork.PurchaseReturns.GetAllAsync();
+            var activeReturns = returns.Where(x => !x.IsDeleted).ToList();
+
+            // Grouping by unique Item Names to calculate aggregate stock levels
+            var distinctItemNames = activePurchases.Select(x => x.ItemName).Distinct();
+            var reportList = new List<StockReportDto>();
+
+            foreach (var name in distinctItemNames)
+            {
+                var itemPurchases = activePurchases.Where(x => x.ItemName == name).ToList();
+                var itemReturns = activeReturns.Where(x => x.ItemName == name).ToList();
+
+                decimal totalPurchased = itemPurchases.Sum(x => x.Quantity);
+                decimal totalReturned = itemReturns.Sum(x => x.ReturnQuantity);
+                decimal currentStock = totalPurchased - totalReturned;
+
+                string unit = itemPurchases.FirstOrDefault()?.Unit ?? "Pcs";
+                decimal avgRate = itemPurchases.Count > 0 ? itemPurchases.Average(x => x.Rate) : 0;
+                decimal totalStockValue = currentStock * avgRate;
+
+                string status = "In Stock";
+                if (currentStock <= 0) status = "Out of Stock";
+                else if (currentStock < 15) status = "Low Stock"; // Configurable warning threshold
+
+                reportList.Add(new StockReportDto
+                {
+                    ItemName = name,
+                    TotalPurchased = totalPurchased,
+                    TotalReturned = totalReturned,
+                    CurrentStock = currentStock,
+                    Unit = unit,
+                    AverageRate = Math.Round(avgRate, 2),
+                    TotalStockValue = Math.Round(totalStockValue, 2),
+                    Status = status
+                });
+            }
+
+            return reportList.OrderBy(x => x.CurrentStock).ToList();
+        }
+
+        public async Task<List<StockLedgerDetailDto>> GetStockLedgerDetailsByItemAsync(string itemName)
+        {
+            var ledgerList = new List<StockLedgerDetailDto>();
+
+            var purchases = await _unitOfWork.PurchaseItems.GetAllAsync();
+            var itemPurchases = purchases.Where(x => !x.IsDeleted && x.ItemName.ToLower() == itemName.ToLower());
+
+            foreach (var p in itemPurchases)
+            {
+                ledgerList.Add(new StockLedgerDetailDto
+                {
+                    TransactionDate = p.PurchaseDate,
+                    TransactionType = "Purchase",
+                    ReferenceNo = p.InvoiceNumber,
+                    SupplierName = p.SupplierName,
+                    Quantity = p.Quantity,
+                    Unit = p.Unit,
+                    Rate = p.Rate,
+                    TotalAmount = p.TotalAmount
+                });
+            }
+
+            var returns = await _unitOfWork.PurchaseReturns.GetAllAsync();
+            var itemReturns = returns.Where(x => !x.IsDeleted && x.ItemName.ToLower() == itemName.ToLower());
+
+            foreach (var r in itemReturns)
+            {
+                ledgerList.Add(new StockLedgerDetailDto
+                {
+                    TransactionDate = r.ReturnDate,
+                    TransactionType = "Return",
+                    ReferenceNo = r.ReferenceInvoiceNo,
+                    SupplierName = r.SupplierName,
+                    Quantity = r.ReturnQuantity,
+                    Unit = r.Unit,
+                    Rate = r.RefundRate,
+                    TotalAmount = r.TotalRefundAmount
+                });
+            }
+
+            return ledgerList.OrderByDescending(x => x.TransactionDate).ToList();
+        }
+
+        #endregion
     }
 }

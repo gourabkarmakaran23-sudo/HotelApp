@@ -165,4 +165,12 @@ export class MasterService {
     return this.http.delete<any>(`${this.baseUrl}/purchase-returns/${id}`);
   }
   //#endregion
+
+  getStockReport(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/stock-report`);
+  }
+
+  getStockDetails(itemName: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/stock-details?itemName=${encodeURIComponent(itemName)}`);
+  }
 }

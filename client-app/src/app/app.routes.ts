@@ -72,6 +72,8 @@ export const routes: Routes = [
   {path: 'wake-up-calls', loadComponent: () => import('./pages/masters/wake-up-call/wake-up-call.component').then(m => m.WakeUpCallComponent), canActivate: [AuthGuard] },
   {path: 'purchase', loadComponent: () => import('./pages/masters/purchase-item/purchase-item.component').then(m => m.PurchaseItemComponent), canActivate: [AuthGuard] },
   {path: 'purchase-returns', loadComponent: () => import('./pages/masters/purchase-return/purchase-return.component').then(m => m.PurchaseReturnComponent), canActivate: [AuthGuard] },
+  {path: 'stock-report', loadComponent: () => import('./pages/masters/stock-report/stock-report.component').then(m => m.StockReportComponent), canActivate: [AuthGuard] },
+  {path: 'stock-details', loadComponent: () => import('./pages/masters/stock-details/stock-details.component').then(m => m.StockDetailsComponent), canActivate: [AuthGuard] },
   
 
 {

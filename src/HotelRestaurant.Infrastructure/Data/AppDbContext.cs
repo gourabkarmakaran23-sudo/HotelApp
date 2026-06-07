@@ -41,7 +41,7 @@ namespace HotelRestaurant.Infrastructure.Data
         public DbSet<WakeUpCall> WakeUpCalls => Set<WakeUpCall>();
 
         public DbSet<PurchaseItem> PurchaseItems => Set<PurchaseItem>();
-public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
+        public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
 
         #endregion
 
@@ -55,23 +55,36 @@ public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
         entity.ToTable("WakeUpCalls");
         entity.HasKey(e => e.Id);
     });
-    modelBuilder.Entity<PurchaseItem>(entity =>
-    {
-        entity.ToTable("purchase_items");
-        entity.HasKey(e => e.Id);
-        entity.Property(e => e.TotalAmount).HasPrecision(12, 2);
-        entity.Property(e => e.Rate).HasPrecision(12, 2);
-        entity.Property(e => e.Quantity).HasPrecision(12, 3);
-    });
+            // Configuration rules for Purchase Item Tracking Ledger
+            modelBuilder.Entity<PurchaseItem>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ItemName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.SupplierName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.InvoiceNumber).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Unit).HasMaxLength(50);
 
-    modelBuilder.Entity<PurchaseReturn>(entity =>
-    {
-        entity.ToTable("purchase_returns");
-        entity.HasKey(e => e.Id);
-        entity.Property(e => e.TotalRefundAmount).HasPrecision(12, 2);
-        entity.Property(e => e.RefundRate).HasPrecision(12, 2);
-        entity.Property(e => e.ReturnQuantity).HasPrecision(12, 3);
-    });
+                // Strict accounting precision mapping matrix overrides
+                entity.Property(e => e.Quantity).HasPrecision(12, 3);
+                entity.Property(e => e.Rate).HasPrecision(18, 2);
+                entity.Property(e => e.TotalAmount).HasPrecision(18, 2);
+            });
+
+            // Configuration rules for Purchase Return Ledger
+            modelBuilder.Entity<PurchaseReturn>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ItemName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.SupplierName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.ReferenceInvoiceNo).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Unit).HasMaxLength(50);
+                entity.Property(e => e.ReasonForReturn).IsRequired().HasMaxLength(500);
+
+                // Strict accounting precision mapping matrix overrides
+                entity.Property(e => e.ReturnQuantity).HasPrecision(12, 3);
+                entity.Property(e => e.RefundRate).HasPrecision(18, 2);
+                entity.Property(e => e.TotalRefundAmount).HasPrecision(18, 2);
+            });
 
             // ⬇️ ADD THIS CONFIGURATION BLOCK HERE
             modelBuilder.Entity<RoomTypeFacility>(entity =>

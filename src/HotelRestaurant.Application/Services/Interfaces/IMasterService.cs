@@ -69,6 +69,10 @@ namespace HotelRestaurant.Application.Services.Interfaces
         Task<bool> UpdatePurchaseReturnAsync(int id, PurchaseReturnDto dto);
         Task<bool> DeletePurchaseReturnAsync(int id);
 
+        Task<List<StockReportDto>> GetCurrentProductStockReportAsync();
+        Task<List<StockLedgerDetailDto>> GetStockLedgerDetailsByItemAsync(string itemName);
+
+
 
     }
 }

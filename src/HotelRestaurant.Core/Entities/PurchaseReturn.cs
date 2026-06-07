@@ -16,5 +16,8 @@ namespace HotelRestaurant.Core.Entities
         public decimal TotalRefundAmount { get; set; }
         public DateTime ReturnDate { get; set; }
         public string ReasonForReturn { get; set; } = string.Empty;
+
+        // Soft Delete tracker baseline
+        public bool IsDeleted { get; set; } = false;
     }
 }

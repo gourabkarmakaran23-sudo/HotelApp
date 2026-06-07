@@ -16,5 +16,8 @@ namespace HotelRestaurant.Core.Entities
         public decimal TotalAmount { get; set; }
         public DateTime PurchaseDate { get; set; }
         public string? Remarks { get; set; }
+
+        // Soft Delete tracker baseline 
+        public bool IsDeleted { get; set; } = false;
     }
 }

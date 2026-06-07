@@ -358,4 +358,25 @@ public class MasterController : ControllerBase
     }
 
     #endregion
+
+    #region Stock Reports
+
+    [HttpGet("stock-report")]
+    public async Task<IActionResult> GetStockReport()
+    {
+        var report = await _masterService.GetCurrentProductStockReportAsync();
+        return Ok(report);
+    }
+
+    [HttpGet("stock-details")]
+    public async Task<IActionResult> GetStockDetails([FromQuery] string itemName)
+    {
+        if (string.IsNullOrEmpty(itemName)) return BadRequest("Item Name query identifier missing.");
+        var details = await _masterService.GetStockLedgerDetailsByItemAsync(itemName);
+        return Ok(details);
+    }
+
+    #endregion
+
+    
 }
