@@ -60,6 +60,10 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         public IGenericRepository<BookingType> BookingTypes { get; }
         public IGenericRepository<BookingSource> BookingSources { get; }
         #endregion
+        #region Core Hotel & Restaurant Repositories
+        public IGenericRepository<Complementary> Complementaries { get; }
+        public IGenericRepository<FloorPlan> FloorPlans { get; }
+        #endregion
         public IGenericRepository<Booking> Bookings { get; }
         public IGenericRepository<ReservationRoom> ReservationRooms { get; }
         public IGenericRepository<BookingGuest> BookingGuests { get; }

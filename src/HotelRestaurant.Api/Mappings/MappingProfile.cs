@@ -8,7 +8,7 @@ using HotelRestaurant.Core.Entities;
 
 namespace HotelRestaurant.Api.Mappings
 {
-    public class MappingProfile:Profile
+    public class MappingProfile : Profile
     {
         public MappingProfile()
         {
@@ -16,6 +16,9 @@ namespace HotelRestaurant.Api.Mappings
             CreateMap<BedType, BedTypeDto>().ReverseMap();
             CreateMap<BookingType, BookingTypeDto>().ReverseMap();
             CreateMap<BookingSource, BookingSourceDto>().ReverseMap();
+
+            CreateMap<Complementary, ComplementaryDto>().ReverseMap();
+            CreateMap<FloorPlan, FloorPlanDto>().ReverseMap();
         }
     }
 }

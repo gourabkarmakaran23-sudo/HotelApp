@@ -663,5 +663,85 @@ namespace HotelRestaurant.Application.Services.Implementations
         }
 
         #endregion
+
+        #region Complementary & Floor Plan Master Methods
+
+// --- COMPLEMENTARY SERVICES ---
+public async Task<List<ComplementaryDto>> GetComplementariesAsync()
+{
+    var items = await _unitOfWork.Complementaries.GetAllAsync();
+    return _mapper.Map<List<ComplementaryDto>>(items.Where(x => !x.IsDeleted).ToList());
+}
+
+public async Task<int> CreateComplementaryAsync(ComplementaryDto dto)
+{
+    var entity = _mapper.Map<Complementary>(dto);
+    await _unitOfWork.Complementaries.AddAsync(entity);
+    await _unitOfWork.SaveChangesAsync();
+    return entity.Id;
+}
+
+public async Task<bool> UpdateComplementaryAsync(int id, ComplementaryDto dto)
+{
+    var entity = await _unitOfWork.Complementaries.GetByIdAsync(id);
+    if (entity == null || entity.IsDeleted) return false;
+    
+    entity.ItemName = dto.ItemName;
+    entity.Description = dto.Description;
+    entity.IsActive = dto.IsActive;
+    
+    await _unitOfWork.SaveChangesAsync();
+    return true;
+}
+
+public async Task<bool> DeleteComplementaryAsync(int id)
+{
+    var entity = await _unitOfWork.Complementaries.GetByIdAsync(id);
+    if (entity == null) return false;
+    
+    entity.IsDeleted = true;
+    await _unitOfWork.SaveChangesAsync();
+    return true;
+}
+
+// --- FLOOR PLAN SERVICES ---
+public async Task<List<FloorPlanDto>> GetFloorPlansAsync()
+{
+    var floors = await _unitOfWork.FloorPlans.GetAllAsync();
+    return _mapper.Map<List<FloorPlanDto>>(floors.Where(x => !x.IsDeleted).ToList());
+}
+
+public async Task<int> CreateFloorPlanAsync(FloorPlanDto dto)
+{
+    var entity = _mapper.Map<FloorPlan>(dto);
+    await _unitOfWork.FloorPlans.AddAsync(entity);
+    await _unitOfWork.SaveChangesAsync();
+    return entity.Id;
+}
+
+public async Task<bool> UpdateFloorPlanAsync(int id, FloorPlanDto dto)
+{
+    var entity = await _unitOfWork.FloorPlans.GetByIdAsync(id);
+    if (entity == null || entity.IsDeleted) return false;
+    
+    entity.FloorName = dto.FloorName;
+    entity.Remarks = dto.Remarks;
+    entity.IsActive = dto.IsActive;
+    
+    await _unitOfWork.SaveChangesAsync();
+    return true;
+}
+
+public async Task<bool> DeleteFloorPlanAsync(int id)
+{
+    var entity = await _unitOfWork.FloorPlans.GetByIdAsync(id);
+    if (entity == null) return false;
+    
+    entity.IsDeleted = true;
+    await _unitOfWork.SaveChangesAsync();
+    return true;
+}
+
+#endregion
     }
 }

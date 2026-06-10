@@ -1,0 +1,6 @@
+Id,FirstName,LastName,Email,Phone,Address,NationalId,DateOfBirth,CreatedAt,UpdatedAt,IsDeleted,Nationality,Title
+1,Aryanma,Nandi,labelnandienterprise@gmail.com,9903439288,Suktara Apartment GA54,PENDING_ID_SCAN,1990-01-01 00:00:00,2026-05-27 14:51:13.861392,2026-05-27 14:51:13.861392,f,Indian,""
+2,Vibek,Chopra,me@mee.com,908884786,Me KOlkata,PENDING_ID_SCAN,1990-01-01 00:00:00,2026-05-27 18:19:01.552077,2026-05-27 18:19:01.552077,f,Indian,""
+3,Rahul,Bose,kol@me.com,984001444,Kolkata 800992,PENDING_ID_SCAN,1990-01-01 00:00:00,2026-05-31 05:26:46.714832,2026-05-31 05:26:46.714832,f,Indian,""
+4,Monali,Thakur,Monali@mymaikl.com,98787888,Barrakpore,PENDING_ID_SCAN,1990-01-01 00:00:00,2026-05-31 12:29:05.928914,2026-05-31 12:29:05.928914,f,Indian,""
+5,Tarun,Dey,puru@tarun.com,23123123,Purulia,PENDING_ID_SCAN,1990-01-01 00:00:00,2026-06-02 17:43:13.612841,2026-06-02 17:43:13.612841,f,Indian,""

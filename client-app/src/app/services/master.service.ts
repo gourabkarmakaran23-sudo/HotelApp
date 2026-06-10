@@ -192,5 +192,17 @@ export class MasterService {
   updateBookingSource(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.baseUrl}/booking-sources/${id}`, payload); }
   deleteBookingSource(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.baseUrl}/booking-sources/${id}`); }
 
+  // Complementary Integration Endpoints
+  getComplementaries(): Observable<any[]> { return this.http.get<any[]>(`${this.baseUrl}/complementary`); }
+  createComplementary(payload: any): Observable<number> { return this.http.post<number>(`${this.baseUrl}/complementary`, payload); }
+  updateComplementary(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.baseUrl}/complementary/${id}`, payload); }
+  deleteComplementary(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.baseUrl}/complementary/${id}`); }
+
+  // Floor Plan Integration Endpoints
+  getFloorPlans(): Observable<any[]> { return this.http.get<any[]>(`${this.baseUrl}/floor-plans`); }
+  createFloorPlan(payload: any): Observable<number> { return this.http.post<number>(`${this.baseUrl}/floor-plans`, payload); }
+  updateFloorPlan(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.baseUrl}/floor-plans/${id}`, payload); }
+  deleteFloorPlan(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.baseUrl}/floor-plans/${id}`); }
+
   
 }

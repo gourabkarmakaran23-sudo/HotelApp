@@ -1,0 +1,5 @@
+Id,TypeName,Remarks,IsActive,CreatedAt,UpdatedAt,IsDeleted
+1,Online Travel Agent (OTA),Reservations routed through global digital API merchant systems and channel managers.,t,2026-06-07 18:05:23.016756,2026-06-07 18:05:23.016756,f
+2,Local Travel Agent (LTA),Offline corporate partnerships and regional destination management aggregators.,t,2026-06-07 18:05:47.910558,2026-06-07 18:05:47.910558,f
+3,Counter Booking,Direct on-premise walk-in arrivals handling manual terminal ledgers.,t,2026-06-07 18:06:10.71957,2026-06-07 18:06:10.719571,f
+4,Back Office,Internal administrative distribution management entries and corporate group assignments.,t,2026-06-07 18:06:35.256257,2026-06-07 18:06:35.256257,f

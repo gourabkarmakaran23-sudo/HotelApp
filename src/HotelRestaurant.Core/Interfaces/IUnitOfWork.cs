@@ -20,6 +20,10 @@ namespace HotelRestaurant.Core.Interfaces
             IGenericRepository<BookingType> BookingTypes { get; }
             IGenericRepository<BookingSource> BookingSources { get; }
         #endregion
+        #region Core Hotel & Restaurant Repositories
+        IGenericRepository<Complementary> Complementaries { get; }
+        IGenericRepository<FloorPlan> FloorPlans { get; }
+        #endregion
         IGenericRepository<Hotel> Hotels { get; }
         IGenericRepository<RoomTypes> RoomTypes { get; }
         IGenericRepository<Room> Rooms { get; }

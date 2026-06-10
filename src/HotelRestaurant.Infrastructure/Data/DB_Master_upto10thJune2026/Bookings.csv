@@ -1,0 +1,6 @@
+Id,BookingNumber,GuestId,BookingDate,TotalAmount,Status,CreatedAt,UpdatedAt,IsDeleted,ArrivalFrom,BookingReference,BookingType,CustomerProfile,PurposeOfVisit,Remarks,SoldBy
+1,RES-20260527202114,1,2026-05-27 14:51:14.38735,14800,1,2026-05-27 14:51:14.387238,2026-05-27 14:51:14.387238,f,,,,,,,
+2,RES-20260527234901,2,2026-05-27 18:19:01.658122,14100,1,2026-05-27 18:19:01.657975,2026-05-27 18:19:01.657975,f,Asansol,Kolkata Back Office,Local Travel Agent (LTA),Me,Work & Dinner,My New Remarks,Sanjay Kumar Hazra
+3,RES-20260531105647,3,2026-05-31 05:26:47.705458,43800,1,2026-05-31 05:26:47.705107,2026-05-31 05:26:47.705107,f,Asansol,Head Back Office,Book Online,Test 2332,Work & Dinner,R Remarks,Sanjay Kumar Hazra
+4,RES-20260531175906,4,2026-05-31 12:29:06.402701,40300,1,2026-05-31 12:29:06.402634,2026-05-31 12:29:06.402634,f,Barrackpore,Kolkata Back Office,Online Travel Agent (OTA),PK,Work and Meeting,TRa,Pinaki Das
+5,RES-20260602231314,5,2026-06-02 17:43:14.122328,77600,1,2026-06-02 17:43:14.122249,2026-06-02 17:43:14.122249,f,Asansol,Head Back Office,Book Online,erwe,Work & Dinner,ewwe,Gourab Karmakar

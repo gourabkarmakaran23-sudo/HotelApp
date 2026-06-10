@@ -399,4 +399,18 @@ public class MasterController : ControllerBase
     [HttpPut("booking-sources/{id}")] public async Task<IActionResult> UpdateBookingSource(int id, [FromBody] BookingSourceDto d) => Ok(await _masterService.UpdateBookingSourceAsync(id, d));
     [HttpDelete("booking-sources/{id}")] public async Task<IActionResult> DeleteBookingSource(int id) => Ok(await _masterService.DeleteBookingSourceAsync(id));
     #endregion
+
+    #region Complementary Master
+    [HttpGet("complementary")] public async Task<IActionResult> GetComplementaries() => Ok(await _masterService.GetComplementariesAsync());
+    [HttpPost("complementary")] public async Task<IActionResult> CreateComplementary([FromBody] ComplementaryDto d) => Ok(await _masterService.CreateComplementaryAsync(d));
+    [HttpPut("complementary/{id}")] public async Task<IActionResult> UpdateComplementary(int id, [FromBody] ComplementaryDto d) => Ok(await _masterService.UpdateComplementaryAsync(id, d));
+    [HttpDelete("complementary/{id}")] public async Task<IActionResult> DeleteComplementary(int id) => Ok(await _masterService.DeleteComplementaryAsync(id));
+    #endregion
+
+    #region Floor Plan Master
+    [HttpGet("floor-plans")] public async Task<IActionResult> GetFloorPlans() => Ok(await _masterService.GetFloorPlansAsync());
+    [HttpPost("floor-plans")] public async Task<IActionResult> CreateFloorPlan([FromBody] FloorPlanDto d) => Ok(await _masterService.CreateFloorPlanAsync(d));
+    [HttpPut("floor-plans/{id}")] public async Task<IActionResult> UpdateFloorPlan(int id, [FromBody] FloorPlanDto d) => Ok(await _masterService.UpdateFloorPlanAsync(id, d));
+    [HttpDelete("floor-plans/{id}")] public async Task<IActionResult> DeleteFloorPlan(int id) => Ok(await _masterService.DeleteFloorPlanAsync(id));
+    #endregion
 }

@@ -50,6 +50,10 @@ namespace HotelRestaurant.Infrastructure.Data
         public DbSet<BookingType> BookingTypes => Set<BookingType>();
         public DbSet<BookingSource> BookingSources => Set<BookingSource>();
 
+        // 1. Append definitions to your DbSets entries
+        public DbSet<Complementary> Complementaries => Set<Complementary>();
+        public DbSet<FloorPlan> FloorPlans => Set<FloorPlan>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -294,6 +298,21 @@ namespace HotelRestaurant.Infrastructure.Data
             {
                 e.HasKey(x => x.Id);
                 e.Property(x => x.SourceName).IsRequired().HasMaxLength(100);
+            });
+
+            // 2. Add these model mapping configurations inside OnModelCreating()
+            modelBuilder.Entity<Complementary>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ItemName).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Description).HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<FloorPlan>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FloorName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Remarks).HasMaxLength(500);
             });
         }
     }
