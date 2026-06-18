@@ -1,0 +1,39 @@
+feature/reservationstandard
+
+1. Payment Method: Done
+2. Currency List:  Done
+3. Payment Setup:  Not Done
+4. Agent Commission List: Done
+5. Commission Agent :Done
+6. Financial Year:   Done
+7. Financial Year Ending: Not Done
+8. Opening Balance :Not Done
+9. Debit Voucher:Not Done
+10. Credit Voucher : Not Done
+11. Contra Voucher: Not Done
+12. Journal Voucher: Not Done
+13. Voucher Approval: Not Done
+14. Account Report
+14 A. Voucher Reprt:Not Done
+14 B. Cash Book: Not Done
+14 C. Bank Book: Not Done
+14 D. General Ledger: NOt Done
+14 E. Trial Balance: Not DOne
+14 F. Profit Loss: Not Done
+14 G. Coa Print : Not Done
+14 H. Balance Sheet: Not DOne
+
+15.Customer/Guest List Create: Not Done
+15 B. Wake Up Call List: Done
+15 C. Purchase Item : DOne
+15 D. Purcahse Return: DOne
+15 E. Stock Report: DOne
+15 F. Stock Details Need to Check
+
+16. Room Settings
+16 A. Bed List
+16 B. BookingType List
+16 C. Booking Source 
+16 D. Complementary
+16 E. Floor Plan List
+
