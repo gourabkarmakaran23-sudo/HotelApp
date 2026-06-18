@@ -26,6 +26,11 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             BedTypes = new GenericRepository<BedType>(_context);
             BookingTypes = new GenericRepository<BookingType>(_context);
             BookingSources = new GenericRepository<BookingSource>(_context);
+            Complementaries = new GenericRepository<Complementary>(_context);
+            FloorPlans = new GenericRepository<FloorPlan>(_context);
+            
+
+
             #endregion
             Hotels = new GenericRepository<Hotel>(_context);
             Rooms = new GenericRepository<Room>(_context);
@@ -60,7 +65,7 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         public IGenericRepository<BookingType> BookingTypes { get; }
         public IGenericRepository<BookingSource> BookingSources { get; }
         #endregion
-        #region Core Hotel & Restaurant Repositories
+        #region Core Hotel & Restaurant RepoComplementariessitories
         public IGenericRepository<Complementary> Complementaries { get; }
         public IGenericRepository<FloorPlan> FloorPlans { get; }
         #endregion

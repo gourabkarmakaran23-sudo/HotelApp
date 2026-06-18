@@ -53,7 +53,9 @@ export class SidebarComponent implements OnInit {
     {icon: '🛏️', label: 'Room Settings', open: false, children: [
       { label: 'Booking Type', route: '/booking-type' },
       { label: 'Booking Source', route: '/booking-source' },
-      { label: 'Bed Type', route: '/bed-type' }
+      { label: 'Bed Type', route: '/bed-type' },
+      { label: 'Floor Plan', route: '/floor-plan' },
+      { label: 'Complementary', route: '/complementary' }
     ]},
     {
       icon: '📅',

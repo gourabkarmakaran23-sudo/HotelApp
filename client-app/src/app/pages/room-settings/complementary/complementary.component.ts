@@ -9,15 +9,19 @@ import { MasterService } from '../../../services/master.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './complementary.component.html',
-  styleUrls: ['./shared-master-layout.css'] // Uses your centralized structural stylesheet
+  styleUrls: ['./complementary.component.css'] // Changed from shared placeholder
 })
 export class ComplementaryComponent implements OnInit {
   collectionList: any[] = [];
   currentModel: any = { id: 0, itemName: '', description: '', isActive: true };
-  isEditMode = false; isLoading = false;
+  isEditMode = false; 
+  isLoading = false;
 
   constructor(private masterService: MasterService) {}
-  ngOnInit(): void { this.loadData(); }
+
+  ngOnInit(): void { 
+    this.loadData(); 
+  }
 
   loadData(): void {
     this.masterService.getComplementaries().subscribe(res => this.collectionList = res);
@@ -32,14 +36,26 @@ export class ComplementaryComponent implements OnInit {
     if (!this.currentModel.itemName || !this.currentModel.itemName.trim()) return;
     this.isLoading = true;
 
-    // Fixed: Explicit type casting prevents the TypeScript method subscription trap
+    // Build an audit-compliant payload containing tracking expectations
+    const payload = {
+      ...this.currentModel,
+      isDeleted: false,
+      createdAt: this.isEditMode ? this.currentModel.createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
     const request$: Observable<any> = this.isEditMode
-      ? this.masterService.updateComplementary(this.currentModel.id, this.currentModel)
-      : this.masterService.createComplementary(this.currentModel);
+      ? this.masterService.updateComplementary(payload.id, payload)
+      : this.masterService.createComplementary(payload);
 
     request$.subscribe({
-      next: () => { this.resetForm(); this.loadData(); },
-      error: () => this.isLoading = false
+      next: () => { 
+        this.resetForm(); 
+        this.loadData(); 
+      },
+      error: () => {
+        this.isLoading = false;
+      }
     });
   }
 
@@ -49,7 +65,8 @@ export class ComplementaryComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.isEditMode = false; this.isLoading = false;
+    this.isEditMode = false; 
+    this.isLoading = false;
     this.currentModel = { id: 0, itemName: '', description: '', isActive: true };
   }
 }

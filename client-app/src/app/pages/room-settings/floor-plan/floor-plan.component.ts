@@ -9,15 +9,19 @@ import { MasterService } from '../../../services/master.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './floor-plan.component.html',
-  styleUrls: ['./shared-master-layout.css'] // Links to your global master styles stylesheet
+  styleUrls: ['./floor-plan.component.css'] // Changed from shared placeholder
 })
 export class FloorPlanComponent implements OnInit {
   collectionList: any[] = [];
   currentModel: any = { id: 0, floorName: '', remarks: '', isActive: true };
-  isEditMode = false; isLoading = false;
+  isEditMode = false; 
+  isLoading = false;
 
   constructor(private masterService: MasterService) {}
-  ngOnInit(): void { this.loadData(); }
+
+  ngOnInit(): void { 
+    this.loadData(); 
+  }
 
   loadData(): void {
     this.masterService.getFloorPlans().subscribe(res => this.collectionList = res);
@@ -32,22 +36,38 @@ export class FloorPlanComponent implements OnInit {
     if (!this.currentModel.floorName || !this.currentModel.floorName.trim()) return;
     this.isLoading = true;
 
-    // Fixed: Explicit type casting prevents the TypeScript method subscription trap
+    // Build an audit-compliant payload containing tracking expectations
+    const payload = {
+      ...this.currentModel,
+      isDeleted: false,
+      createdAt: this.isEditMode ? this.currentModel.createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
     const request$: Observable<any> = this.isEditMode
-      ? this.masterService.updateFloorPlan(this.currentModel.id, this.currentModel)
-      : this.masterService.createFloorPlan(this.currentModel);
+      ? this.masterService.updateFloorPlan(payload.id, payload)
+      : this.masterService.createFloorPlan(payload);
 
     request$.subscribe({
-      next: () => { this.resetForm(); this.loadData(); },
-      error: () => this.isLoading = false
+      next: () => { 
+        this.resetForm(); 
+        this.loadData(); 
+      },
+      error: () => {
+        this.isLoading = false;
+      }
     });
   }
 
+  
   triggerDelete(id: number): void {
     if (!confirm('Purge this block location layout entry permanently?')) return;
     this.masterService.deleteFloorPlan(id).subscribe(() => this.loadData());
   }
 
   resetForm(): void {
-    this.isEditMode = false; this.isLoading = false;
-    this.currentModel = { id: 0, floorName: '', remarks: '', isActive: true }
+    this.isEditMode = false; 
+    this.isLoading = false;
+    this.currentModel = { id: 0, floorName: '', remarks: '', isActive: true };
+  }
+}
