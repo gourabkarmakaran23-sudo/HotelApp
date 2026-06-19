@@ -51,5 +51,31 @@ export const routes: Routes = [
   },
   {path: 'room-types', loadComponent: () => import('./pages/room-type/room-type.component').then(m => m.RoomTypeComponent), canActivate: [AuthGuard] }, 
   { path: 'rooms',      loadComponent: () => import('./pages/rooms/room.component').then(m => m.RoomComponent), canActivate: [AuthGuard] },
+  //Add all Master pages here
+  { path: 'currencies', loadComponent: () => import('./pages/masters/currency/currency.component').then(m => m.CurrencyComponent), canActivate: [AuthGuard] },
+  { path: 'payment-methods', loadComponent: () => import('./pages/masters/payment-method/payment-method.component').then(m => m.PaymentMethodComponent), canActivate: [AuthGuard] },
+  { path: 'commission-agents', loadComponent: () => import('./pages/masters/commission-agent/commission-agent.component').then(m => m.CommissionAgentComponent), canActivate: [AuthGuard] },
+  {path: 'agent-commissions', loadComponent: () => import('./pages/masters/agent-commission/agent-commission.component').then(m => m.AgentCommissionComponent), canActivate: [AuthGuard] },
+  {path: 'financial-years', loadComponent: () => import('./pages/masters/financial-year/financial-year.component').then(m => m.FinancialYearComponent), canActivate: [AuthGuard] },
+  {path: 'wake-up-calls', loadComponent: () => import('./pages/masters/wake-up-call/wake-up-call.component').then(m => m.WakeUpCallComponent), canActivate: [AuthGuard] },
+  {path: 'purchase', loadComponent: () => import('./pages/masters/purchase-item/purchase-item.component').then(m => m.PurchaseItemComponent), canActivate: [AuthGuard] },
+  {path: 'purchase-returns', loadComponent: () => import('./pages/masters/purchase-return/purchase-return.component').then(m => m.PurchaseReturnComponent), canActivate: [AuthGuard] },
+  {path: 'stock-report', loadComponent: () => import('./pages/masters/stock-report/stock-report.component').then(m => m.StockReportComponent), canActivate: [AuthGuard] },
+  {path: 'stock-details', loadComponent: () => import('./pages/masters/stock-details/stock-details.component').then(m => m.StockDetailsComponent), canActivate: [AuthGuard] },
+  //#region Room Settings Sub Pages
+  {path: 'booking-type', loadComponent: () => import('./pages/room-settings/booking-type/booking-type.component').then(m => m.BookingTypeComponent), canActivate: [AuthGuard] },
+  {path: 'booking-source', loadComponent: () => import('./pages/room-settings/booking-source/booking-source.component').then(m => m.BookingSourceComponent), canActivate: [AuthGuard] },
+  {path: 'bed-type', loadComponent: () => import('./pages/room-settings/bed-type/bed-type.component').then(m => m.BedTypeComponent), canActivate: [AuthGuard] },
+  {path: 'floor-plan', loadComponent: () => import('./pages/room-settings/floor-plan/floor-plan.component').then(m => m.FloorPlanComponent), canActivate: [AuthGuard] },
+  {path: 'complementary', loadComponent: () => import('./pages/room-settings/complementary/complementary.component').then(m => m.ComplementaryComponent), canActivate: [AuthGuard] },
+
+  //#endregion
+
+{
+  path: 'upcoming-checkin',
+  loadComponent: () =>
+    import('./pages/upcoming-checkin/upcoming-checkin.component')
+      .then(m => m.UpcomingCheckinComponent)
+},
   { path: '**',         redirectTo: 'login' }
 ];

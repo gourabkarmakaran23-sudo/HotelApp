@@ -1,0 +1,7 @@
+Id,Name,Description,BasePrice,MaxOccupancy,MaxAdults,MaxChildren,Amenities,ImageUrl,IsActive,CreatedAt,UpdatedAt,IsDeleted
+1,Family Non View,Spacious family room without view,1500,3,3,3,no,https://imgur.com/image1.jpg,t,2026-05-23 08:08:03.832809,2026-05-23 08:08:03.832809,f
+35,Family View,Specious family room with beautiful view,2000,4,3,2,"","",t,2026-05-24 05:43:34.851099,2026-05-24 05:43:34.851099,f
+36,Executive Non View,Executive room for business travelers,1800,2,2,0,"","",t,2026-05-24 06:28:28.649659,2026-05-24 06:28:28.649659,f
+37,Executive View,Executive room with premium view,2500,2,2,0,"","",t,2026-05-24 06:29:28.101228,2026-05-24 06:29:28.101228,f
+38,Family Junction View,Family room with junction view,2200,4,3,2,"","",t,2026-05-24 06:30:11.773277,2026-05-24 06:30:11.773277,f
+39,Premium View,Premium room with the best view,3000,3,2,1,"","",t,2026-05-24 06:31:39.917647,2026-05-24 06:31:39.917647,f

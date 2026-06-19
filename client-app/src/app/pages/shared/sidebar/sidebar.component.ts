@@ -35,6 +35,28 @@ export class SidebarComponent implements OnInit {
     { icon: '🛒', label: 'Purchase Manage', route: '/purchase' },
     { icon: '📈', label: 'Reports', route: '/reports' },
     { icon: '🏨', label: 'Room Facilities', route: '/facilities' },
+    //Add master pages here like Room Rerrvation and submenu
+    {icon: '⚙️', label: 'Masters', open: false, children: [
+      { label: 'Currency', route: '/currencies' },
+      { label: 'Payment Methods', route: '/payment-methods' },
+      { label: 'Commission Agents', route: '/commission-agents' },
+      { label: 'Agent Commissions', route: '/agent-commissions' },
+      { label: 'Financial Years', route: '/financial-years' },
+      { label: 'Wake Up Calls', route: '/wake-up-calls' },
+      { label: 'Purchase Items', route: '/purchase' },
+      { label: 'Purchase Returns', route: '/purchase-returns' },
+      { label: 'Stock Report', route: '/stock-report' },
+      { label: 'Stock Details', route: '/stock-details' }
+      //Add more master pages here
+    ]},
+    //#region Room Settings Sub Pages
+    {icon: '🛏️', label: 'Room Settings', open: false, children: [
+      { label: 'Booking Type', route: '/booking-type' },
+      { label: 'Booking Source', route: '/booking-source' },
+      { label: 'Bed Type', route: '/bed-type' },
+      { label: 'Floor Plan', route: '/floor-plan' },
+      { label: 'Complementary', route: '/complementary' }
+    ]},
     {
       icon: '📅',
       label: 'Room Reservation',

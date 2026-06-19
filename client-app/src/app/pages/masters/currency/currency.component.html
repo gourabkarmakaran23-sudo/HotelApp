@@ -1,0 +1,95 @@
+<div class="management-container">
+  <div class="header-panel">
+    <h2>Currency Management</h2>
+    <button class="btn btn-primary" (click)="addNew()">+ Add Currency</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="management-table">
+      <thead>
+        <tr>
+          <th>SL</th>
+          <th>Currency Name</th>
+          <th>Currency Icon</th>
+          <th>Position</th>
+          <th>Conversion Rate</th>
+          <th>Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of currencies; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><strong>{{ item.currencyName || item.name }}</strong></td>
+          <td><span class="icon-preview-badge">{{ item.currencyIcon || '---' }}</span></td>
+          <td>{{ item.position }}</td>
+          <td>{{ item.conversionRate | number:'1.2-4' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="item.isActive ? 'active' : 'inactive'">
+              {{ item.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="text-center actions-cell">
+            <button class="action-btn edit-btn" title="Edit" (click)="edit(item)">
+              <i class="fa fa-pencil"></i> Edit
+            </button>
+            <button class="action-btn delete-btn" title="Delete" (click)="delete(item.id)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="currencies.length === 0">
+          <td colspan="7" class="text-center no-data-message">No currency definitions found in the master registry.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showModal">
+  <div class="custom-modal">
+    <div class="modal-header">
+      <h3>{{ isEditMode ? 'Edit Currency Parameters' : 'Add New Currency Context' }}</h3>
+      <button class="close-x" (click)="closeModal()">&times;</button>
+    </div>
+
+    <form [formGroup]="currencyForm" (ngSubmit)="save()" class="modal-form">
+      <div class="form-row">
+        <div class="form-group col">
+          <label>Currency Name <span class="required">*</span></label>
+          <input type="text" formControlName="currencyName" placeholder="e.g. Indian Rupee" class="form-control" />
+        </div>
+        <div class="form-group col">
+          <label>Symbol / Icon <span class="required">*</span></label>
+          <input type="text" formControlName="currencyIcon" placeholder="e.g. ₹ or USD" class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col">
+          <label>Symbol Positioning Context</label>
+          <select formControlName="position" class="form-control">
+            <option value="Left">Left (e.g. $100)</option>
+            <option value="Right">Right (e.g. 100/-)</option>
+          </select>
+        </div>
+        <div class="form-group col">
+          <label>Exchange Conversion Rate <span class="required">*</span></label>
+          <input type="number" step="0.0001" formControlName="conversionRate" class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="isActive" />
+          <span>Active & Available for transactions</span>
+        </label>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>

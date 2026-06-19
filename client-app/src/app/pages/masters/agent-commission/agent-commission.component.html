@@ -1,0 +1,109 @@
+<div class="page-container">
+  
+  <div class="page-header">
+    <h2 class="page-title">Agent Commissions Log</h2>
+    <button class="add-btn" (click)="openAddModal()">+ Record Agent Commission</button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert-banner">
+    <span><strong>System Warning:</strong> {{ errorMessage }}</span>
+    <button class="close-alert" (click)="errorMessage = ''">×</button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+    <span>Fetching commission ledger mappings...</span>
+  </div>
+
+  <div class="table-container" *ngIf="!isLoading">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th style="width: 80px;">SL</th>
+          <th>Booking No.</th>
+          <th>Agent Name</th>
+          <th>Rate (%)</th>
+          <th>Calculated Payout</th>
+          <th>Settlement Date</th>
+          <th style="width: 120px;" class="text-center">Status</th>
+          <th style="width: 200px;" class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of commissions; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><strong style="color: #0f172a;">{{ item.bookingNumber }}</strong></td>
+          <td class="name-column">{{ item.agentName }}</td>
+          <td>{{ item.commissionPercentage }}%</td>
+          <td style="font-weight: 600; color: #0f172a;">${{ item.commissionAmount | number:'1.2-2' }}</td>
+          <td>{{ item.paidDate ? (item.paidDate | date:'dd MMM yyyy') : '—' }}</td>
+          <td class="text-center">
+            <span class="status-badge" [ngClass]="{'active': item.paymentStatus === 'Paid', 'pending': item.paymentStatus === 'Due'}">
+              {{ item.paymentStatus }}
+            </span>
+          </td>
+          <td class="actions-column">
+            <button class="btn-action edit" (click)="openEditModal(item)">Modify</button>
+            <button class="btn-action delete" (click)="deleteCommission(item.id)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="commissions.length === 0">
+          <td colspan="8" class="empty-state">No transaction logs compiled. Click '+ Record Agent Commission' to initialize mappings.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-panel-overlay" *ngIf="isFormOpen">
+    <div class="form-panel-card">
+      <div class="form-panel-header">
+        <h5>{{ isEditMode ? 'Update Transaction Entry' : 'Log New Agent Settlement Record' }}</h5>
+        <button class="btn-close-panel" (click)="closeForm()">×</button>
+      </div>
+      
+      <div class="form-panel-body">
+        <form (ngSubmit)="saveCommission()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Booking Number Reference *</label>
+              <input type="text" class="form-input" name="bookingNumber" [(ngModel)]="selectedCommission.bookingNumber" required placeholder="E.g., BK-2026-0089">
+            </div>
+
+            <div class="form-group">
+              <label>Agent Profile Mapping Name *</label>
+              <input type="text" class="form-input" name="agentName" [(ngModel)]="selectedCommission.agentName" required placeholder="Select or type entity name">
+            </div>
+
+            <div class="form-group">
+              <label>Commission Rate (%) *</label>
+              <input type="number" class="form-input" name="commissionPercentage" [(ngModel)]="selectedCommission.commissionPercentage" (input)="calculateAmount()" min="0" max="100" required>
+            </div>
+
+            <div class="form-group">
+              <label>Calculated Payout Value ($) *</label>
+              <input type="number" class="form-input" name="commissionAmount" [(ngModel)]="selectedCommission.commissionAmount" min="0" required>
+            </div>
+
+            <div class="form-group">
+              <label>Payment Settlement Status</label>
+              <select class="form-input" name="paymentStatus" [(ngModel)]="selectedCommission.paymentStatus">
+                <option value="Due">Due</option>
+                <option value="Paid">Paid</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Disbursal Processing Date</label>
+              <input type="date" class="form-input" name="paidDate" [(ngModel)]="selectedCommission.paidDate">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="closeForm()">Cancel</button>
+            <button type="submit" class="btn-submit">Commit Log Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
