@@ -29,148 +29,246 @@
 
         <div class="form-group">
           <label>Check In <span class="req">*</span></label>
-          <input type="datetime-local" [(ngModel)]="form.checkIn" name="checkIn" (change)="recalculate()"
-            [class.input-error]="bookingForm.submitted && !form.checkIn" />
+          <input type="datetime-local" [(ngModel)]="form.checkIn" name="checkIn" (change)="recalculateAllRooms()"
+            [class.input-error]="bookingForm.submitted && !form.checkIn" [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group">
           <label>Check Out <span class="req">*</span></label>
-          <input type="datetime-local" [(ngModel)]="form.checkOut" name="checkOut" (change)="recalculate()"
-            [class.input-error]="bookingForm.submitted && !form.checkOut" />
+          <input type="datetime-local" [(ngModel)]="form.checkOut" name="checkOut" (change)="recalculateAllRooms()"
+            [class.input-error]="bookingForm.submitted && !form.checkOut" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Arrival From <span class="req">*</span></label>
-          <input type="text" placeholder="Arrival From" [(ngModel)]="form.arrivalFrom" name="arrivalFrom" />
+          <input type="text" placeholder="Arrival From" [(ngModel)]="form.arrivalFrom" name="arrivalFrom" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Booking Type</label>
-          <select [(ngModel)]="form.bookingType" name="bookingType">
+          <select [(ngModel)]="form.bookingType" name="bookingType" [disabled]="mode === 'view'">
             <option *ngFor="let type of bookingTypes" [value]="type">{{ type }}</option>
           </select>
         </div>
 
         <div class="form-group">
           <label>Booking Reference</label>
-          <select [(ngModel)]="form.bookingReference" name="bookingReference">
+          <select [(ngModel)]="form.bookingReference" name="bookingReference" [disabled]="mode === 'view'">
             <option *ngFor="let ref of bookingReferences" [value]="ref">{{ ref }}</option>
           </select>
         </div>
 
         <div class="form-group">
           <label>Sold By</label>
-          <select [(ngModel)]="form.soldBy" name="soldBy">
+          <select [(ngModel)]="form.soldBy" name="soldBy" [disabled]="mode === 'view'">
             <option *ngFor="let sold of soldByNames" [value]="sold">{{ sold }}</option>
           </select>
         </div>
 
         <div class="form-group full-width">
           <label>Customer Profile</label>
-          <input type="text" placeholder="Customer Profile" [(ngModel)]="form.customerProfile" name="customerProfile" />
+          <input type="text" placeholder="Customer Profile" [(ngModel)]="form.customerProfile" name="customerProfile" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group full-width">
           <label>Purpose of Visit</label>
-          <input type="text" placeholder="Purpose of Visit" [(ngModel)]="form.purposeOfVisit" name="purposeOfVisit" />
+          <input type="text" placeholder="Purpose of Visit" [(ngModel)]="form.purposeOfVisit" name="purposeOfVisit" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group full-width">
           <label>Remarks</label>
-          <textarea placeholder="Remarks" [(ngModel)]="form.remarks" name="remarks"></textarea>
+          <textarea placeholder="Remarks" [(ngModel)]="form.remarks" name="remarks" [disabled]="mode === 'view'"></textarea>
         </div>
       </div>
     </section>
 
     <!-- ── Room Details ───────────────────────────────────────────────────── -->
     <section class="section-card">
-      <h2>Room Details</h2>
-      <div class="form-grid">
 
-        <div class="form-group">
-          <label>Room Type <span class="req">*</span></label>
-          <!-- <select formControlName="roomTypesId" class="form-control">
-              <option value="" disabled selected>-- Select Room Type --</option>
-              <option *ngFor="let type of roomTypesList" [value]="type.id">
-                {{ type.name }}
+      <div class="room-header">
+
+        <h2>Room Details</h2>
+
+        <button type="button" class="primary-btn" (click)="addRoom()">
+
+          + Add Room
+
+        </button>
+
+      </div>
+
+      <!-- MULTIPLE ROOM LOOP -->
+
+      <div class="room-card" *ngFor="let room of form.rooms; let i = index">
+
+        <div class="room-card-header">
+
+          <h3>
+            Room {{ i + 1 }}
+          </h3>
+
+          <button *ngIf="form.rooms.length > 1" type="button" class="danger-btn" (click)="removeRoom(i)">
+
+            Remove
+
+          </button>
+
+        </div>
+
+        <div class="form-grid">
+
+          <!-- ROOM TYPE -->
+
+          <div class="form-group">
+
+            <label>
+              Room Type
+              <span class="req">*</span>
+            </label>
+
+            <select [(ngModel)]="room.roomTypeId" [name]="'roomTypeId' + i" (change)="onRoomTypeChange(i)" required>
+
+              <option value="">
+                Select Room Type
               </option>
-            </select> -->
-          <select [(ngModel)]="form.roomTypeId" name="roomTypeId" (change)="onRoomTypeChange($event)" required>
 
-            <option value="">Select Room Type</option>
+              <option *ngFor="let type of roomTypesList" [value]="type.id">
 
-            <option *ngFor="let type of roomTypesList" [value]="type.id">
+                {{ type.name }}
 
-              {{ type.name }}
+              </option>
 
-            </option>
+            </select>
 
-          </select>
+          </div>
+
+          <!-- ROOM NUMBER -->
+
+          <div class="form-group">
+
+            <label>
+              Room No.
+              <span class="req">*</span>
+            </label>
+
+            <select [(ngModel)]="room.roomNo" [name]="'roomNo' + i" required>
+
+              <option value="">
+                Choose Room No.
+              </option>
+
+              <option *ngFor="let roomOption of room.roomNoOptions" [value]="roomOption.roomNumber">
+
+                {{ roomOption.roomNumber }}
+
+              </option>
+
+            </select>
+
+          </div>
+
+          <!-- ADULTS -->
+
+          <div class="form-group">
+
+            <label>#Adults</label>
+
+            <input type="number" min="1" [(ngModel)]="room.adults" [name]="'adults' + i" (input)="recalculate(i)" />
+
+          </div>
+
+          <!-- CHILDREN -->
+
+          <div class="form-group">
+
+            <label>#Children</label>
+
+            <input type="number" min="0" [(ngModel)]="room.children" [name]="'children' + i" (input)="recalculate(i)" />
+
+          </div>
+
+          <!-- CHILD AGE -->
+
+          <div class="form-group">
+
+            <label>Child Age</label>
+
+            <select [(ngModel)]="room.extraChildAge" [name]="'extraChildAge' + i" (change)="onChildAgeChange(i)">
+
+              <option *ngFor="let age of childAgeOptions" [value]="age">
+
+                {{ age }}
+
+              </option>
+
+            </select>
+
+          </div>
+
+          <!-- MEAL PLAN -->
+
+          <div class="form-group full-width">
+
+            <label>
+              Room Package
+            </label>
+
+            <select [(ngModel)]="room.mealPlan" [name]="'mealPlan' + i" (change)="onMealPlanChange(i)">
+
+              <option *ngFor="let plan of mealPlanOptions" [value]="plan">
+
+                {{ plan }}
+
+              </option>
+
+            </select>
+
+          </div>
+
         </div>
 
-        <div class="form-group">
-          <label>Room No. <span class="req">*</span></label>
-          <!-- <select [(ngModel)]="form.roomNo" name="roomNo" [class.input-error]="bookingForm.submitted && !form.roomNo">
-            <option value="">Choose Room No.</option>
-            <option *ngFor="let roomNo of roomNoOptions" [value]="roomNo">{{ roomNo }}</option>
-          </select> -->
-          <select [(ngModel)]="form.roomNo" name="roomNo" required>
+        <!-- ROOM CHARGES -->
 
-            <option value="">Choose Room No.</option>
+        <div class="summary-grid">
 
-            <option *ngFor="let room of roomNoOptions" [value]="room.roomNumber">
+          <div class="form-group">
 
-              {{ room.roomNumber }}
+            <label>Rent / Night</label>
 
-            </option>
+            <input type="text" [value]="room.rentPerNight | currency:'INR'" readonly />
 
-          </select>
+          </div>
+
+          <div class="form-group">
+
+            <label>Complimentary / Night</label>
+
+            <input type="text" [value]="room.complimentaryPerNight | currency:'INR'" readonly />
+
+          </div>
+
+          <div class="form-group">
+
+            <label>Extra Child Charge</label>
+
+            <input type="text" [value]="room.extraCharge | currency:'INR'" readonly />
+
+          </div>
+
+          <div class="form-group">
+
+            <label>Total Amount</label>
+
+            <input type="text" [value]="room.totalAmount | currency:'INR'" readonly class="total-highlight" />
+
+          </div>
+
         </div>
 
-        <div class="form-group">
-          <label>#Adults</label>
-          <input type="number" min="1" [(ngModel)]="form.adults" name="adults" />
-        </div>
+        <hr />
 
-        <div class="form-group">
-          <label>#Children</label>
-          <input type="number" min="0" [(ngModel)]="form.children" name="children" />
-        </div>
-
-        <div class="form-group">
-          <label>Child Age</label>
-          <select [(ngModel)]="form.extraChildAge" name="extraChildAge" (change)="onChildAgeChange()">
-            <option *ngFor="let age of childAgeOptions" [value]="age">{{ age }}</option>
-          </select>
-        </div>
-
-        <div class="form-group full-width">
-          <label>Room Package <span class="req">*</span></label>
-          <select [(ngModel)]="form.mealPlan" name="mealPlan" (change)="onMealPlanChange()">
-            <option *ngFor="let plan of mealPlanOptions" [value]="plan">{{ plan }}</option>
-          </select>
-        </div>
       </div>
 
-      <!-- Charges summary row -->
-      <div class="summary-grid">
-        <div class="form-group">
-          <label>Rent / Night</label>
-          <input type="text" [value]="form.rentPerNight | currency:'INR'" readonly />
-        </div>
-        <div class="form-group">
-          <label>Complimentary / Night</label>
-          <input type="text" [value]="form.complimentaryPerNight | currency:'INR'" readonly />
-        </div>
-        <div class="form-group">
-          <label>Extra Child Charge</label>
-          <input type="text" [value]="form.extraCharge | currency:'INR'" readonly />
-        </div>
-        <div class="form-group">
-          <label>Total Amount</label>
-          <input type="text" [value]="form.totalAmount | currency:'INR'" readonly class="total-highlight" />
-        </div>
-      </div>
     </section>
 
     <!-- ── Customer + Guest + Billing ─────────────────────────────────────── -->
@@ -332,7 +430,7 @@
           <textarea placeholder="Advance Remarks" [(ngModel)]="form.advanceRemarks" name="advanceRemarks"></textarea>
         </div>
 
-        <button type="button" class="secondary-btn recalc-btn" (click)="recalculate()">
+        <button type="button" class="secondary-btn recalc-btn" (click)="recalculateAllRooms()">
           ⟳ Recalculate
         </button>
       </div>

@@ -10,29 +10,34 @@ using Microsoft.EntityFrameworkCore;
 namespace HotelRestaurant.Infrastructure.Repositories
 {
     public class BookingRepository
-        : GenericRepository<Reservation>, IBookingRepository
+        : GenericRepository<Booking>, IBookingRepository
     {
         public BookingRepository(AppDbContext context)
             : base(context)
         {
         }
-
         public async Task<bool> IsRoomBookedAsync(
             int roomId,
             DateTime checkIn,
             DateTime checkOut,
             int? bookingId = null)
         {
-            return await _context.Reservations.AnyAsync(x =>
+            return await _context.ReservationRooms.AnyAsync(x =>
 
                 x.RoomId == roomId
 
-                && (!bookingId.HasValue || x.Id != bookingId.Value)
+                // Ignore same booking during edit
+                && (!bookingId.HasValue || x.BookingId != bookingId.Value)
 
-                // Date overlap logic
+                // DATE OVERLAP CHECK
                 && checkIn < x.CheckOutDate
+
                 && checkOut > x.CheckInDate
+
+                // Optional:
+                && x.Status != BookingStatus.Cancelled
             );
         }
+
     }
 }

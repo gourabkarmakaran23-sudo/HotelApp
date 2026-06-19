@@ -12,17 +12,22 @@ namespace HotelRestaurant.Infrastructure.Data
 
         public DbSet<Hotel> Hotels => Set<Hotel>();
         public DbSet<Room> Rooms => Set<Room>();
-        public DbSet<RoomTypes> RoomTypes { get; set; }
+        public DbSet<RoomTypes> RoomTypes => Set<RoomTypes>();
 
-        public DbSet<RoomTypeFacility> RoomTypeFacility { get; set; }
+        public DbSet<RoomTypeFacility> RoomTypeFacility => Set<RoomTypeFacility>();
         public DbSet<Guest> Guests => Set<Guest>();
+        public DbSet<BookingGuest> BookingGuests => Set<BookingGuest>();
+        public DbSet<BookingDocument> BookingDocuments => Set<BookingDocument>();
         public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
-        public DbSet<Reservation> Reservations => Set<Reservation>();
+        //public DbSet<Reservation> Reservations => Set<Reservation>();
+        public DbSet<Booking> Bookings => Set<Booking>();
+        public DbSet<ReservationRoom> ReservationRooms => Set<ReservationRoom>();
         public DbSet<Employee> Employees => Set<Employee>();
         public DbSet<MenuItem> MenuItems => Set<MenuItem>();
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         public DbSet<Invoice> Invoices => Set<Invoice>();
+        public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<InventoryItem> InventoryItems => Set<InventoryItem>();
 
         #region Master Data Context Configuration
@@ -90,27 +95,27 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.Property(e => e.TotalRefundAmount).HasPrecision(18, 2);
             });
 
-             // ⬇️ ADD THIS CONFIGURATION BLOCK HERE
-    modelBuilder.Entity<RoomTypeFacility>(entity =>
-    {
-        // Define the composite key configuration using both foreign keys
-        // (Verify that the property names match your actual RoomTypeFacility class exactly)
-        entity.HasKey(rtf => new { rtf.RoomTypeId, rtf.RoomFacilityId });
+            // ⬇️ ADD THIS CONFIGURATION BLOCK HERE
+            modelBuilder.Entity<RoomTypeFacility>(entity =>
+            {
+                // Define the composite key configuration using both foreign keys
+                // (Verify that the property names match your actual RoomTypeFacility class exactly)
+                entity.HasKey(rtf => new { rtf.RoomTypeId, rtf.RoomFacilityId });
 
-        // Explicitly establish the relationship mapping back to RoomTypes
-        entity.HasOne(rtf => rtf.RoomType)
-              .WithMany(rt => rt.RoomTypeFacilities) // or whatever your navigation property name is
-              .HasForeignKey(rtf => rtf.RoomTypeId)
-              .OnDelete(DeleteBehavior.Cascade);
+                // Explicitly establish the relationship mapping back to RoomTypes
+                entity.HasOne(rtf => rtf.RoomType)
+                      .WithMany(rt => rt.RoomTypeFacilities) // or whatever your navigation property name is
+                      .HasForeignKey(rtf => rtf.RoomTypeId)
+                      .OnDelete(DeleteBehavior.Cascade);
 
-        // If you have a Facility entity mapping as well, define it here:
-        /*
-        entity.HasOne(rtf => rtf.Facility)
-              .WithMany(f => f.RoomTypeFacilities)
-              .HasForeignKey(rtf => rtf.FacilityId)
-              .OnDelete(DeleteBehavior.Cascade);
-        */
-    });
+                // If you have a Facility entity mapping as well, define it here:
+                /*
+                entity.HasOne(rtf => rtf.Facility)
+                      .WithMany(f => f.RoomTypeFacilities)
+                      .HasForeignKey(rtf => rtf.FacilityId)
+                      .OnDelete(DeleteBehavior.Cascade);
+                */
+            });
 
             modelBuilder.Entity<Hotel>(entity =>
             {
@@ -154,21 +159,29 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.HasIndex(u => u.Email).IsUnique();
                 entity.HasIndex(u => u.UserName).IsUnique();
             });
+            modelBuilder.Entity<ReservationRoom>()
+                .HasOne(x => x.Booking)
+                .WithMany(x => x.ReservationRooms)
+                .HasForeignKey(x => x.BookingId);
 
-            modelBuilder.Entity<Reservation>(entity =>
-            {
-                entity.Property(r => r.TotalAmount).HasPrecision(12, 2);
-                entity.Property(r => r.Notes).HasMaxLength(500);
-                entity.HasOne(r => r.Guest)
-                    .WithMany(g => g.Reservations)
-                    .HasForeignKey(r => r.GuestId)
-                    .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<ReservationRoom>()
+                .HasOne(x => x.Room)
+                .WithMany()
+                .HasForeignKey(x => x.RoomId);
+            // modelBuilder.Entity<Reservation>(entity =>
+            // {
+            //     entity.Property(r => r.TotalAmount).HasPrecision(12, 2);
+            //     entity.Property(r => r.Notes).HasMaxLength(500);
+            //     entity.HasOne(r => r.Guest)
+            //         .WithMany(g => g.Reservations)
+            //         .HasForeignKey(r => r.GuestId)
+            //         .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasOne(r => r.Room)
-                    .WithMany(room => room.Reservations)
-                    .HasForeignKey(r => r.RoomId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
+            //     entity.HasOne(r => r.Room)
+            //         .WithMany(room => room.Reservations)
+            //         .HasForeignKey(r => r.RoomId)
+            //         .OnDelete(DeleteBehavior.Restrict);
+            // });
 
             modelBuilder.Entity<Employee>(entity =>
             {
@@ -231,9 +244,9 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.Property(i => i.Total).HasPrecision(12, 2);
                 entity.Property(i => i.PaymentStatus).HasConversion<string>().HasMaxLength(50);
 
-                entity.HasOne(i => i.Reservation)
-                    .WithOne(r => r.Invoice)
-                    .HasForeignKey<Invoice>(i => i.ReservationId)
+                entity.HasOne(i => i.Booking)
+                    .WithMany(b => b.Invoices)
+                    .HasForeignKey(i => i.BookingId)
                     .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(i => i.Order)

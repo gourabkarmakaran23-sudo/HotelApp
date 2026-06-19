@@ -36,12 +36,17 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             Rooms = new GenericRepository<Room>(_context);
             RoomTypes = new GenericRepository<RoomTypes>(_context);
             Guests = new GenericRepository<Guest>(_context);
+            Bookings = new GenericRepository<Booking>(_context);
+            ReservationRooms = new GenericRepository<ReservationRoom>(_context);
+            BookingGuests = new GenericRepository<BookingGuest>(_context);
+            BookingDocuments = new GenericRepository<BookingDocument>(_context);
             Reservations = new GenericRepository<Reservation>(_context);
             Employees = new GenericRepository<Employee>(_context);
             MenuItems = new GenericRepository<MenuItem>(_context);
             Orders = new GenericRepository<Order>(_context);
             OrderItems = new GenericRepository<OrderItem>(_context);
             Invoices = new GenericRepository<Invoice>(_context);
+            Payments = new GenericRepository<Payment>(_context);
             InventoryItems = new GenericRepository<InventoryItem>(_context);
         }
 
@@ -80,11 +85,12 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         public IGenericRepository<Order> Orders { get; }
         public IGenericRepository<OrderItem> OrderItems { get; }
         public IGenericRepository<Invoice> Invoices { get; }
+        public IGenericRepository<Payment> Payments { get; }
         public IGenericRepository<InventoryItem> InventoryItems { get; }
- 
+
         public IUserRepository ApplicationUsers
         => _users ??= new UserRepository(_context);
- 
+
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             return await _context.SaveChangesAsync(cancellationToken);

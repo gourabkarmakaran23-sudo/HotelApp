@@ -29,11 +29,16 @@ namespace HotelRestaurant.Core.Interfaces
         IGenericRepository<Room> Rooms { get; }
         IGenericRepository<Guest> Guests { get; }
         IGenericRepository<Reservation> Reservations { get; }
+        IGenericRepository<Booking> Bookings { get; }
+        IGenericRepository<ReservationRoom> ReservationRooms { get; }
+        IGenericRepository<BookingGuest> BookingGuests { get; }
+        IGenericRepository<BookingDocument> BookingDocuments { get; }
         IGenericRepository<Employee> Employees { get; }
         IGenericRepository<MenuItem> MenuItems { get; }
         IGenericRepository<Order> Orders { get; }
         IGenericRepository<OrderItem> OrderItems { get; }
         IGenericRepository<Invoice> Invoices { get; }
+        IGenericRepository<Payment> Payments { get; }
         IGenericRepository<InventoryItem> InventoryItems { get; }
         IUserRepository ApplicationUsers { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

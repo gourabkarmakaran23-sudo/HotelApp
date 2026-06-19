@@ -1,12 +1,24 @@
 <div class="checkout-page">
-  <div class="page-header">
-    <h2>Customer Details</h2>
-    <div class="header-row">Booking No: {{ bookingNumber }} &nbsp; | &nbsp; {{ guestName }} &nbsp; | &nbsp; Rooms: {{ roomNos }}</div>
+  <div class="back-btn-container">
+    <button class="back-btn" (click)="back()">← Back to List</button>
   </div>
 
-  <div class="sections">
-    <div class="section customer">
-      <table class="info">
+  <div class="page-title">
+    <h1>Check Out</h1>
+    <p class="subtitle">Manual Checkout in System</p>
+  </div>
+
+  <div class="info-header">
+    <span><strong>Booking No:</strong> {{ bookingNumber }}</span>
+    <span><strong>Guest Name:</strong> {{ guestName }}</span>
+    <span><strong>Rooms:</strong> {{ roomNos }}</span>
+  </div>
+
+  <div class="main-content">
+    <!-- Guest Information Section -->
+    <div class="section guest-info-section">
+      <h3 class="section-title guest-title">Guest Information</h3>
+      <table class="info-table">
         <tr><td><strong>Name</strong></td><td>{{ guestName }}</td></tr>
         <tr><td><strong>Room No.</strong></td><td>{{ roomNos }}</td></tr>
         <tr><td><strong>Booking No.</strong></td><td>{{ bookingNumber }}</td></tr>
@@ -15,21 +27,51 @@
       </table>
     </div>
 
-    <div class="section billing">
-      <h3>Billing Details</h3>
-      <div class="bill-grid">
-        <div>
-          <div>Room Rent And: {{ billing.roomRent }}</div>
-          <div>Amenities Services: {{ billing.amenity }}</div>
-          <div>Cancellation Charge: {{ billing.cancellation }}</div>
-          <div>Refund Amount: {{ billing.refund }}</div>
-          <div>Total Tax: {{ billing.totalTax }}</div>
-          <div>Subtotal: {{ billing.subtotal }}</div>
+    <!-- Billing Details Section -->
+    <div class="section billing-section">
+      <h3 class="section-title billing-title">Billing Details</h3>
+      <div class="billing-content">
+        <div class="charges-list">
+          <div class="charge-item">
+            <span>Room Rent and Extra Bed:</span>
+            <span class="amount">{{ billing.roomRent }}</span>
+          </div>
+          <div class="charge-item">
+            <span>Amenities Service:</span>
+            <span class="amount">{{ billing.amenity }}</span>
+          </div>
+          <div class="charge-item">
+            <span>Cancellation Charge:</span>
+            <span class="amount">{{ billing.cancellation }}</span>
+          </div>
+          <div class="charge-item">
+            <span>Refund Amount:</span>
+            <span class="amount">{{ billing.refund }}</span>
+          </div>
+          <div class="charge-item">
+            <span>Total Tax:</span>
+            <span class="amount">{{ billing.totalTax }}</span>
+          </div>
+          <div class="charge-item total">
+            <span>Subtotal:</span>
+            <span class="amount">{{ billing.subtotal }}</span>
+          </div>
         </div>
-        <div>
+
+        <div class="room-rent-details">
           <h4>Room Rent Details</h4>
           <table class="room-bills">
-            <thead><tr><th>#</th><th>Room No</th><th>Room Type</th><th>From Date</th><th>To Date</th><th>NoD</th><th>Tot. Rent</th></tr></thead>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Room No</th>
+                <th>Room Type</th>
+                <th>From Date</th>
+                <th>To Date</th>
+                <th>NoD</th>
+                <th>Tot. Rent</th>
+              </tr>
+            </thead>
             <tbody>
               <tr *ngFor="let b of roomBills">
                 <td>{{ b.no }}</td>
@@ -46,29 +88,53 @@
       </div>
     </div>
 
-    <div class="section side">
-      <h3>Room Settlement Restaurant Bills</h3>
-      <p class="empty">(no restaurant bills)</p>
+    <!-- Room Settlement Restaurant Bills Section -->
+    <div class="section restaurant-section">
+      <h3 class="section-title restaurant-title">Room Settlement Restaurant Bills</h3>
+      <p class="empty-message">(no restaurant bills)</p>
     </div>
   </div>
 
-  <div class="bottom-row">
-    <div class="room-settlement">
-      <h4>Room Bill Settlement</h4>
-      <div>Payment Mode: <select><option>Choose Payment Mode</option></select></div>
-      <div>Amount: <input placeholder="Amount" /></div>
+  <!-- Bottom sections -->
+  <div class="bottom-sections">
+    <div class="section payment-section">
+      <h4 class="section-title payment-title">Room Bill Settlement</h4>
+      <div class="payment-form">
+        <div class="form-group">
+          <label>Payment Mode:</label>
+          <select class="payment-mode-select">
+            <option>Choose Payment Mode</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amount:</label>
+          <input type="text" placeholder="0" class="amount-input" />
+        </div>
+      </div>
     </div>
-    <div class="balance">
-      <h4>Balance Details</h4>
-      <div>Remain Amt: {{ balance.remaining }}</div>
-      <div>Collected Amt: {{ balance.collected }}</div>
-      <div>Change Amt: {{ balance.change }}</div>
+
+    <div class="section balance-section">
+      <h4 class="section-title balance-title">Balance Details</h4>
+      <div class="balance-info">
+        <div class="balance-item">
+          <span>Remain Amt:</span>
+          <span class="amount">{{ balance.remaining }}</span>
+        </div>
+        <div class="balance-item">
+          <span>Collected Amt:</span>
+          <span class="amount">{{ balance.collected }}</span>
+        </div>
+        <div class="balance-item">
+          <span>Change Amt:</span>
+          <span class="amount">{{ balance.change }}</span>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="actions">
-    <button class="btn" (click)="back()">Back</button>
-    <button class="btn warn">Room Rent Proforma</button>
-    <button class="btn primary" (click)="doCheckout()">Check Out</button>
+    <button class="btn btn-cancel">CANCEL</button>
+    <button class="btn btn-proforma">Room Rent Proforma</button>
+    <button class="btn btn-checkout" (click)="doCheckout()">COMPLETE CHECKOUT</button>
   </div>
 </div>
