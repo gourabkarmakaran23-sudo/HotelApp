@@ -1,0 +1,226 @@
+
+
+.management-container {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  width: 100%;
+}
+
+.header-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.filter-panel {
+  margin-bottom: 1.2rem;
+  
+  // Make search input visible and beautifully bounded
+  .search-input {
+    max-width: 300px;
+    padding: 0.6rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #fff !important;
+    color: #333 !important;
+  }
+}
+
+/* AG-Grid Theme Application Core */
+.grid-wrapper {
+  margin-bottom: 1rem;
+  width: 100%;
+
+  .ag-theme-alpine {
+    // Variable mappings to apply your theme colors to the grid rows and headers
+    --ag-header-background-color: #2e7d32;
+    --ag-header-foreground-color: #ffffff;
+    --ag-header-cell-hover-background-color: #236026;
+    --ag-row-hover-color: #f8f9fa;
+    --ag-selected-row-background-color: #e8f5e9;
+    --ag-font-size: 0.9rem;
+    --ag-border-color: #eef2f7;
+
+    // Add these two layout variables to match your cell heights nicely:
+  --ag-row-height: 22px;
+  --ag-header-height: 22px;
+
+    border: 1px solid #eef2f7;
+    border-radius: 6px;
+
+
+
+
+
+    .ag-header-cell-label {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+/* Custom rendered utility classes inside grid cells */
+::v-deep .actions-cell {
+  display: flex !important;
+  gap: 0.5rem;
+  align-items: center;
+  height: 100%;
+}
+
+::v-deep .status-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+
+  &.active {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.inactive {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+}
+
+::v-deep .action-btn {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+
+  &.edit-btn {
+    border-color: #0d6efd;
+    color: #0d6efd;
+    &:hover { background: #0d6efd; color: #fff; }
+  }
+
+  &.delete-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+    &:hover { background: #dc3545; color: #fff; }
+  }
+}
+
+/* Modals Core Styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+
+  h3 { margin: 0; font-size: 1.2rem; font-weight: 600; }
+  .close-x { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+}
+
+.modal-form {
+  padding: 1.5rem;
+
+  .form-group {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: #333;
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    .col { flex: 1; }
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.55rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+
+    &:focus {
+      outline: none;
+      border-color: #2e7d32;
+    }
+  }
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn {
+  padding: 0.55rem 1.2rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+
+  &.btn-primary {
+    background-color: #2e7d32;
+    color: #ffffff;
+    &:hover:not(:disabled) { background-color: #1b5e20; }
+    &:disabled { background-color: #a5d6a7; cursor: not-allowed; }
+  }
+
+  &.btn-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+    &:hover { background-color: #5a6268; }
+  }
+}
+
+.required { color: #dc3545; margin-left: 2px; }

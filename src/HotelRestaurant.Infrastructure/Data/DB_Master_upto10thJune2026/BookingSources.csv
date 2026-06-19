@@ -1,0 +1,6 @@
+Id,SourceName,Details,IsActive,CreatedAt,UpdatedAt,IsDeleted
+1,Booking.com,OTA Pipeline Integration Group — Linked under channel classification lookup group 1.,t,2026-06-07 18:07:56.243057,2026-06-07 18:07:56.243058,f
+2,MakeMyTrip,OTA Pipeline Integration Group — Linked under channel classification lookup group 1.,t,2026-06-07 18:08:21.732602,2026-06-07 18:08:21.732603,f
+3,Goibibo,OTA Pipeline Integration Group — Linked under channel classification lookup group 1.,t,2026-06-07 18:08:45.855982,2026-06-07 18:08:45.855982,f
+4,Destiny Travels,OTA Corporate Brokerage Link — Linked under channel classification lookup group 1.,t,2026-06-07 18:10:10.285488,2026-06-07 18:10:10.285488,f
+5,Direct Walk-In,Front office desk lobby registration channel fallback context.,t,2026-06-07 18:10:31.17708,2026-06-07 18:10:31.17708,f

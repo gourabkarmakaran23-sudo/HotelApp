@@ -5,6 +5,8 @@ using HotelRestaurant.Core.Interfaces;
 using System.Threading.Tasks;
 using System;
 using Microsoft.EntityFrameworkCore;
+using HotelRestaurant.Application.Services.Interfaces;
+using HotelRestaurant.Application.DTOs.Reservation;
 
 namespace HotelRestaurant.Api.Controllers
 {
@@ -15,195 +17,197 @@ namespace HotelRestaurant.Api.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public BookingsController(IUnitOfWork unitOfWork)
+        private readonly IReservationService _reservationService;
+
+        public BookingsController(
+            IUnitOfWork unitOfWork,
+            IReservationService reservationService)
         {
             _unitOfWork = unitOfWork;
+            _reservationService = reservationService;
         }
-        #region CreateBooking
-        // LEAVE ROUTE BALK BLANK SO IT PINPOINTS ABSOLUTE BASE URL ROUTE ("api/bookings")
+
+        #region GetCheckInList 
+        [HttpGet("checkin-list")]
+        public async Task<IActionResult> GetCheckInList()
+        {
+            var data = await _reservationService.GetCheckInListAsync();
+
+            return Ok(data);
+        }
+        #endregion
+        #region Create Reservation (Clean SOLID approach)
         [HttpPost("")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto dto)
         {
-            if (dto == null)
-                return BadRequest("Payload data cannot be empty.");
-
             try
             {
-                // Validate string fields to protect against database NOT NULL column constraints
-                string validatedFirstName = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingFirstName : dto.PrimaryFirstName) ? "WalkIn" : (dto.SameAsCustomer ? dto.BillingFirstName : dto.PrimaryFirstName);
-                string validatedLastName = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingLastName : dto.PrimaryLastName) ? "Guest" : (dto.SameAsCustomer ? dto.BillingLastName : dto.PrimaryLastName);
-                string validatedPhone = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingMobile : dto.PrimaryMobile) ? "0000000000" : (dto.SameAsCustomer ? dto.BillingMobile : dto.PrimaryMobile);
-
-                // 1. Create the Guest Entity
-                var guest = new Guest
-                {
-                    FirstName = validatedFirstName,
-                    LastName = validatedLastName,
-                    Phone = validatedPhone,
-                    Email = string.IsNullOrWhiteSpace(dto.Email) ? "no-email@hotel.com" : dto.Email,
-                    Address = string.IsNullOrWhiteSpace(dto.BillingAddress) ? "Not Provided" : dto.BillingAddress,
-                    NationalId = "PENDING_ID_SCAN",
-                    DateOfBirth = new DateTime(1990, 1, 1)
-                };
-
-                await _unitOfWork.Guests.AddAsync(guest);
-
-                // 2. Find matching Room record
-                var roomsList = await _unitOfWork.Rooms.GetAllAsync();
-                var roomEntity = roomsList.FirstOrDefault(r => r.RoomNumber.Trim() == dto.RoomNo.Trim());
-
-                if (roomEntity == null)
-                    return NotFound($"Database validation failed: Assigned Room number '{dto.RoomNo}' was not found.");
-
-                // Persist midpoint data so EF Core materializes the new auto-incremented Guest.Id
-                await _unitOfWork.SaveChangesAsync();
-
-                // 3. Build the Reservation entity
-                var notesSummary = $"Type: {dto.BookingType} | Ref: {dto.BookingReference} | Sold By: {dto.SoldBy} | Plan: {dto.MealPlan} | Profile: {dto.CustomerProfile} | Visit Purpose: {dto.PurposeOfVisit} | Remarks: {dto.Remarks}".Trim();
-
-                var reservation = new Reservation
-                {
-                    GuestId = guest.Id,
-                    RoomId = roomEntity.Id,
-                    CheckInDate = dto.CheckIn == DateTime.MinValue ? DateTime.UtcNow : dto.CheckIn,
-                    CheckOutDate = dto.CheckOut == DateTime.MinValue ? DateTime.UtcNow.AddDays(1) : dto.CheckOut,
-                    Adults = dto.Adults <= 0 ? 1 : dto.Adults,
-                    Children = dto.Children,
-                    TotalAmount = dto.TotalAmount,
-                    Status = ReservationStatus.Pending,
-                    Notes = notesSummary
-                };
-
-                await _unitOfWork.Reservations.AddAsync(reservation);
-
-                // Transition room availability status
-                roomEntity.Status = RoomStatus.Reserved;
-
-                // Save reservation to materialize its auto-incremented Reservation.Id
-                await _unitOfWork.SaveChangesAsync();
-
-                // 4. Compute Invariant tax allocations and create checking Invoice entity record
-                decimal computedTax = dto.TotalAmount * 0.05m;
-                decimal computedTotal = dto.TotalAmount + computedTax;
-
-                var invoice = new Invoice
-                {
-                    ReservationId = reservation.Id,
-                    InvoiceDate = DateTime.UtcNow,
-                    Subtotal = dto.TotalAmount,
-                    Tax = computedTax,
-                    Total = computedTotal,
-                    PaymentStatus = dto.AdvanceAmount >= computedTotal ? PaymentStatus.Paid :
-                                    dto.AdvanceAmount > 0 ? PaymentStatus.PartiallyPaid : PaymentStatus.Unpaid
-                };
-
-                await _unitOfWork.Invoices.AddAsync(invoice);
-
-                // Final database commit transaction
-                await _unitOfWork.SaveChangesAsync();
-
-                return Ok(new
-                {
-                    success = true,
-                    bookingId = reservation.Id,
-                    guestId = guest.Id,
-                    invoiceId = invoice.Id
-                });
+                var result = await _reservationService.CreateBookingAsync(dto);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                var internalMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-                return StatusCode(500, $"Internal Database Error: {internalMessage}");
+                return StatusCode(500, $"Internal Database Error processing stay: {ex.Message}");
             }
         }
         #endregion
 
-        #region GetBookingById
+
+        #region GetAllBookings
+
         [HttpGet]
         public async Task<IActionResult> GetAllBookings()
         {
             try
             {
-                var reservations = await _unitOfWork.Reservations
+                var bookings = await _unitOfWork.Bookings
                     .GetAllQueryable()
-                    .Include(r => r.Guest)
-                    .Include(r => r.Room)
-                    .Include(r => r.Invoice)
-                    .OrderByDescending(r => r.CreatedAt)
+
+                    .Include(b => b.Guest)
+
+                    .Include(b => b.ReservationRooms)
+                        .ThenInclude(rr => rr.Room)
+                            .ThenInclude(r => r.RoomTypes)
+
+                    .Include(b => b.Invoices)
+
+                    .OrderByDescending(b => b.CreatedAt)
+
                     .ToListAsync();
 
-                var result = reservations.Select(r => new
+                var result = bookings.Select(b =>
                 {
-                    id = r.Id,
-                    bookingNumber = r.Notes != null && r.Notes.Contains("REF-")
-                        ? r.Notes
-                        : $"RES-{r.Id}",
+                    var firstRoom = b.ReservationRooms.FirstOrDefault();
 
-                    bookingDate = r.CreatedAt.ToString("yyyy-MM-dd"),
+                    var invoice = b.Invoices.FirstOrDefault();
 
-                    roomType = r.Room?.RoomType.ToString() ?? "Standard",
+                    return new
+                    {
+                        id = b.Id,
 
-                    roomNo = r.Room?.RoomNumber ?? "N/A",
+                        bookingNumber = b.BookingNumber,
 
-                    mealPlan = "Room Only",
+                        bookingDate = b.BookingDate
+                            .ToString("yyyy-MM-dd"),
 
-                    pax = r.Adults + r.Children,
+                        roomType = string.Join(", ",
+                        b.ReservationRooms
+                         .Select(rr => rr.Room.RoomTypes.Name)),
+                        //roomType = firstRoom?.Room?.RoomTypes?.Name ?? "N/A",
 
-                    name = r.Guest != null
-                        ? $"{r.Guest.FirstName} {r.Guest.LastName}"
-                        : "Unknown Guest",
+                        roomNo = string.Join(", ",
+                            b.ReservationRooms
+                                .Select(x => x.Room?.RoomNumber)
+                                .Where(x => !string.IsNullOrEmpty(x))),
 
-                    mobile = r.Guest?.Phone ?? string.Empty,
+                        mealPlan = string.Join(", ",
+                            b.ReservationRooms
+                                .Select(x => x.MealPlan)
+                                .Where(x => !string.IsNullOrEmpty(x))),
 
-                    guestName = r.Guest != null
-                        ? $"{r.Guest.FirstName} {r.Guest.LastName}"
-                        : "Unknown Guest",
+                        pax = string.Join(", ",
+                            b.ReservationRooms
+                                .Select(x => x.Pax)),
 
-                    guestPhone = r.Guest?.Phone ?? string.Empty,
+                        name = b.Guest != null
+                            ? $"{b.Guest.FirstName} {b.Guest.LastName}"
+                            : "Unknown Guest",
 
-                    checkIn = r.CheckInDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+                        mobile = b.Guest?.Phone ?? string.Empty,
 
-                    checkOut = r.CheckOutDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+                        guestName = b.Guest != null
+                            ? $"{b.Guest.FirstName} {b.Guest.LastName}"
+                            : "Unknown Guest",
 
-                    paymentStatus = r.Invoice?.PaymentStatus.ToString() ?? "Unpaid",
+                        guestPhone = b.Guest?.Phone ?? string.Empty,
 
-                    amount = r.TotalAmount
+                        checkIn = firstRoom != null
+                            ? firstRoom.CheckInDate
+                                .ToString("yyyy-MM-ddTHH:mm:ss")
+                            : "",
+
+                        checkOut = firstRoom != null
+                            ? firstRoom.CheckOutDate
+                                .ToString("yyyy-MM-ddTHH:mm:ss")
+                            : "",
+
+                        paymentStatus = invoice != null
+                            ? invoice.PaymentStatus.ToString()
+                            : "Unpaid",
+
+                        amount = b.TotalAmount,
+
+                        bookingStatus = b.Status.ToString()
+                    };
                 });
 
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+                return StatusCode(500,
+                    $"Internal Server Error: {ex.Message}");
             }
         }
-        // [HttpGet("{id}")]
-        // public async Task<IActionResult> GetBookingById(int id)
-        // {
-        //     var reservation = await _unitOfWork.Reservations.GetByIdAsync(id);
-        //     if (reservation == null)
-        //         return NotFound($"No booking found with ID {id}.");
 
-        //     var guest = await _unitOfWork.Guests.GetByIdAsync(reservation.GuestId);
-        //     var room = await _unitOfWork.Rooms.GetByIdAsync(reservation.RoomId);
-        //     var invoice = await _unitOfWork.Invoices.GetAllAsync();
-        //     var invoiceForReservation = invoice.FirstOrDefault(i => i.ReservationId == reservation.Id);
-
-        //     var bookingDetails = new
-        //     {
-        //         ReservationId = reservation.Id,
-        //         GuestName = $"{guest?.FirstName} {guest?.LastName}",
-        //         RoomNumber = room?.RoomNumber,
-        //         CheckInDate = reservation.CheckInDate,
-        //         CheckOutDate = reservation.CheckOutDate,
-        //         TotalAmount = reservation.TotalAmount,
-        //         InvoiceTotal = invoiceForReservation?.Total ?? 0,
-        //         PaymentStatus = invoiceForReservation?.PaymentStatus.ToString() ?? "N/A",
-        //         Notes = reservation.Notes
-        //     };
-
-        //     return Ok(bookingDetails);
-        // }
         #endregion
+
+        #region Upcoming CheckIns
+
+        [HttpGet("upcoming-checkins")]
+        public async Task<IActionResult> GetUpcomingCheckIns()
+        {
+            var result =
+                await _reservationService
+                    .GetUpcomingCheckInsAsync();
+
+            return Ok(result);
+        }
+
+        #endregion
+        #region GetBookingById
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBookingById(int id)
+        {
+            var result =
+                await _reservationService
+                    .GetBookingForEditAsync(id);
+
+            if (result == null)
+                return NotFound("Booking not found.");
+
+            return Ok(result);
+        }
+
+        #endregion
+
+        #region Update Specific Room Occupant Companions
+        [HttpPut("{id}/occupants")]
+        public async Task<IActionResult> UpdateBookingOccupants(int id, [FromBody] List<BookingGuestUpdateDto> guestDtos)
+        {
+            try
+            {
+                if (guestDtos == null || guestDtos.Count == 0)
+                    return BadRequest("Occupants updates target dataset compilation collection cannot be left empty.");
+
+                var success = await _reservationService.UpdateBookingOccupantsAsync(id, guestDtos);
+
+                if (!success)
+                    return NotFound($"Unable to process changes. Target stay identity index #{id} was not tracked inside our registers.");
+
+                return Ok(new { success = true, message = "Occupants listing state collection updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Tracking exception matching records: {ex.Message}");
+            }
+        }
+        #endregion
+
     }
 }

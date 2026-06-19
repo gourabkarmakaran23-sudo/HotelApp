@@ -1,0 +1,122 @@
+<div class="page-container">
+  
+  <div class="form-panel-side">
+    <div class="panel-card shadow-sm">
+      <div class="panel-card-header">
+        <h5 class="m-0 text-dark font-weight-bold">{{ isEditMode ? 'Edit Purchase Item' : 'Add Purchase Item' }}</h5>
+      </div>
+      <div class="panel-card-body">
+        <form (ngSubmit)="saveItem()">
+          <div class="form-vertical-stack">
+            
+            <div class="form-group">
+              <label>Item Name *</label>
+              <input type="text" class="form-input" name="itemName" [(ngModel)]="selectedItem.itemName" required placeholder="Enter Item Name">
+            </div>
+
+            <div class="form-group">
+              <label>Supplier Name *</label>
+              <input type="text" class="form-input" name="supplierName" [(ngModel)]="selectedItem.supplierName" required placeholder="Enter Supplier Name">
+            </div>
+
+            <div class="form-group">
+              <label>Invoice Number *</label>
+              <input type="text" class="form-input" name="invoiceNumber" [(ngModel)]="selectedItem.invoiceNumber" required placeholder="Enter Invoice Number">
+            </div>
+
+            <div class="form-row-split">
+              <div class="form-group">
+                <label>Qty *</label>
+                <input type="number" class="form-input" name="quantity" [(ngModel)]="selectedItem.quantity" (input)="calculateTotal()" required min="0.001">
+              </div>
+              <div class="form-group">
+                <label>Unit *</label>
+                <select class="form-input" name="unit" [(ngModel)]="selectedItem.unit" required>
+                  <option value="Pcs">Pcs</option>
+                  <option value="Kg">Kg</option>
+                  <option value="Ltr">Ltr</option>
+                  <option value="Box">Box</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Rate *</label>
+              <input type="number" class="form-input" name="rate" [(ngModel)]="selectedItem.rate" (input)="calculateTotal()" required min="0" placeholder="0.00">
+            </div>
+
+            <div class="form-group">
+              <label>Total Value</label>
+              <input type="text" class="form-input readonly-input-display" name="totalAmount" [value]="(selectedItem.totalAmount || 0) | number:'1.2-2'" readonly>
+            </div>
+
+            <div class="form-group">
+              <label>Purchase Date *</label>
+              <input type="date" class="form-input" name="purchaseDate" [(ngModel)]="selectedItem.purchaseDate" required>
+            </div>
+
+            <div class="form-group">
+              <label>Remarks</label>
+              <textarea class="form-input textarea-input" name="remarks" [(ngModel)]="selectedItem.remarks" placeholder="Enter Remarks" rows="2"></textarea>
+            </div>
+
+          </div>
+
+          <div class="form-actions-row">
+            <button type="button" class="btn-action-form btn-clear" (click)="resetForm()">Clear</button>
+            <button type="submit" class="btn-action-form btn-submit" [disabled]="isLoading">
+              {{ isLoading ? 'Saving...' : 'Save' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-panel-side">
+    <div *ngIf="errorMessage" class="alert-banner">
+      <span class="alert-text"><strong>Error:</strong> {{ errorMessage }}</span>
+      <button class="alert-close-btn" (click)="errorMessage = ''">&times;</button>
+    </div>
+
+    <div class="table-responsive-wrapper shadow-sm">
+      <table class="custom-flat-table">
+        <thead>
+          <tr>
+            <th style="width: 60px; text-align: center;">Sl.No</th>
+            <th>Item Name</th>
+            <th>Supplier Name</th>
+            <th style="width: 120px;">Invoice No</th>
+            <th style="width: 100px; text-align: right;">Qty</th>
+            <th style="width: 100px; text-align: right;">Rate</th>
+            <th style="width: 120px; text-align: right;">Total Value</th>
+            <th style="width: 120px; text-align: center;">Date</th>
+            <th style="width: 140px; text-align: center;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items; let i = index">
+            <td style="text-align: center; color: #64748b;">{{ i + 1 }}</td>
+            <td class="font-medium-text" style="color: #0f172a;">{{ item.itemName }}</td>
+            <td style="color: #334155;">{{ item.supplierName }}</td>
+            <td><span class="room-indicator-badge">{{ item.invoiceNumber }}</span></td>
+            <td style="text-align: right; font-weight: 500;">{{ item.quantity }} <span style="font-size: 11px; color:#64748b;">{{ item.unit }}</span></td>
+            <td style="text-align: right; color: #475569;">{{ item.rate | number:'1.2-2' }}</td>
+            <td style="text-align: right; font-weight: 600; color: #1e293b;">{{ item.totalAmount | number:'1.2-2' }}</td>
+            <td style="text-align: center; color: #475569;">{{ item.purchaseDate | date:'dd-MM-yyyy' }}</td>
+            <td style="text-align: center;">
+              <div class="actions-inline-group">
+                <button type="button" class="grid-btn btn-edit" (click)="openEditMode(item)">Edit</button>
+                <button type="button" class="grid-btn btn-delete" (click)="deleteItem(item.id)">Delete</button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="items.length === 0 && !isLoading">
+            <td colspan="9" class="empty-table-state">No records available. Add purchase entries via the side layout form.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,141 @@
+Set Username
+git config --global user.name "Yor Name"
+Set email
+git config --global user.email "your.email@example.com"
+
+Check config 
+git config --list
+
+Initialize a new repo 
+git init
+
+Create an existing repo 
+git clone <repo-url>
+
+Check status 
+git status
+
+Add file to staging
+git add <file> #Add specific file
+git add .      #Add all chages
+
+Commit changes
+git commit -m "Commit message"
+
+Amend last commit 
+git commit --amend
+
+Branching & Merging
+
+List Branches
+git branch
+
+Create new Branch
+git branch <branch-name>
+
+Switch Branch
+git checkout <branch-name>
+
+Create & Switch Branch
+git checkout -b <branch-name>  
+
+
+Merge Branch
+git merge <branch-name>
+
+Delete Branch
+git delete -d <branch-name>
+
+Remote Repositoriess
+Add Remote
+git remote add origin <repo-url>
+
+Show Remote
+git remote -v
+
+Remove Remote
+git remote remove origin
+
+Pull & Push
+
+Push to Remote
+git push origin <branch-name>
+
+Push all branches
+git push-all
+
+Pull from Origin
+git pull origin <branch-name> 
+
+Fetch changes
+git fetch
+
+Undoing changes
+----------------
+git checkout
+
+Unstage files:
+git reset <file>
+
+Discard changes
+git checkout -- <file>
+Reset to previous commit:
+git reset --hard <commit-id>
+
+Viewing History
+Show Commit History
+
+git log
+
+
+Compact log
+git log --oneline-graph-decorate
+
+Show Commit with ISO
+git log --pretty=format:"%h | %an | %ad | %s
+
+show diff
+git diff
+
+Create tag
+git tag <tag-name>
+
+Push tags
+git push origin --tags
+
+See current Branch
+git branch --show-current
+
+Show Commit with ISO
+
+git log --pretty=format:"%h | %an | sad | %s"
+
+Show all branch
+
+git branch -a
+
+See current Branch
+
+git branch --show-current
+
+git branch -a
+
+Switch Branch
+git checkout <branch-name>
+
+Create & Switch Branch
+git checkout -b <branch-name>  
+
+
+git checkout feature/reservationstandard
+git checkout -b feature/reservationstandard
+
+https://www.petukpos.in/
+
+getRoomsByRoomType
+
+ this.roomService
+      .getRoomsByRoomType(room.roomTypeId)
+      .subscribe({
+
+this.roomService

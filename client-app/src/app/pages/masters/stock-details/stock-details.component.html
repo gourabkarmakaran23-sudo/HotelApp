@@ -1,0 +1,84 @@
+<div class="full-page-container">
+
+  <div class="detail-header-card shadow-sm">
+    <div class="back-nav-row">
+      <button class="back-link-btn" (click)="goBack()">&larr; Back to Stock Summary Report</button>
+    </div>
+    <div class="header-main-info">
+      <div>
+        <span class="sub-label">Audit Item Product Profile</span>
+        <h2 class="active-item-title">
+          {{ hasSelection ? currentItemName : 'Stock Ledger History Audit Workspace' }}
+        </h2>
+      </div>
+      <div class="badge-accent-box">
+        Historical Ledger Audit
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="hasSelection; else noItemSelectedState">
+    <div class="report-table-card shadow-sm">
+      <div class="report-card-header bg-light">
+        <h5 class="m-0 font-weight-bold text-slate">Item Transaction Activity Log</h5>
+      </div>
+      
+      <div class="table-responsive-wrapper">
+        <table class="custom-flat-table">
+          <thead>
+            <tr>
+              <th style="width: 60px; text-align: center;">Sl.No</th>
+              <th style="width: 140px; text-align: center;">Transaction Date</th>
+              <th style="width: 150px; text-align: center;">Type</th>
+              <th style="width: 160px;">Reference Voucher No</th>
+              <th>Supplier Merchant Link</th>
+              <th style="text-align: right; width: 130px;">Quantity</th>
+              <th style="text-align: right; width: 120px;">Unit Rate</th>
+              <th style="text-align: right; width: 150px;">Total Value Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of ledgerHistory; let i = index" 
+                [style.borderLeft]="log.transactionType === 'Purchase' ? '4px solid #1e293b' : '4px solid #ef4444'">
+              <td style="text-align: center; color: #64748b;">{{ i + 1 }}</td>
+              <td style="text-align: center; color: #475569;">{{ log.transactionDate | date:'dd-MM-yyyy hh:mm a' }}</td>
+              <td style="text-align: center;">
+                <span class="type-indicator-pill" 
+                  [ngClass]="log.transactionType === 'Purchase' ? 'pill-purchase' : 'pill-return'">
+                  {{ log.transactionType }}
+                </span>
+              </td>
+              <td><span class="room-indicator-badge">{{ log.referenceNo }}</span></td>
+              <td class="font-medium-text" style="color: #334155;">{{ log.supplierName }}</td>
+              <td style="text-align: right; font-weight: 600;">
+                {{ log.transactionType === 'Return' ? '-' : '' }}{{ log.quantity }} <span class="unit-text">{{ log.unit }}</span>
+              </td>
+              <td style="text-align: right; color: #475569;">{{ log.rate | number:'1.2-2' }}</td>
+              <td style="text-align: right; font-weight: 700;" 
+                  [style.color]="log.transactionType === 'Purchase' ? '#0f172a' : '#b91c1c'">
+                {{ log.transactionType === 'Return' ? '-' : '' }}{{ log.totalAmount | number:'1.2-2' }}
+              </td>
+            </tr>
+            <tr *ngIf="ledgerHistory.length === 0 && !isLoading">
+              <td colspan="8" class="empty-table-state">No transaction history found logging ledger actions for this product.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #noItemSelectedState>
+    <div class="report-table-card shadow-sm" style="padding: 60px 40px; text-align: center; background-color: #ffffff;">
+      <div style="font-size: 48px; margin-bottom: 16px;">📋</div>
+      <h4 style="font-weight: 600; color: #1e293b; margin-bottom: 8px;">No Product Selected for Auditing</h4>
+      <p style="color: #64748b; max-width: 460px; margin: 0 auto 24px auto; font-size: 14px; line-height: 1.5;">
+        To review structural ledger entries, receipts, balance drops, or returns, please open the main Stock Report screen first and click the details actions index tracking switch.
+      </p>
+      <button class="view-details-action-btn" style="padding: 8px 20px; font-size: 13px;" (click)="goBack()">
+        Go to Stock Report Summary
+      </button>
+    </div>
+  </ng-template>
+
+</div>

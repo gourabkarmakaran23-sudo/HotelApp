@@ -1,0 +1,5 @@
+Id,Name,Category,Description,Price,IsAvailable,CreatedAt,UpdatedAt,IsDeleted
+1,Grilled Salmon,MainCourse,Fresh salmon with lemon butter sauce,24.50,t,2026-05-18 17:07:50.438948,2026-05-18 17:07:50.438948,f
+2,Caesar Salad,Appetizer,Crisp romaine with creamy dressing,9.95,t,2026-05-18 17:07:50.439077,2026-05-18 17:07:50.439077,f
+3,Chocolate Lava Cake,Dessert,Warm chocolate cake with molten center,8.75,t,2026-05-18 17:07:50.439077,2026-05-18 17:07:50.439077,f
+4,Sparkling Water,Beverage,Chilled sparkling water,3.50,t,2026-05-18 17:07:50.439077,2026-05-18 17:07:50.439077,f

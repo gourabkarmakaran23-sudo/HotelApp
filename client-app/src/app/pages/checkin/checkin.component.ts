@@ -10,7 +10,7 @@ interface GuestRow {
   roomType: string;
   roomNo: string;
   mealPlan: string;
-  pak: string;
+  pax: string;
   name: string;
   mobile: string;
   checkIn: string;
@@ -32,222 +32,351 @@ interface GuestRow {
   templateUrl: './checkin.component.html',
   styleUrls: ['./checkin.component.scss']
 })
-export class CheckinComponent {
+export class CheckinComponent implements OnInit {
+
+  apiUrl = 'http://localhost:5287/api/bookings/checkin-list';
+
   pageSizeOptions = [10, 25, 50];
+
   pageSize = 10;
+
   searchText = '';
 
-  bookingNumber = '00002706';
-  guestNames = ['Dr. Sneha Singh', 'Mr. Arjun Roy'];
+  bookingNumber = '';
 
-  guestRows: GuestRow[] = [
-    {
-      id: 1,
-      bookingNumber: '00002706',
-      roomType: 'EV, EV',
-      roomNo: '304, 201',
-      mealPlan: 'EP, EP',
-      pak: '6',
-      name: 'Mr. Arjun Roy',
-      mobile: '9999999999',
-      checkIn: '07-05-2026 12:18',
-      checkOut: '08-05-2026 10:00',
-      paidAmt: 20000,
-      dueAmt: 31827.00,
-      bookingStatus: 'Check In'
-    },
-    {
-      id: 2,
-      bookingNumber: '00002702',
-      roomType: 'FV',
-      roomNo: '202, 203',
-      mealPlan: 'CP, CP',
-      pak: '4',
-      name: 'Mr. Karan Ghosh',
-      mobile: '9999999999',
-      checkIn: '06-05-2026 15:55',
-      checkOut: '08-05-2026 10:00',
-      paidAmt: 7000,
-      dueAmt: 21728.00,
-      bookingStatus: 'Check In'
-    }
-  ];
+  guestNames: string[] = [];
 
-  constructor(private readonly router: Router, private readonly http: HttpClient) {}
+  guestRows: GuestRow[] = [];
+
+  constructor(
+    private readonly router: Router,
+    private readonly http: HttpClient
+  ) {}
 
   ngOnInit(): void {
-    // Try to load bookings from local asset to populate the checkin list
-    this.http.get<any[]>('assets/BookingList.json').subscribe({
-      next: (data) => {
-        if (data && data.length) {
-          // map to GuestRow structure — take first few relevant fields if available
-          this.guestRows = data.map((d, idx) => ({
-            id: idx + 1,
-            bookingNumber: d.bookingNumber ?? `0000${idx + 1}`,
-            roomType: d.roomType ?? d.roomType ?? '',
-            roomNo: Array.isArray(d.roomNo) ? d.roomNo.join(', ') : (d.roomNo ?? ''),
-            mealPlan: d.mealPlan ?? d.mealPlan ?? '',
-            pak: d.pax ? String(d.pax) : (d.pak ?? ''),
-            name: d.name ?? `${d.guestName ?? ''}`,
-            mobile: d.mobile ?? d.guestPhone ?? '',
-            checkIn: d.checkIn ?? '',
-            checkOut: d.checkOut ?? '',
-            paidAmt: d.amount ?? 0,
-            dueAmt: d.dueAmt ?? 0,
-            bookingStatus: d.paymentStatus ?? ''
-          }));
+
+    this.fetchCheckInList();
+
+  }
+
+  fetchCheckInList(): void {
+
+    this.http.get<any[]>(this.apiUrl).subscribe({
+
+      next: (response) => {
+
+        console.log('CHECKIN API RESPONSE:', response);
+
+        this.guestRows = response.map((x: any) => ({
+
+          id: x.reservationId,
+
+          bookingNumber: x.bookingNumber,
+
+          roomType: x.roomType,
+
+          roomNo: x.roomNo,
+
+          mealPlan: x.mealPlan || 'EP',
+
+          pax: x.pax || '',
+
+          name: x.guestName,
+
+          mobile: x.mobile || '',
+
+          checkIn: x.checkInDate,
+
+          checkOut: x.checkOutDate,
+
+          paidAmt: x.paidAmount,
+
+          dueAmt: x.dueAmount,
+
+          bookingStatus: x.bookingStatus
+
+        }));
+
+        if (this.guestRows.length > 0) {
+
+          this.bookingNumber =
+            this.guestRows[0].bookingNumber;
+
+          this.guestNames =
+            this.guestRows.map(x => x.name);
+
         }
+
       },
-      error: () => {
-        // keep existing sample rows if asset not found
+
+      error: (err) => {
+
+        console.error(err);
+
+        alert('Failed to load check-in list.');
+
       }
+
     });
+
   }
 
   get filteredRows(): GuestRow[] {
+
     const search = this.searchText.trim().toLowerCase();
+
     if (!search) {
+
       return this.guestRows;
+
     }
+
     return this.guestRows.filter((row) =>
-      row.roomNo.includes(search) ||
+
+      row.roomNo.toLowerCase().includes(search) ||
+
       row.name.toLowerCase().includes(search) ||
-      row.bookingNumber.includes(search) ||
-      row.mobile.includes(search) ||
+
+      row.bookingNumber.toLowerCase().includes(search) ||
+
+      row.mobile.toLowerCase().includes(search) ||
+
       row.roomType.toLowerCase().includes(search)
+
     );
+
   }
 
   addGuest(): void {
+
     this.router.navigateByUrl('/add-guest');
+
   }
 
-  // Toggle per-row action menu
   toggleRowMenu(row: GuestRow, ev?: MouseEvent): void {
-    if (ev) { ev.stopPropagation(); }
-    // close others
-    this.guestRows.forEach(r => { if (r.id !== row.id) r.showActions = false; });
-    const next = !row.showActions;
-    row.showActions = next;
-    if (next && ev && ev.target) {
-      // decide whether to align menu to left or right based on viewport space
-      try {
-        const btnEl = (ev.target as HTMLElement).closest('.action-dropdown') as HTMLElement || (ev.target as HTMLElement);
-        const rect = btnEl.getBoundingClientRect();
-        const menuMinWidth = 220; // px (match SCSS min-width)
-        // alignment
-        if (rect.left + menuMinWidth > window.innerWidth) {
-          row.menuAlign = 'left';
-        } else {
-          row.menuAlign = 'right';
-        }
-        // compute fixed coordinates so menu is not clipped by ancestor overflow
-        const padding = 8;
-        const leftCandidate = row.menuAlign === 'right' ? rect.left : rect.right - menuMinWidth;
-        const left = Math.max(padding, Math.min(leftCandidate, window.innerWidth - menuMinWidth - padding));
-        const top = rect.bottom + 6; // show below button
-        row.menuLeft = `${Math.round(left)}px`;
-        row.menuTop = `${Math.round(top)}px`;
-        row.menuFixed = true;
-      } catch {
-        row.menuAlign = 'right';
-        row.menuFixed = false;
-      }
-    } else {
-      // closing menu
-      row.menuFixed = false;
+
+    if (ev) {
+
+      ev.stopPropagation();
+
     }
+
+    this.guestRows.forEach(r => {
+
+      if (r.id !== row.id) {
+
+        r.showActions = false;
+
+      }
+
+    });
+
+    const next = !row.showActions;
+
+    row.showActions = next;
+
+    if (next && ev && ev.target) {
+
+      try {
+
+        const btnEl =
+          (ev.target as HTMLElement).closest('.action-dropdown') as HTMLElement
+          || (ev.target as HTMLElement);
+
+        const rect = btnEl.getBoundingClientRect();
+
+        const menuMinWidth = 220;
+
+        if (rect.left + menuMinWidth > window.innerWidth) {
+
+          row.menuAlign = 'left';
+
+        } else {
+
+          row.menuAlign = 'right';
+
+        }
+
+        const padding = 8;
+
+        const leftCandidate =
+          row.menuAlign === 'right'
+            ? rect.left
+            : rect.right - menuMinWidth;
+
+        const left =
+          Math.max(
+            padding,
+            Math.min(
+              leftCandidate,
+              window.innerWidth - menuMinWidth - padding
+            )
+          );
+
+        const top = rect.bottom + 6;
+
+        row.menuLeft = `${Math.round(left)}px`;
+
+        row.menuTop = `${Math.round(top)}px`;
+
+        row.menuFixed = true;
+
+      } catch {
+
+        row.menuAlign = 'right';
+
+        row.menuFixed = false;
+
+      }
+
+    } else {
+
+      row.menuFixed = false;
+
+    }
+
   }
 
   closeAllMenus(): void {
+
     this.guestRows.forEach(r => {
+
       r.showActions = false;
+
       r.menuFixed = false;
+
     });
+
   }
 
-  // Row-level actions
   addGuestRow(row: GuestRow): void {
+
     this.closeAllMenus();
+
     this.router.navigateByUrl('/add-guest');
+
   }
 
   checkOutRow(row: GuestRow): void {
+
     this.closeAllMenus();
-    // navigate to checkout page with row data so page can display full details
-    this.router.navigate(['/checkout'], { state: { row } });
+
+    this.router.navigate(['/checkout'], {
+      state: { row }
+    });
+
   }
 
   cancelReservationRow(row: GuestRow): void {
+
     this.closeAllMenus();
+
     alert(`Cancel reservation for ${row.roomNo}`);
+
   }
 
   amenityAddRow(row: GuestRow): void {
+
     this.closeAllMenus();
+
     alert(`Add amenity for ${row.roomNo}`);
+
   }
 
   roomAlterRow(row: GuestRow): void {
+
     this.closeAllMenus();
+
     alert(`Room alter for ${row.roomNo}`);
+
   }
 
   paymentRow(row: GuestRow): void {
+
     this.closeAllMenus();
-    alert(`Payment for ${row.roomNo}`);
+
+    this.router.navigate(['/payment-list', row.id], { queryParams: { bookingId: row.id } });
+
   }
 
   upgradeRow(row: GuestRow): void {
+
     this.closeAllMenus();
+
     alert(`Upgrade room ${row.roomNo}`);
+
   }
 
   gtcFormRow(row: GuestRow): void {
+
     this.closeAllMenus();
+
     alert(`GTC form for ${row.roomNo}`);
+
   }
 
   guestCheckinPhotoRow(row: GuestRow): void {
+
     this.closeAllMenus();
+
     alert(`Open guest checkin photo for ${row.roomNo}`);
+
   }
 
   guestCheckinModeRow(row: GuestRow): void {
+
     this.closeAllMenus();
+
     alert(`Guest Checkin Mode for ${row.roomNo}`);
+
   }
 
-
   print(): void {
+
     window.print();
+
   }
 
   view(): void {
+
     alert('View guest details');
+
   }
 
   cancelReservation(): void {
+
     alert('Cancel reservation');
+
   }
 
   payment(): void {
-    alert('Payment action');
+
+    // Payment is triggered from row context via paymentRow()
+
   }
 
   gtcForm(): void {
+
     alert('GTC form action');
+
   }
 
   checkOut(): void {
+
     alert('Check Out action');
+
   }
 
   rowPrint(row: GuestRow): void {
+
     alert(`Print guest ${row.name}`);
+
   }
 
   rowView(row: GuestRow): void {
+
     this.router.navigate(['/guest', row.id]);
+
   }
+
 }

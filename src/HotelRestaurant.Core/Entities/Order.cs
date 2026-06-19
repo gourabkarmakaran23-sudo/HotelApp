@@ -14,14 +14,14 @@ namespace HotelRestaurant.Core.Entities
         // public Invoice? Invoice { get; set; }
 
         //New
-        public int? ReservationId { get; set; }
+        public int? BookingId { get; set; }
         public int? GuestId { get; set; }
         public DateTime OrderDate { get; set; }
         public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
         public decimal TotalAmount { get; set; }
 
-        // Navigation Properties matching the expanded Reservation architecture
-        public Reservation? Reservation { get; set; }
+        // Navigation Properties matching the expanded Booking architecture
+        public Booking? Booking { get; set; }
         public Guest? Guest { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public Invoice? Invoice { get; set; }

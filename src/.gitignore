@@ -1,0 +1,41 @@
+# Build folders
+bin/
+obj/
+
+# Visual Studio build output
+Debug/
+Release/
+
+# DLL files
+*.dll
+
+# EXE files
+*.exe
+
+# PDB files
+*.pdb
+
+# Runtime config
+*.runtimeconfig.json
+*.deps.json
+
+# NuGet packages
+*.nupkg
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Publish folders
+publish/
+artifacts/
+
+# Logs
+*.log

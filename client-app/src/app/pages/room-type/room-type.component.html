@@ -1,0 +1,118 @@
+<div class="management-container">
+  <div class="header-panel">
+    <h2>Room Types Management</h2>
+    <button class="btn btn-primary" (click)="openAddModal()">+ Add Room Type</button>
+  </div>
+
+  <div class="filter-panel">
+    <input type="text" placeholder="Search room types..." (input)="onSearch($event)"
+      class="form-control search-input" />
+  </div>
+
+  <div class="table-responsive">
+    <table class="management-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Base Price</th>
+          <th>Max Occupancy</th>
+          <th>Max Adults</th>
+          <th>Max Children</th>
+          <th>Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let room of filteredRoomTypes">
+          <td><strong>{{ room.name }}</strong></td>
+          <td>₹{{ room.basePrice | number:'1.2-2' }}</td>
+          <td>{{ room.maxOccupancy }}</td>
+          <td>{{ room.maxAdults }}</td>
+          <td>{{ room.maxChildren }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="room.isActive ? 'active' : 'inactive'">
+              {{ room.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="text-center actions-cell">
+            <button class="action-btn edit-btn" title="Edit" (click)="openEditModal(room)">
+              ✏️
+            </button>
+            <button class="action-btn delete-btn" (click)="onDelete(room.id)" title="Delete">
+              🗑️
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredRoomTypes.length === 0">
+          <td colspan="7" class="empty-state">No matching room types discovered.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditMode ? 'Edit Room Type' : 'Add Room Type' }}</h3>
+      <button class="close-x" (click)="closeModal()">&times;</button>
+    </div>
+
+    <form [formGroup]="roomTypeForm" (ngSubmit)="onSubmit()" class="modal-form">
+      <div class="form-group">
+        <label>Name <span class="required">*</span></label>
+        <input type="text" formControlName="name" placeholder="e.g., Deluxe, Standard, Suite" class="form-control" />
+        <small class="error-msg"
+          *ngIf="roomTypeForm.get('name')?.touched && roomTypeForm.get('name')?.errors?.['required']">
+          Room Type name definition is required.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="description" rows="3" placeholder="Describe the room type"
+          class="form-control"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col">
+          <label>Base Price (₹) <span class="required">*</span></label>
+          <input type="number" formControlName="basePrice" class="form-control" />
+        </div>
+        <div class="form-group col">
+          <label>Max Occupancy <span class="required">*</span></label>
+          <input type="number" formControlName="maxOccupancy" class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col">
+          <label>Max Adults <span class="required">*</span></label>
+          <input type="number" formControlName="maxAdults" class="form-control" />
+        </div>
+        <div class="form-group col">
+          <label>Max Children <span class="required">*</span></label>
+          <input type="number" formControlName="maxChildren" class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Image URL</label>
+        <input type="text" formControlName="imageUrl" placeholder="https://example.com/image.jpg"
+          class="form-control" />
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="isActive" />
+          <span>Active</span>
+        </label>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="roomTypeForm.invalid">Save Room Type</button>
+      </div>
+    </form>
+  </div>
+</div>

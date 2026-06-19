@@ -53,6 +53,8 @@ export class CheckoutComponent implements OnInit {
     this.computeTotals();
   }
 
+  
+
   computeTotals(): void {
     const sum = this.roomBills.reduce((acc, b) => {
       // rent is like '₹6120.00'
