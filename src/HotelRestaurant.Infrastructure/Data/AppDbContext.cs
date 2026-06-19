@@ -43,6 +43,8 @@ namespace HotelRestaurant.Infrastructure.Data
         public DbSet<PurchaseItem> PurchaseItems => Set<PurchaseItem>();
         public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
 
+        public DbSet<OpeningBalance> OpeningBalances => Set<OpeningBalance>();
+
         #endregion
 
         // 1. Expose DbSets

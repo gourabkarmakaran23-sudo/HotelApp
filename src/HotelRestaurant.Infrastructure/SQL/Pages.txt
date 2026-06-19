@@ -8,6 +8,7 @@ feature/reservationstandard
 6. Financial Year:   Done
 7. Financial Year Ending: Not Done
 8. Opening Balance :Not Done
+
 9. Debit Voucher:Not Done
 10. Credit Voucher : Not Done
 11. Contra Voucher: Not Done
@@ -100,6 +101,15 @@ feature/reservationstandard
 21. A1. Purchase Report
 21. A2. Stock Report
 21. A3. Daily Booking Report
+
+
+dotnet ef migrations add AddOpeningBalanceTable --project HotelRestaurant.Infrastructure --startup-project HotelRestaurant.Api
+
+F:\1_Holel_Projects_Techno\Hotel_App_2026_Lattest\src>cd  HotelRestaurant.Api
+dotnet run Or dotnet watch run
+F:\1_Holel_Projects_Techno\Hotel_App_2026_Lattest\client-app>
+npm start Or ng serve
+
 
 
 

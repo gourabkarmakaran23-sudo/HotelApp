@@ -83,6 +83,14 @@ export const routes: Routes = [
 
   //#endregion
 
+  //#region Account
+ // Change 'account' to 'account/opening-balance'
+{ 
+  path: 'account/opening-balance', 
+  loadComponent: () => import('./pages/accounts/opening-balance/opening-balance.component').then(m => m.OpeningBalanceComponent), 
+  canActivate: [AuthGuard] 
+},
+
 {
   path: 'upcoming-checkin',
   loadComponent: () =>

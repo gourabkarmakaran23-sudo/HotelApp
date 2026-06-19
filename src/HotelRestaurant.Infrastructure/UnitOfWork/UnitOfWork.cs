@@ -49,7 +49,9 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             Payments = new GenericRepository<Payment>(_context);
             InventoryItems = new GenericRepository<InventoryItem>(_context);
         }
-
+        #region Master Data Repositories
+        public IGenericRepository<OpeningBalance> OpeningBalances { get; }
+        #endregion
         #region Master Data Repositories
         public IGenericRepository<Currency> Currencies { get; }
         public IGenericRepository<PaymentMethods> PaymentMethods { get; }

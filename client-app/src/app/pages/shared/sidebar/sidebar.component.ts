@@ -28,7 +28,14 @@ export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [
     { icon: '📊', label: 'Dashboard', active: true, route: '/dashboard' },
     { icon: '📋', label: 'Tariff Interface', route: '/tariff' },
-    { icon: '👤', label: 'Account', route: '/account' },
+    { 
+  icon: '👤', 
+  label: 'Account', 
+  route: '/account', // <-- REMOVE THIS LINE
+  children: [
+    { label: 'Opening Balance', route: '/account/opening-balance' }
+  ]
+},
     { icon: '🛏️', label: 'Room Types', route: '/room-types' },
     // { icon: '🛏️', label: 'Rooms', route: '/rooms' },
     { icon: '💳', label: 'Payment Setting', route: '/payment' },

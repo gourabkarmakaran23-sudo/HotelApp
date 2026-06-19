@@ -14,6 +14,8 @@ namespace HotelRestaurant.Core.Interfaces
 
             IGenericRepository<PurchaseItem> PurchaseItems { get; }
             IGenericRepository<PurchaseReturn> PurchaseReturns { get; }
+
+            IGenericRepository<OpeningBalance> OpeningBalances { get; }
         #endregion
         #region Room Settings Repositories
             IGenericRepository<BedType> BedTypes { get; }
@@ -42,5 +44,6 @@ namespace HotelRestaurant.Core.Interfaces
         IGenericRepository<InventoryItem> InventoryItems { get; }
         IUserRepository ApplicationUsers { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        
     }
 }
