@@ -30,7 +30,7 @@ export class SidebarComponent implements OnInit {
     { icon: '📋', label: 'Tariff Interface', route: '/tariff' },
     { icon: '👤', label: 'Account', route: '/account' },
     { icon: '🛏️', label: 'Room Types', route: '/room-types' },
-    { icon: '🛏️', label: 'Rooms', route: '/rooms' },
+    // { icon: '🛏️', label: 'Rooms', route: '/rooms' },
     { icon: '💳', label: 'Payment Setting', route: '/payment' },
     { icon: '🛒', label: 'Purchase Manage', route: '/purchase' },
     { icon: '📈', label: 'Reports', route: '/reports' },
@@ -55,7 +55,8 @@ export class SidebarComponent implements OnInit {
       { label: 'Booking Source', route: '/booking-source' },
       { label: 'Bed Type', route: '/bed-type' },
       { label: 'Floor Plan', route: '/floor-plan' },
-      { label: 'Complementary', route: '/complementary' }
+      { label: 'Complementary', route: '/complementary' },
+      { label: 'Rooms', route: '/rooms' } // Added right after Complementary
     ]},
     {
       icon: '📅',

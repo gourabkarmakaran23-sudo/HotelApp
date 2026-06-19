@@ -31,9 +31,78 @@ feature/reservationstandard
 15 F. Stock Details Need to Check
 
 16. Room Settings
-16 A. Bed List
-16 B. BookingType List
-16 C. Booking Source 
-16 D. Complementary
-16 E. Floor Plan List
+16 A. Bed List          :Done
+16 B. BookingType List  :Done
+16 C. Booking Source    :Done
+16 D. Complementary     :Done
+16 E. Floor Plan List   :Done
+16 F. Room List         :Done
+16.G. Room Images       :Not Done
+16.H. Room Rate Update  :Not Done
+16.I  Maintenance List  :Not Done
+
+17. Tax Management
+17.A. Tax List          :Not Done
+17.B. Promocode List    :Not Done
+17.C. Cancellation Policy List :Not Done
+17.D. Aminities List    :Not Done
+17.E. Other Payment Entry      :Not Done
+
+18. Cancellation Management
+18.A. Refund Due Non-website Booking
+18.B. Refund Under Process
+18.C. Refunded
+18.D. COA(Chart-Of-Account)
+
+19. Room Reservation
+19.A. Booking List: Done
+19.B. Upcoming CheckIn: DOne
+19.C. Check In: DOne
+19.D. Direct CheckOut: Not DOne
+19.E. Room Status: Not Done
+19.F. Booking Extend: Not Done
+
+20. House Keeping(Not Done ALL)
+20. A. Assign Room Cleaning
+20. B. Room Cleaning
+20. C. CheckList
+20. D. Room QR List
+20. E. Laundry Products List
+20. F. Laundry
+20. G. Laundry Payment
+
+21. Reports(Not Done ALL)
+21. A. Booking Report
+21. B. Meal Details Report
+21. C. Monthly Summary Report
+21. D. Payment Details Report
+21. E. Payment Summary Report
+21. F. Daily Room Occupancy Report
+21. G. Available ROom Report
+21. H. GST Invoice Report
+21. I. Room Checkout Report
+21. J. Police Report
+21. K. Transaction Report
+21. L. Complementary Monthly Report
+21. M. RMS Settlement Report
+21. N. Today's Occupancy Report
+21. O. OTA Summary Report
+21. P. Revenue Report
+21. Q. Month-Wise Revenue Report
+21. S. Individual Transaction Report
+21. T. Total Payment Pending Report
+21. U. Total Part Payment(excluding Part Payment) Before CheckOut
+21. V. Outstanding Room Revenue
+21. W. In-Store Wallet List Report
+21. X. Meal Details Report
+21. Y. Paymenr Pending Report
+21. Z. Cancelled Report
+21. A1. Purchase Report
+21. A2. Stock Report
+21. A3. Daily Booking Report
+
+
+
+
+
 
