@@ -1,0 +1,3 @@
+Id,ItemName,SupplierName,InvoiceNumber,Quantity,Unit,Rate,TotalAmount,PurchaseDate,Remarks,CreatedAt,UpdatedAt,IsDeleted
+1,Premium Basmati Rice (Long Grain),Apex Agro Industries Ltd.,INV-2026-8941,50.000,Box,24.50,1225.00,2026-06-02 00:00:00,Initial stock for summer inventory cycle.,2026-06-07 15:41:35.78289,2026-06-07 15:41:35.782891,f
+2,Organic Whole Wheat Flour,EcoGrain Distribution Co.,INV-2026-9012,120.000,Kg,3.10,372.00,2026-06-05 00:00:00,Rush delivery requested due to low safety stock.,2026-06-07 15:43:46.830947,2026-06-07 15:43:46.830948,f

@@ -12,19 +12,110 @@ namespace HotelRestaurant.Infrastructure.Data
 
         public DbSet<Hotel> Hotels => Set<Hotel>();
         public DbSet<Room> Rooms => Set<Room>();
+        public DbSet<RoomTypes> RoomTypes => Set<RoomTypes>();
+
+        public DbSet<RoomTypeFacility> RoomTypeFacility => Set<RoomTypeFacility>();
         public DbSet<Guest> Guests => Set<Guest>();
+        public DbSet<BookingGuest> BookingGuests => Set<BookingGuest>();
+        public DbSet<BookingDocument> BookingDocuments => Set<BookingDocument>();
         public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
-        public DbSet<Reservation> Reservations => Set<Reservation>();
+        //public DbSet<Reservation> Reservations => Set<Reservation>();
+        public DbSet<Booking> Bookings => Set<Booking>();
+        public DbSet<ReservationRoom> ReservationRooms => Set<ReservationRoom>();
         public DbSet<Employee> Employees => Set<Employee>();
         public DbSet<MenuItem> MenuItems => Set<MenuItem>();
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         public DbSet<Invoice> Invoices => Set<Invoice>();
+        public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<InventoryItem> InventoryItems => Set<InventoryItem>();
+
+        #region Master Data Context Configuration
+        public DbSet<Currency> Currencies => Set<Currency>();
+        public DbSet<PaymentMethods> PaymentMethods => Set<PaymentMethods>();
+        public DbSet<CommissionAgent> CommissionAgents => Set<CommissionAgent>();
+
+        public DbSet<FinancialYear> FinancialYears => Set<FinancialYear>();
+        public DbSet<AgentCommission> AgentCommissions => Set<AgentCommission>();
+
+        public DbSet<WakeUpCall> WakeUpCalls => Set<WakeUpCall>();
+
+        public DbSet<PurchaseItem> PurchaseItems => Set<PurchaseItem>();
+        public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
+
+        #endregion
+
+        // 1. Expose DbSets
+        public DbSet<BedType> BedTypes => Set<BedType>();
+        public DbSet<BookingType> BookingTypes => Set<BookingType>();
+        public DbSet<BookingSource> BookingSources => Set<BookingSource>();
+
+        // 1. Append definitions to your DbSets entries
+        public DbSet<Complementary> Complementaries => Set<Complementary>();
+        public DbSet<FloorPlan> FloorPlans => Set<FloorPlan>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<WakeUpCall>(entity =>
+    {
+        // Enforce exact table name configuration mapping rule matching PostgreSQL context
+        entity.ToTable("WakeUpCalls");
+        entity.HasKey(e => e.Id);
+    });
+            // Configuration rules for Purchase Item Tracking Ledger
+            modelBuilder.Entity<PurchaseItem>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ItemName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.SupplierName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.InvoiceNumber).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Unit).HasMaxLength(50);
+
+                // Strict accounting precision mapping matrix overrides
+                entity.Property(e => e.Quantity).HasPrecision(12, 3);
+                entity.Property(e => e.Rate).HasPrecision(18, 2);
+                entity.Property(e => e.TotalAmount).HasPrecision(18, 2);
+            });
+
+            // Configuration rules for Purchase Return Ledger
+            modelBuilder.Entity<PurchaseReturn>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ItemName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.SupplierName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.ReferenceInvoiceNo).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Unit).HasMaxLength(50);
+                entity.Property(e => e.ReasonForReturn).IsRequired().HasMaxLength(500);
+
+                // Strict accounting precision mapping matrix overrides
+                entity.Property(e => e.ReturnQuantity).HasPrecision(12, 3);
+                entity.Property(e => e.RefundRate).HasPrecision(18, 2);
+                entity.Property(e => e.TotalRefundAmount).HasPrecision(18, 2);
+            });
+
+            // ⬇️ ADD THIS CONFIGURATION BLOCK HERE
+            modelBuilder.Entity<RoomTypeFacility>(entity =>
+            {
+                // Define the composite key configuration using both foreign keys
+                // (Verify that the property names match your actual RoomTypeFacility class exactly)
+                entity.HasKey(rtf => new { rtf.RoomTypeId, rtf.RoomFacilityId });
+
+                // Explicitly establish the relationship mapping back to RoomTypes
+                entity.HasOne(rtf => rtf.RoomType)
+                      .WithMany(rt => rt.RoomTypeFacilities) // or whatever your navigation property name is
+                      .HasForeignKey(rtf => rtf.RoomTypeId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                // If you have a Facility entity mapping as well, define it here:
+                /*
+                entity.HasOne(rtf => rtf.Facility)
+                      .WithMany(f => f.RoomTypeFacilities)
+                      .HasForeignKey(rtf => rtf.FacilityId)
+                      .OnDelete(DeleteBehavior.Cascade);
+                */
+            });
 
             modelBuilder.Entity<Hotel>(entity =>
             {
@@ -68,21 +159,29 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.HasIndex(u => u.Email).IsUnique();
                 entity.HasIndex(u => u.UserName).IsUnique();
             });
+            modelBuilder.Entity<ReservationRoom>()
+                .HasOne(x => x.Booking)
+                .WithMany(x => x.ReservationRooms)
+                .HasForeignKey(x => x.BookingId);
 
-            modelBuilder.Entity<Reservation>(entity =>
-            {
-                entity.Property(r => r.TotalAmount).HasPrecision(12, 2);
-                entity.Property(r => r.Notes).HasMaxLength(500);
-                entity.HasOne(r => r.Guest)
-                    .WithMany(g => g.Reservations)
-                    .HasForeignKey(r => r.GuestId)
-                    .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<ReservationRoom>()
+                .HasOne(x => x.Room)
+                .WithMany()
+                .HasForeignKey(x => x.RoomId);
+            // modelBuilder.Entity<Reservation>(entity =>
+            // {
+            //     entity.Property(r => r.TotalAmount).HasPrecision(12, 2);
+            //     entity.Property(r => r.Notes).HasMaxLength(500);
+            //     entity.HasOne(r => r.Guest)
+            //         .WithMany(g => g.Reservations)
+            //         .HasForeignKey(r => r.GuestId)
+            //         .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasOne(r => r.Room)
-                    .WithMany(room => room.Reservations)
-                    .HasForeignKey(r => r.RoomId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
+            //     entity.HasOne(r => r.Room)
+            //         .WithMany(room => room.Reservations)
+            //         .HasForeignKey(r => r.RoomId)
+            //         .OnDelete(DeleteBehavior.Restrict);
+            // });
 
             modelBuilder.Entity<Employee>(entity =>
             {
@@ -107,18 +206,20 @@ namespace HotelRestaurant.Infrastructure.Data
             });
 
             modelBuilder.Entity<Order>(entity =>
-            {
-                entity.Property(o => o.TotalAmount).HasPrecision(12, 2);
-                entity.HasOne(o => o.Reservation)
-                    .WithMany(r => r.Orders)
-                    .HasForeignKey(o => o.ReservationId)
-                    .OnDelete(DeleteBehavior.SetNull);
+   {
+       entity.Property(o => o.TotalAmount)
+       .HasPrecision(12, 2);
 
-                entity.HasOne(o => o.Guest)
-                    .WithMany()
-                    .HasForeignKey(o => o.GuestId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            });
+       entity.HasOne(o => o.Booking)
+      .WithMany()
+      .HasForeignKey(o => o.BookingId)
+      .OnDelete(DeleteBehavior.SetNull);
+
+       entity.HasOne(o => o.Guest)
+      .WithMany()
+      .HasForeignKey(o => o.GuestId)
+      .OnDelete(DeleteBehavior.SetNull);
+   });
 
             modelBuilder.Entity<OrderItem>(entity =>
             {
@@ -143,9 +244,9 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.Property(i => i.Total).HasPrecision(12, 2);
                 entity.Property(i => i.PaymentStatus).HasConversion<string>().HasMaxLength(50);
 
-                entity.HasOne(i => i.Reservation)
-                    .WithOne(r => r.Invoice)
-                    .HasForeignKey<Invoice>(i => i.ReservationId)
+                entity.HasOne(i => i.Booking)
+                    .WithMany(b => b.Invoices)
+                    .HasForeignKey(i => i.BookingId)
                     .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(i => i.Order)
@@ -162,6 +263,56 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.Property(i => i.ReorderLevel).HasPrecision(12, 2);
                 entity.Property(i => i.CostPrice).HasPrecision(12, 2);
                 entity.Property(i => i.Unit).HasConversion<string>().HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.Property(p => p.Amount).HasPrecision(12, 2);
+                entity.Property(p => p.ReceiptNo).HasMaxLength(100);
+
+                entity.HasOne(p => p.Booking)
+                    .WithMany(b => b.Payments)
+                    .HasForeignKey(p => p.BookingId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(p => p.Invoice)
+                    .WithMany(i => i.Payments)
+                    .HasForeignKey(p => p.InvoiceId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            // 2. Add properties mappings within OnModelCreating()
+            modelBuilder.Entity<BedType>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.BedName).IsRequired().HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<BookingType>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.TypeName).IsRequired().HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<BookingSource>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.SourceName).IsRequired().HasMaxLength(100);
+            });
+
+            // 2. Add these model mapping configurations inside OnModelCreating()
+            modelBuilder.Entity<Complementary>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ItemName).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Description).HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<FloorPlan>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FloorName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Remarks).HasMaxLength(500);
             });
         }
     }

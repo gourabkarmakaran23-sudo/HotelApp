@@ -1,0 +1,73 @@
+<div class="page-container">
+  <div class="form-panel-side">
+    <div class="panel-card shadow-sm">
+      <div class="panel-card-header">
+        <h5 class="m-0 font-weight-bold text-dark">{{ isEditMode ? 'Modify Structural Floor Profile' : 'Add Structural Floor' }}</h5>
+      </div>
+      <div class="panel-card-body">
+        <form (ngSubmit)="saveModel()">
+          <div class="form-vertical-stack">
+            <div class="form-group">
+              <label>Floor Section Designation Name *</label>
+              <input type="text" class="form-input" name="floorName" [(ngModel)]="currentModel.floorName" required placeholder="e.g. Second Floor Block A">
+            </div>
+            <div class="form-group">
+              <label>Structural Management Remarks</label>
+              <textarea class="form-input" rows="3" name="remarks" [(ngModel)]="currentModel.remarks" placeholder="Enter floor sequence or sector details context..."></textarea>
+            </div>
+            <div class="form-group checkbox-row">
+              <input type="checkbox" id="floorIsActive" name="isActive" [(ngModel)]="currentModel.isActive">
+              <label for="floorIsActive">Activate sector allocation inside booking logs</label>
+            </div>
+            <div class="action-buttons-row">
+              <button type="button" class="btn-secondary-cancel" (click)="resetForm()">Clear</button>
+              <button type="submit" class="btn-primary-save" [disabled]="isLoading">Save Layout</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-display-side">
+    <div class="panel-card shadow-sm">
+      <div class="panel-card-header bg-white">
+        <h5 class="m-0 font-weight-bold text-dark">Hotel Property Structural Floor Map Blueprint Levels</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="custom-flat-table">
+          <thead>
+            <tr>
+              <th style="width: 60px; text-align: center;">Sl.No</th>
+              <th>Floor Configuration Assignment Name</th>
+              <th>Property Sector Mapping Remarks</th>
+              <th style="width: 100px; text-align: center;">Status</th>
+              <th style="width: 140px; text-align: center;">Action Log</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of collectionList; let i = index">
+              <td style="text-align: center; color: #64748b;">{{ i + 1 }}</td>
+              <td class="font-weight-semibold text-slate">{{ item.floorName }}</td>
+              <td class="text-muted-details">{{ item.remarks || '—' }}</td>
+              <td style="text-align: center;">
+                <span class="status-badge-pill" [ngClass]="item.isActive ? 'state-active' : 'state-disabled'">
+                  {{ item.isActive ? 'Active' : 'Disabled' }}
+                </span>
+              </td>
+              <td style="text-align: center;">
+                <div class="actions-inline-row">
+                  <button class="btn-action edit" (click)="activateEdit(item)">Edit</button>
+                  <button class="btn-action delete" (click)="triggerDelete(item.id)">Delete</button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="collectionList.length === 0">
+              <td colspan="5" class="empty-state-notice">No physical layout floors configured.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

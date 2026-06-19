@@ -9,6 +9,7 @@ namespace HotelRestaurant.Infrastructure.Repositories
     {
         protected readonly AppDbContext _context;
         protected readonly DbSet<T> _dbSet;
+        
 
 
         public GenericRepository(AppDbContext context)
@@ -54,6 +55,44 @@ namespace HotelRestaurant.Infrastructure.Repositories
         public void Update(T entity)
         {
             _dbSet.Update(entity);
+        }
+
+        public void DeleteRange(IEnumerable<T> entities)
+        {
+            foreach (var entity in entities)
+            {
+                _dbSet.Remove(entity);
+            }
+        }
+
+        public virtual async Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync(
+            int pageNumber,
+            int pageSize,
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            Func<IQueryable<T>, IQueryable<T>>? include = null,
+            CancellationToken cancellationToken = default)
+        {
+           
+            IQueryable<T> query = _dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);        
+            }
+            if (include != null)
+            {
+                query = include(query);
+            }
+            int totalCount=await query.CountAsync(cancellationToken);
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            var items= await query.Skip((pageNumber - 1) * pageSize).
+            Take(pageSize).ToListAsync(cancellationToken);
+            return (items,totalCount) ;
         }
     }
 }

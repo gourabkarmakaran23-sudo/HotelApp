@@ -1,0 +1,3 @@
+Id,CurrencyName,CurrencyIcon,Position,ConversionRate,IsActive,CreatedAt,UpdatedAt,IsDeleted
+1,US Dollar,USD,Left,1,t,2026-06-03 17:41:38.609168,2026-06-03 17:41:38.609168,f
+2,Indian Rupee,₹,Left,1,t,2026-06-03 17:52:25.545782,2026-06-03 17:52:25.545782,f

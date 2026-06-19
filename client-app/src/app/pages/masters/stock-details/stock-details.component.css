@@ -1,0 +1,223 @@
+/* Core Structural Blueprint Container Setup */
+.full-page-container {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 60px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Metric Widgets Row Layout Panel Styles mapping handles */
+.metrics-summary-row {
+  display: flex;
+  gap: 16px;
+}
+
+.metric-mini-card {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 16px 20px;
+}
+
+.border-left-navy { border-left: 4px solid #1e293b; }
+.border-left-amber { border-left: 4px solid #d97706; }
+.border-left-danger { border-left: 4px solid #ef4444; }
+
+.metric-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.metric-value {
+  margin: 6px 0 0 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Main Block Layout Cards */
+.report-table-card, .detail-header-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.detail-header-card {
+  padding: 20px;
+}
+
+.report-card-header {
+  padding: 16px 20px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.report-card-header h5 {
+  font-size: 15px;
+  color: #0f172a;
+}
+
+/* Operational Element Control Triggers Buttons */
+.refresh-action-btn {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.refresh-action-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.view-details-action-btn {
+  background-color: #1e293b;
+  border: 1px solid #1e293b;
+  color: #ffffff;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.view-details-action-btn:hover {
+  background-color: #0f172a;
+}
+
+.back-link-btn {
+  background: none;
+  border: none;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 12px;
+}
+
+.back-link-btn:hover {
+  color: #0f172a;
+}
+
+.header-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sub-label {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.active-item-title {
+  margin: 2px 0 0 0;
+  font-size: 22px;
+  color: #0f172a;
+}
+
+.badge-accent-box {
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+/* Custom Table Formatting Context Matrix rules */
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.custom-flat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.custom-flat-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.custom-flat-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.custom-flat-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Text Detail Spacers Badges units helpers formatting */
+.unit-text { font-size: 11px; color: #64748b; margin-left: 2px; font-weight: 400; }
+.unit-text-bold { font-size: 11px; color: #475569; margin-left: 2px; font-weight: 600; }
+.font-medium-text { font-weight: 500; }
+
+.room-indicator-badge {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  font-size: 11px;
+}
+
+/* System Context pills states */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.status-completed { background-color: #dcfce7; color: #15803d; }
+.status-pending { background-color: #fef3c7; color: #d97706; }
+.status-cancelled { background-color: #fee2e2; color: #b91c1c; }
+
+.type-indicator-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.pill-purchase { background-color: #e2e8f0; color: #1e293b; }
+.pill-return { background-color: #fee2e2; color: #ef4444; }
+
+.empty-table-state {
+  text-align: center;
+  padding: 50px !important;
+  color: #94a3b8;
+  font-style: italic;
+}

@@ -1,0 +1,8 @@
+•	Item Name: Premium Basmati Rice (Long Grain)
+•	Supplier Name: Apex Agro Industries Ltd.
+•	Invoice Number: INV-2026-8941
+•	Qty / Unit: 50 / Box
+•	Rate ($): 24.50
+•	Total Value ($): 1,225.00 (Calculated automatically)
+•	Purchase Date: 02-Jun-2026
+•	Remarks: Initial stock for summer inventory cycle.

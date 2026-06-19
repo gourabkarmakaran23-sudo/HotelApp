@@ -2,23 +2,46 @@ namespace HotelRestaurant.Core.Entities
 {
     public enum RoomStatus
     {
-        Available,
-        Reserved,
-        Occupied,
-        Maintenance,
-        OutOfService
+        // Available,
+        // Reserved,
+        // Occupied,
+        // Maintenance,
+
+        // Available = 0,
+        // Occupied = 1,
+        // Maintenance = 2,
+        // OutOfService = 3,
+        // Cleaning = 4,
+        // Reserved = 5
+
+        Available = 1,
+    Occupied = 2,
+    Maintenance = 3,
+    Reserved = 4,
+    OutOfService = 5,
+    Cleaning = 6
     }
 
-    public enum RoomType
+    // public enum RoomType
+    // {
+    //     Standard,
+    //     Deluxe,
+    //     Suite,
+    //     Presidential,
+    //     Twin,
+    //     Double
+    // }
+
+    public enum BookingStatus
     {
-        Standard,
-        Deluxe,
-        Suite,
-        Presidential,
-        Twin,
-        Double
+        Pending,
+        Confirmed,
+        CheckedIn,
+        CheckedOut,
+        Cancelled,
+        Completed,
+        NoShow
     }
-
     public enum ReservationStatus
     {
         Pending,
@@ -76,5 +99,22 @@ namespace HotelRestaurant.Core.Entities
         Bartender,
         Accountant,
         Maintenance
+    }
+
+    public enum PaymentMethod
+    {
+        Cash,
+        CreditCard,
+        DebitCard,
+        MobilePayment,
+        BankTransfer,
+        Voucher
+    }
+
+    public enum SeasonType
+    {
+        Regular,
+        Peak,
+        OffPeak
     }
 }

@@ -27,9 +27,9 @@ namespace HotelRestaurant.Infrastructure.Data
 
             var rooms = new List<Room>
             {
-                new Room { RoomNumber = "101", RoomType = RoomType.Standard, Capacity = 2, Price = 120m, Status = RoomStatus.Available, Description = "Standard room with garden view", Hotel = hotel },
-                new Room { RoomNumber = "102", RoomType = RoomType.Deluxe, Capacity = 3, Price = 180m, Status = RoomStatus.Available, Description = "Deluxe room with balcony", Hotel = hotel },
-                new Room { RoomNumber = "201", RoomType = RoomType.Suite, Capacity = 4, Price = 320m, Status = RoomStatus.Available, Description = "Spacious suite with lake view", Hotel = hotel }
+                new Room { RoomNumber = "101", RoomTypesId = 1, Capacity = 2, Price = 120m, Status = RoomStatus.Available, Description = "Standard room with garden view", Hotel = hotel },
+                new Room { RoomNumber = "102", RoomTypesId = 2, Capacity = 3, Price = 180m, Status = RoomStatus.Available, Description = "Deluxe room with balcony", Hotel = hotel },
+                new Room { RoomNumber = "201", RoomTypesId = 3, Capacity = 4, Price = 320m, Status = RoomStatus.Available, Description = "Spacious suite with lake view", Hotel = hotel }
             };
 
             var employee = new Employee
@@ -55,19 +55,41 @@ namespace HotelRestaurant.Infrastructure.Data
                 // FIX: Explicitly enforce UTC on the date instance
                 DateOfBirth = DateTime.SpecifyKind(new DateTime(1985, 5, 12), DateTimeKind.Utc)
             };
-            var reservation = new Reservation
+            var booking = new Booking
             {
+                BookingNumber = "BK-1001",
+
                 Guest = guest,
-                Room = rooms[1],
-                CheckInDate = DateTime.UtcNow.Date.AddDays(3),
-                CheckOutDate = DateTime.UtcNow.Date.AddDays(6),
-                Status = ReservationStatus.Confirmed,
-                Adults = 2,
-                Children = 1,
+
+                BookingDate = DateTime.UtcNow,
+
                 TotalAmount = 540m,
-                Notes = "Late check-in requested"
+
+                Status = BookingStatus.Confirmed
             };
 
+            var reservationRoom = new ReservationRoom
+            {
+                Booking = booking,
+
+                Room = rooms[1],
+
+                CheckInDate = DateTime.UtcNow.Date.AddDays(3),
+
+                CheckOutDate = DateTime.UtcNow.Date.AddDays(6),
+
+                Adults = 2,
+
+                Children = 1,
+
+                Pax = "3",
+
+                MealPlan = "Room with Breakfast",
+
+                RoomAmount = 540m,
+
+                Status = BookingStatus.Confirmed
+            };
             var menuItems = new List<MenuItem>
             {
                 new MenuItem { Name = "Grilled Salmon", Category = MenuCategory.MainCourse, Description = "Fresh salmon with lemon butter sauce", Price = 24.50m, IsAvailable = true },
@@ -78,7 +100,7 @@ namespace HotelRestaurant.Infrastructure.Data
 
             var order = new Order
             {
-                Reservation = reservation,
+                Booking = booking,
                 Guest = guest,
                 OrderDate = DateTime.UtcNow,
                 OrderStatus = OrderStatus.Pending,
@@ -105,12 +127,18 @@ namespace HotelRestaurant.Infrastructure.Data
 
             var invoice = new Invoice
             {
-                Reservation = reservation,
+                Booking = booking,
+
                 Order = order,
+
                 InvoiceDate = DateTime.UtcNow,
+
                 Subtotal = 540m + 46.95m,
+
                 Tax = 58.10m,
+
                 Total = 645.05m,
+
                 PaymentStatus = PaymentStatus.Unpaid
             };
 
@@ -124,7 +152,8 @@ namespace HotelRestaurant.Infrastructure.Data
             context.Rooms.AddRange(rooms);
             context.Employees.Add(employee);
             context.Guests.Add(guest);
-            context.Reservations.Add(reservation);
+            context.Bookings.Add(booking);
+            context.ReservationRooms.Add(reservationRoom);
             context.MenuItems.AddRange(menuItems);
             context.Orders.Add(order);
             context.Invoices.Add(invoice);

@@ -1,0 +1,279 @@
+/* Layout Framework Grid Framework Setup Block */
+.page-container {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 60px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  align-items: flex-start; /* Fixes unexpected input vertical stretching */
+}
+
+/* Side Action Input Container Panel Card */
+.form-panel-side {
+  flex: 0 0 340px; /* Locks form sidebar layout width securely */
+  min-width: 340px;
+}
+
+.panel-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.panel-card-header {
+  background-color: #ffffff;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.panel-card-header h5 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.panel-card-body {
+  padding: 18px;
+}
+
+/* Form Inputs Layout Configurations Stack */
+.form-vertical-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.form-input {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  color: #334155;
+  background-color: #ffffff;
+  transition: border-color 0.15s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #94a3b8;
+}
+
+.form-row-split {
+  display: flex;
+  gap: 12px;
+}
+
+.form-row-split > .form-group {
+  flex: 1;
+}
+
+.textarea-input {
+  resize: vertical;
+}
+
+.readonly-input-display {
+  background-color: #f1f5f9;
+  color: #475569;
+  cursor: not-allowed;
+  font-weight: 500;
+}
+
+.return-highlight-box {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+/* Form Action Buttons Wrapper layout alignment row */
+.form-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 16px;
+}
+
+.btn-action-form {
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-clear {
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.btn-clear:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-submit {
+  background-color: #1e293b;
+  border: 1px solid #1e293b;
+  color: #ffffff;
+}
+
+.btn-submit:hover {
+  background-color: #0f172a;
+}
+
+.return-btn-color {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.return-btn-color:hover {
+  background-color: #991b1b;
+}
+
+/* Right Side Data Display Grid Layout Panel */
+.table-panel-side {
+  flex: 1;
+  min-width: 0; /* Prevents long lines breaking layout widths */
+}
+
+.table-responsive-wrapper {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+/* Custom Table Design Layout System */
+.custom-flat-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.custom-flat-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  padding: 12px 14px;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.custom-flat-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.custom-flat-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Row Styling Elements Components */
+.room-indicator-badge {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  font-size: 12px;
+}
+
+.return-badge-tint {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border-color: #fee2e2;
+}
+
+.font-medium-text {
+  font-weight: 500;
+}
+
+/* Inline Table Control Action Row Map triggers */
+.actions-inline-group {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.grid-btn {
+  background: none;
+  border: 1px solid #cbd5e1;
+  padding: 3px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-edit {
+  color: #475569;
+}
+
+.btn-edit:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.btn-delete {
+  color: #ef4444;
+  border-color: #fecaca;
+}
+
+.btn-delete:hover {
+  background-color: #fef2f2;
+  border-color: #f87171;
+}
+
+.empty-table-state {
+  text-align: center;
+  padding: 40px !important;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Alert Error Banner Layout */
+.alert-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.alert-text {
+  font-size: 13px;
+  color: #991b1b;
+}
+
+.alert-close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #991b1b;
+  cursor: pointer;
+}

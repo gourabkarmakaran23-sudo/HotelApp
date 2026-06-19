@@ -1,0 +1,5 @@
+Id,BedName,Description,IsActive,CreatedAt,UpdatedAt,IsDeleted
+1,Standard Double,Two interconnected standard matrices suitable for family accommodations or shared business setups.,t,2026-06-07 18:12:34.210498,2026-06-07 18:12:34.210499,f
+2,Queen Bed,Standard continuous medium-profile queen sizing framework.,t,2026-06-07 18:12:53.499172,2026-06-07 18:12:53.499172,f
+3,King Bed,Premium executive large configuration master structural bed frame.,t,2026-06-07 18:13:13.360075,2026-06-07 18:13:13.360076,f
+4,Single Bed,Standard individual layout design structure for compact studio room formats.,t,2026-06-07 18:13:43.853286,2026-06-07 18:13:43.853286,f

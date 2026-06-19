@@ -1,0 +1,416 @@
+using System.Threading.Tasks;
+using HotelRestaurant.Application.DTOs.Master;
+using HotelRestaurant.Application.DTOs.RoomSettings;
+using HotelRestaurant.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace HotelRestaurant.Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class MasterController : ControllerBase
+{
+    private readonly IMasterService _masterService;
+
+    public MasterController(IMasterService masterService)
+    {
+        _masterService = masterService;
+    }
+
+    #region Currency
+
+    [HttpGet("currencies")]
+    public async Task<IActionResult> GetCurrencies()
+    {
+        return Ok(await _masterService.GetCurrenciesAsync());
+    }
+
+    [HttpGet("currencies/{id}")]
+    public async Task<IActionResult> GetCurrency(int id)
+    {
+        var result = await _masterService.GetCurrencyByIdAsync(id);
+
+        if (result == null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpPost("currencies")]
+    public async Task<IActionResult> CreateCurrency(
+        CurrencyDto dto)
+    {
+        var id = await _masterService.CreateCurrencyAsync(dto);
+
+        return Ok(id);
+    }
+
+    [HttpPut("currencies/{id}")]
+    public async Task<IActionResult> UpdateCurrency(
+        int id,
+        CurrencyDto dto)
+    {
+        var result = await _masterService.UpdateCurrencyAsync(id, dto);
+
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
+
+    [HttpDelete("currencies/{id}")]
+    public async Task<IActionResult> DeleteCurrency(int id)
+    {
+        var result = await _masterService.DeleteCurrencyAsync(id);
+
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
+
+    #endregion
+
+    #region Payment Method
+
+    [HttpGet("payment-methods")]
+    public async Task<IActionResult> GetPaymentMethods()
+    {
+        return Ok(await _masterService.GetPaymentMethodsAsync());
+    }
+
+    [HttpGet("payment-methods/{id}")]
+    public async Task<IActionResult> GetPaymentMethod(int id)
+    {
+        var result = await _masterService.GetPaymentMethodByIdAsync(id);
+
+        if (result == null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpPost("payment-methods")]
+    public async Task<IActionResult> CreatePaymentMethod(
+        PaymentMethodDto dto)
+    {
+        var id = await _masterService.CreatePaymentMethodAsync(dto);
+
+        return Ok(id);
+    }
+
+    [HttpPut("payment-methods/{id}")]
+    public async Task<IActionResult> UpdatePaymentMethod(
+        int id,
+        PaymentMethodDto dto)
+    {
+        var result = await _masterService.UpdatePaymentMethodAsync(id, dto);
+
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
+
+    [HttpDelete("payment-methods/{id}")]
+    public async Task<IActionResult> DeletePaymentMethod(int id)
+    {
+        var result = await _masterService.DeletePaymentMethodAsync(id);
+
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
+
+    #endregion
+
+    #region Commission Agent
+
+    [HttpGet("commission-agents")]
+    public async Task<IActionResult> GetCommissionAgents()
+    {
+        return Ok(await _masterService.GetCommissionAgentsAsync());
+    }
+
+    [HttpGet("commission-agents/{id}")]
+    public async Task<IActionResult> GetCommissionAgent(int id)
+    {
+        var result = await _masterService.GetCommissionAgentByIdAsync(id);
+
+        if (result == null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpPost("commission-agents")]
+    public async Task<IActionResult> CreateCommissionAgent(
+        CommissionAgentDto dto)
+    {
+        var id = await _masterService.CreateCommissionAgentAsync(dto);
+
+        return Ok(id);
+    }
+
+    [HttpPut("commission-agents/{id}")]
+    public async Task<IActionResult> UpdateCommissionAgent(
+        int id,
+        CommissionAgentDto dto)
+    {
+        var result = await _masterService.UpdateCommissionAgentAsync(id, dto);
+
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
+
+    [HttpDelete("commission-agents/{id}")]
+    public async Task<IActionResult> DeleteCommissionAgent(int id)
+    {
+        var result = await _masterService.DeleteCommissionAgentAsync(id);
+
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
+
+    #endregion
+
+    #region Financial Year
+
+    [HttpGet("financial-years")]
+    public async Task<IActionResult> GetFinancialYears()
+    {
+        return Ok(await _masterService.GetFinancialYearsAsync());
+    }
+
+    [HttpGet("financial-years/{id}")]
+    public async Task<IActionResult> GetFinancialYear(int id)
+    {
+        var result = await _masterService.GetFinancialYearByIdAsync(id);
+
+        if (result == null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpPost("financial-years")]
+    public async Task<IActionResult> CreateFinancialYear(
+        FinancialYearDto dto)
+    {
+        var id = await _masterService.CreateFinancialYearAsync(dto);
+
+        return Ok(id);
+    }
+
+    [HttpPut("financial-years/{id}")]
+    public async Task<IActionResult> UpdateFinancialYear(
+        int id,
+        FinancialYearDto dto)
+    {
+        var result = await _masterService.UpdateFinancialYearAsync(id, dto);
+
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
+
+    [HttpDelete("financial-years/{id}")]
+    public async Task<IActionResult> DeleteFinancialYear(int id)
+    {
+        var result = await _masterService.DeleteFinancialYearAsync(id);
+
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
+
+    #endregion
+
+   #region Wake Up Call
+
+    [HttpGet("wake-up-calls")]
+    public async Task<IActionResult> GetWakeUpCalls()
+    {
+        var result = await _masterService.GetWakeUpCallsAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("wake-up-calls/{id}")]
+    public async Task<IActionResult> GetWakeUpCall(int id)
+    {
+        var result = await _masterService.GetWakeUpCallByIdAsync(id);
+
+        if (result == null)
+            return NotFound(new { message = "Record assignment target not located." });
+
+        return Ok(result);
+    }
+
+    [HttpPost("wake-up-calls")]
+    public async Task<IActionResult> CreateWakeUpCall([FromBody] WakeUpCallDto dto)
+    {
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
+
+        var id = await _masterService.CreateWakeUpCallAsync(dto);
+        return Ok(id);
+    }
+
+    [HttpPut("wake-up-calls/{id}")]
+    public async Task<IActionResult> UpdateWakeUpCall(int id, [FromBody] WakeUpCallDto dto)
+    {
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
+
+        var result = await _masterService.UpdateWakeUpCallAsync(id, dto);
+
+        if (!result)
+            return NotFound(new { message = "Record tracking mismatch target identifier error." });
+
+        return Ok(new { success = true });
+    }
+
+    [HttpDelete("wake-up-calls/{id}")]
+    public async Task<IActionResult> DeleteWakeUpCall(int id)
+    {
+        var result = await _masterService.DeleteWakeUpCallAsync(id);
+
+        if (!result)
+            return NotFound();
+
+        return Ok();
+    }
+
+    #endregion
+
+    #region Purchase Items
+
+    [HttpGet("purchase-items")]
+    public async Task<IActionResult> GetPurchaseItems()
+    {
+        return Ok(await _masterService.GetPurchaseItemsAsync());
+    }
+
+    [HttpPost("purchase-items")]
+    public async Task<IActionResult> CreatePurchaseItem([FromBody] PurchaseItemDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var id = await _masterService.CreatePurchaseItemAsync(dto);
+        return Ok(id);
+    }
+
+    [HttpPut("purchase-items/{id}")]
+    public async Task<IActionResult> UpdatePurchaseItem(int id, [FromBody] PurchaseItemDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var result = await _masterService.UpdatePurchaseItemAsync(id, dto);
+        if (!result) return NotFound();
+        return Ok(new { success = true });
+    }
+
+    [HttpDelete("purchase-items/{id}")]
+    public async Task<IActionResult> DeletePurchaseItem(int id)
+    {
+        var result = await _masterService.DeletePurchaseItemAsync(id);
+        if (!result) return NotFound();
+        return Ok();
+    }
+
+    #endregion
+
+    #region Purchase Returns
+
+    [HttpGet("purchase-returns")]
+    public async Task<IActionResult> GetPurchaseReturns()
+    {
+        return Ok(await _masterService.GetPurchaseReturnsAsync());
+    }
+
+    [HttpPost("purchase-returns")]
+    public async Task<IActionResult> CreatePurchaseReturn([FromBody] PurchaseReturnDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var id = await _masterService.CreatePurchaseReturnAsync(dto);
+        return Ok(id);
+    }
+
+    [HttpPut("purchase-returns/{id}")]
+    public async Task<IActionResult> UpdatePurchaseReturn(int id, [FromBody] PurchaseReturnDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var result = await _masterService.UpdatePurchaseReturnAsync(id, dto);
+        if (!result) return NotFound();
+        return Ok(new { success = true });
+    }
+
+    [HttpDelete("purchase-returns/{id}")]
+    public async Task<IActionResult> DeletePurchaseReturn(int id)
+    {
+        var result = await _masterService.DeletePurchaseReturnAsync(id);
+        if (!result) return NotFound();
+        return Ok();
+    }
+
+    #endregion
+
+    #region Stock Reports
+
+    [HttpGet("stock-report")]
+    public async Task<IActionResult> GetStockReport()
+    {
+        var report = await _masterService.GetCurrentProductStockReportAsync();
+        return Ok(report);
+    }
+
+    [HttpGet("stock-details")]
+    public async Task<IActionResult> GetStockDetails([FromQuery] string itemName)
+    {
+        if (string.IsNullOrEmpty(itemName)) return BadRequest("Item Name query identifier missing.");
+        var details = await _masterService.GetStockLedgerDetailsByItemAsync(itemName);
+        return Ok(details);
+    }
+
+    #endregion
+
+    #region Bed Types
+    [HttpGet("bed-types")] public async Task<IActionResult> GetBedTypes() => Ok(await _masterService.GetBedTypesAsync());
+    [HttpPost("bed-types")] public async Task<IActionResult> CreateBedType([FromBody] BedTypeDto d) => Ok(await _masterService.CreateBedTypeAsync(d));
+    [HttpPut("bed-types/{id}")] public async Task<IActionResult> UpdateBedType(int id, [FromBody] BedTypeDto d) => Ok(await _masterService.UpdateBedTypeAsync(id, d));
+    [HttpDelete("bed-types/{id}")] public async Task<IActionResult> DeleteBedType(int id) => Ok(await _masterService.DeleteBedTypeAsync(id));
+    #endregion
+
+    #region Booking Types
+    [HttpGet("booking-types")] public async Task<IActionResult> GetBookingTypes() => Ok(await _masterService.GetBookingTypesAsync());
+    [HttpPost("booking-types")] public async Task<IActionResult> CreateBookingType([FromBody] BookingTypeDto d) => Ok(await _masterService.CreateBookingTypeAsync(d));
+    [HttpPut("booking-types/{id}")] public async Task<IActionResult> UpdateBookingType(int id, [FromBody] BookingTypeDto d) => Ok(await _masterService.UpdateBookingTypeAsync(id, d));
+    [HttpDelete("booking-types/{id}")] public async Task<IActionResult> DeleteBookingType(int id) => Ok(await _masterService.DeleteBookingTypeAsync(id));
+    #endregion
+
+    #region Booking Sources
+    [HttpGet("booking-sources")] public async Task<IActionResult> GetBookingSources() => Ok(await _masterService.GetBookingSourcesAsync());
+    [HttpPost("booking-sources")] public async Task<IActionResult> CreateBookingSource([FromBody] BookingSourceDto d) => Ok(await _masterService.CreateBookingSourceAsync(d));
+    [HttpPut("booking-sources/{id}")] public async Task<IActionResult> UpdateBookingSource(int id, [FromBody] BookingSourceDto d) => Ok(await _masterService.UpdateBookingSourceAsync(id, d));
+    [HttpDelete("booking-sources/{id}")] public async Task<IActionResult> DeleteBookingSource(int id) => Ok(await _masterService.DeleteBookingSourceAsync(id));
+    #endregion
+
+    #region Complementary Master
+    [HttpGet("complementary")] public async Task<IActionResult> GetComplementaries() => Ok(await _masterService.GetComplementariesAsync());
+    [HttpPost("complementary")] public async Task<IActionResult> CreateComplementary([FromBody] ComplementaryDto d) => Ok(await _masterService.CreateComplementaryAsync(d));
+    [HttpPut("complementary/{id}")] public async Task<IActionResult> UpdateComplementary(int id, [FromBody] ComplementaryDto d) => Ok(await _masterService.UpdateComplementaryAsync(id, d));
+    [HttpDelete("complementary/{id}")] public async Task<IActionResult> DeleteComplementary(int id) => Ok(await _masterService.DeleteComplementaryAsync(id));
+    #endregion
+
+    #region Floor Plan Master
+    [HttpGet("floor-plans")] public async Task<IActionResult> GetFloorPlans() => Ok(await _masterService.GetFloorPlansAsync());
+    [HttpPost("floor-plans")] public async Task<IActionResult> CreateFloorPlan([FromBody] FloorPlanDto d) => Ok(await _masterService.CreateFloorPlanAsync(d));
+    [HttpPut("floor-plans/{id}")] public async Task<IActionResult> UpdateFloorPlan(int id, [FromBody] FloorPlanDto d) => Ok(await _masterService.UpdateFloorPlanAsync(id, d));
+    [HttpDelete("floor-plans/{id}")] public async Task<IActionResult> DeleteFloorPlan(int id) => Ok(await _masterService.DeleteFloorPlanAsync(id));
+    #endregion
+}

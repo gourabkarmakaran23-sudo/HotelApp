@@ -1,0 +1,225 @@
+// Main Content Container Canvas Match
+.management-container {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  width: 100%;
+}
+
+.header-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+// Data Tables Styling Configuration
+.management-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+
+  th, td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #eef2f7;
+    color: #495057;
+    font-size: 0.9rem;
+  }
+
+  th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #343a40;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+
+  tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+.icon-preview-badge {
+  background: #f1f3f5;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: bold;
+  color: #495057;
+}
+
+// Global Badges Styling Core 
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 50px;
+  text-align: center;
+
+  &.active {
+    background-color: #e6f4ea;
+    color: #137333;
+  }
+
+  &.inactive {
+    background-color: #fce8e6;
+    color: #c5221f;
+  }
+}
+
+// Operational Action Buttons Cell Layout Matrix
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &.edit-btn {
+    color: #0d6efd;
+    &:hover { background: #e9f1fe; border-color: #0d6efd; }
+  }
+
+  &.delete-btn {
+    color: #dc3545;
+    &:hover { background: #fdf2f3; border-color: #dc3545; }
+  }
+}
+
+.no-data-message {
+  color: #adb5bd;
+  padding: 2rem !important;
+  font-style: italic;
+}
+
+// Clean Angular Overlay Modal Popup Engines
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.custom-modal {
+  width: 550px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+
+  h3 { margin: 0; font-size: 1.2rem; font-weight: 600; color: #2c3e50; }
+  .close-x { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #adb5bd; &:hover { color: #495057; } }
+}
+
+.modal-form {
+  padding: 1.5rem;
+
+  .form-group {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: #495057;
+      
+      .required { color: #dc3545; margin-left: 2px; }
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.2rem;
+    .col { flex: 1; display: flex; flex-direction: column; }
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.55rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+    transition: border-color 0.15s ease-in-out;
+
+    &:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    }
+  }
+
+  .checkbox-group {
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    user-select: none;
+    color: #495057;
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+  }
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+@keyframes modalFadeIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

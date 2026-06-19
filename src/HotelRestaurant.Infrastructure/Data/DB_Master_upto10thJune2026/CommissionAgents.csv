@@ -1,0 +1,2 @@
+Id,AgentName,Address,Mobile,Email,GSTIN,IsActive,CreatedAt,UpdatedAt,IsDeleted,CommissionRate
+1,Rupa Roy,Kolkata,908080808,ruparoy@gmail.com,ZZZZSDADAD,t,2026-06-04 16:08:26.825881,2026-06-04 16:08:26.825882,f,3.5

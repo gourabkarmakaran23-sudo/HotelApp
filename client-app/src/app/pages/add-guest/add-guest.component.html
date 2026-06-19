@@ -1,100 +1,172 @@
 <div class="add-guest-page">
   <div class="top-toolbar">
     <div class="toolbar-left">
-      <button class="btn" (click)="router.navigate(['/checkin'])">Back</button>
-      <button class="btn">Print</button>
-      <button class="btn">Print (Draft)</button>
-      <button class="btn">View</button>
-      <button class="btn">Cancel Reservation</button>
-      <button class="btn">Payment</button>
-      <button class="btn">Gtc Form</button>
+      <button class="btn back-btn" (click)="router.navigate(['/upcoming-checkin'])">
+        <i class="fa fa-arrow-left"></i> Back
+      </button>
+      <button class="btn" (click)="triggerPrint()">Print</button>
+      <button class="btn" (click)="triggerPrint()">Print (Draft)</button>
+      <button class="btn" (click)="navigateToPayment()">Payment</button>
     </div>
     <div class="toolbar-right">
-      <button class="btn primary" (click)="openAddGuestModal()">+ Add new guest</button>
+      <button class="btn primary-action-btn" (click)="openAddGuestModal()">
+        + Add New Guest
+      </button>
     </div>
   </div>
 
-  <div class="page-header">
-    Guest Details of booking No : 00002706 | Dr. Sneha Singh | Mr. Arjun Roy
+  <div class="page-header" *ngIf="bookingDetails">
+    Guest Details of Booking No: <span class="highlight">{{ bookingDetails.bookingNumber || '---' }}</span>
+    | Main Client: <span class="highlight">{{ bookingDetails.guestName }}</span>
+    | Phone Contact: <span class="highlight">{{ bookingDetails.mobile }}</span>
   </div>
 
-  <div class="content-grid">
-    <div class="left-col">
-      <div class="controls">
+  <div class="main-content-layout" style="display: block;">
+    <div class="table-container-card" style="width: 100%;">
+      <div class="table-sub-header">
         <label>Show
-          <select>
+          <select class="inline-select">
             <option>10</option>
             <option>25</option>
-          </select>
-          entries
+          </select> entries
         </label>
-        <div class="search-box">
-          <input placeholder="Search..." />
-        </div>
+        <input type="text" placeholder="Search parameters..." class="table-search-input" />
       </div>
 
-      <table class="guest-table">
+      <table class="responsive-data-table">
         <thead>
           <tr>
             <th>SL</th>
             <th>Room No</th>
-            <th>First name</th>
-            <th>Last name</th>
-            <th>Mobile No.</th>
-            <th>Action</th>
+            <th>Guest Full Name</th>
+            <th>Mobile Number</th>
+            <th>Identity Type</th>
+            <th>Id Doc Number</th>
+            <th class="text-center">Actions Management</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let g of guests; let i = index">
+          <tr *ngFor="let guest of guests; let i = index">
             <td>{{ i + 1 }}</td>
-            <td>{{ g.roomNo }}</td>
-            <td>{{ g.firstName }}</td>
-            <td>{{ g.lastName }}</td>
-            <td>{{ g.mobile }}</td>
-            <td>
-              <!-- <button class="small" (click)="alert('Edit')">✎</button>
-              <button class="small" (click)="alert('Delete')">🗑</button> -->
-              <!-- ✅ FIXED — use the methods already in your TS file -->
-              <button class="small" (click)="editGuest(guest)">✎</button>
-              <button class="small" (click)="deleteGuest(i)">🗑</button>
+            <td class="accent-text">Room {{ guest.roomNo }}</td>
+            <td class="bold-text">{{ guest.title }} {{ guest.guestFirstName }} {{ guest.guestLastName }}</td>
+            <td>{{ guest.mobile || '---' }}</td>
+            <td><span class="badge">{{ guest.idType }}</span></td>
+            <td>{{ guest.idNumber || '---' }}</td>
+            <td class="text-center actions-cell">
+              <input type="file" #rowFileInput style="display: none;" (change)="onRowFileSelected($event, guest, i)"
+                accept="image/*,application/pdf" />
+
+              <button *ngIf="!guest.uploadedFileName" class="action-badge-btn upload-proof-btn"
+                style="background-color: #28a745; color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; margin-right: 4px; font-weight: 500;"
+                (click)="rowFileInput.click()">
+                <i class="fa fa-cloud-upload"></i> Upload ID Proof
+              </button>
+
+              <span *ngIf="guest.uploadedFileName" class="file-attached-badge"
+                style="color: #28a745; font-weight: bold; margin-right: 12px; font-size: 13px; display: inline-block; vertical-align: middle;">
+                <i class="fa fa-check-circle"></i> {{ guest.uploadedFileName }}
+              </span>
+
+              <button class="action-badge-btn edit" (click)="editGuest(i)">
+                <i class="fa fa-pencil"></i> Edit
+              </button>
+              <button class="action-badge-btn delete" (click)="deleteGuest(i)">
+                <i class="fa fa-trash"></i> Delete
+              </button>
             </td>
+          </tr>
+          <tr *ngIf="guests.length === 0">
+            <td colspan="7" class="empty-table-state">No accompanied guest rows bound to this context.</td>
           </tr>
         </tbody>
       </table>
     </div>
+  </div>
+</div>
 
-    <div class="right-col">
-      <div class="upload-card">
-        <label>Document Upload</label>
-        <div class="upload-row">
-          <input type="file" (change)="uploadFile($event)" />
-          <button class="btn">Browse</button>
+<div class="modal-overlay-layer" *ngIf="showAddGuestModal">
+  <div class="pms-fluid-modal">
+    <div class="pms-modal-header">
+      <h3>{{ isEditMode ? 'Modify Guest Context' : 'Guest Details Entry Form' }}</h3>
+      <button class="close-dismiss-btn" (click)="closeGuestModal()">&times;</button>
+    </div>
+
+    <div class="pms-modal-body">
+      <div class="pms-grid-form">
+
+        <div class="form-field-wrapper full-width">
+          <label class="pms-required">Assign to Specific Room</label>
+          <select *ngIf="availableRooms.length > 0" [(ngModel)]="guestForm.roomNo" class="pms-select">
+            <option *ngFor="let rm of availableRooms" [value]="rm">Room {{ rm }}</option>
+          </select>
+          <input *ngIf="availableRooms.length === 0" type="text" [(ngModel)]="guestForm.roomNo"
+            placeholder="Enter room number" class="pms-input" />
         </div>
-        <div class="uploaded">
-          <h4>UPLOADED DOCUMENTS</h4>
-          <p class="empty">No documents uploaded</p>
+
+        <div class="form-field-wrapper">
+          <label class="pms-required">Title</label>
+          <select [(ngModel)]="guestForm.title" class="pms-select">
+            <option value="Mr.">Mr.</option>
+            <option value="Mrs.">Mrs.</option>
+            <option value="Ms.">Ms.</option>
+            <option value="Dr.">Dr.</option>
+          </select>
         </div>
+
+        <div class="form-field-wrapper">
+          <label class="pms-required">First Name</label>
+          <input type="text" [(ngModel)]="guestForm.guestFirstName" placeholder="First Name" class="pms-input" />
+        </div>
+
+        <div class="form-field-wrapper">
+          <label>Last Name</label>
+          <input type="text" [(ngModel)]="guestForm.guestLastName" placeholder="Last Name" class="pms-input" />
+        </div>
+
+        <div class="form-field-wrapper">
+          <label>Gender</label>
+          <select [(ngModel)]="guestForm.gender" class="pms-select">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-field-wrapper">
+          <label>Age</label>
+          <input type="number" [(ngModel)]="guestForm.age" placeholder="Age" class="pms-input" />
+        </div>
+
+        <div class="form-field-wrapper">
+          <label class="pms-required">Mobile</label>
+          <input type="tel" [(ngModel)]="guestForm.mobile" placeholder="Mobile Number" class="pms-input" />
+        </div>
+
+        <div class="form-field-wrapper">
+          <label>Id Type</label>
+          <select [(ngModel)]="guestForm.idType" class="pms-select">
+            <option value="Aadhar Card">Aadhar Card</option>
+            <option value="Passport">Passport</option>
+            <option value="Driving License">Driving License</option>
+            <option value="Voter ID">Voter ID</option>
+          </select>
+        </div>
+
+        <div class="form-field-wrapper dual-span">
+          <label>Id Number</label>
+          <input type="text" [(ngModel)]="guestForm.idNumber" placeholder="Document Number ID string"
+            class="pms-input" />
+        </div>
+
       </div>
     </div>
-  </div>
 
-  <div class="modal-backdrop" *ngIf="showAddGuestModal" (click)="cancelNewGuest()">
-    <div class="modal-card" (click)="$event.stopPropagation()">
-      <h3>Add New Guest</h3>
-      <div class="modal-form">
-        <label>Room No.</label>
-        <input [(ngModel)]="newGuest.roomNo" name="modalRoomNo" />
-        <label>First Name</label>
-        <input [(ngModel)]="newGuest.firstName" name="modalFirstName" />
-        <label>Last Name</label>
-        <input [(ngModel)]="newGuest.lastName" name="modalLastName" />
-        <label>Mobile</label>
-        <input [(ngModel)]="newGuest.mobile" name="modalMobile" />
-      </div>
-      <div class="modal-actions">
-        <button class="btn primary" (click)="saveNewGuest()">Save</button>
-        <button class="btn" (click)="cancelNewGuest()">Cancel</button>
-      </div>
+    <div class="pms-modal-footer">
+      <button class="pms-btn-secondary" (click)="closeGuestModal()">Cancel</button>
+      <button class="pms-btn-primary" (click)="saveGuestSubmit()">
+        {{ isEditMode ? 'Apply Updates' : 'Commit Details' }}
+      </button>
     </div>
   </div>
 </div>
