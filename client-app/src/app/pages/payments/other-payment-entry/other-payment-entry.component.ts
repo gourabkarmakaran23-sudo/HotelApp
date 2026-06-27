@@ -203,8 +203,6 @@ export class OtherPaymentEntryComponent implements OnInit {
   saveInvoice(): void {
     if (this.invoiceForm.invalid) {
       this.invoiceForm.markAllAsTouched();
-      
-      // 🎯 ম্যাজিক লাইন: কোন ফিল্ডটি আটকাচ্ছে তা নিখুঁতভাবে বের করে অ্যালার্টে দেখাবে
       const errorList = this.getFormValidationErrors();
       const detailedMessage = errorList.length > 0 
         ? `Missing Fields: ${errorList.join(', ')}` 
@@ -214,19 +212,56 @@ export class OtherPaymentEntryComponent implements OnInit {
       return;
     }
     
-    const payload = {
-      ...this.invoiceForm.getRawValue(),
-      id: this.invoiceId,
-      attachmentName: this.selectedFile ? this.selectedFile.name : null
+    // ১. ফর্মের ডিজেবল্ড (Sub Total, GST Amt, Total Gross) সহ সব রিয়েল ভ্যালু এক্সট্র্যাক্ট করা হলো
+    const rawFormValues = this.invoiceForm.getRawValue();
+
+    // ২. ব্যাকএন্ড ডাটাবেজের জন্য পেলোড ডাটা টাইপগুলো নিখুঁতভাবে কনভার্ট করা হলো
+    const finalizedPayload = {
+      invoiceNo: rawFormValues.invoiceNo ? rawFormValues.invoiceNo.toString() : '',
+      invoiceDate: rawFormValues.invoiceDate,
+      customerName: rawFormValues.customerName,
+      mobile: rawFormValues.mobile ? rawFormValues.mobile.toString() : '',
+      customerAddress: rawFormValues.customerAddress || '',
+      gstin: rawFormValues.gstin || '',
+      remarks: rawFormValues.remarks || '',
+      
+      // প্রধান সামারি ফিল্ডগুলোকে ফ্লোট/নাম্বার নিশ্চিত করা
+      subTotalSummary: Number(rawFormValues.subTotalSummary || 0),
+      totalGstSummary: Number(rawFormValues.totalGstSummary || 0),
+      adjustment: Number(rawFormValues.adjustment || 0),
+      roundOff: Number(rawFormValues.roundOff || 0),
+      invoiceAmount: Number(rawFormValues.invoiceAmount || 0),
+      id: this.invoiceId ? Number(this.invoiceId) : 0, // ডাটাবেজ ইন্টিজারের জন্য ০ অথবা আইডি
+      attachmentName: this.selectedFile ? this.selectedFile.name : null,
+
+      // টেবিল গ্রিডের প্রতিটি অবজেক্টের ডাটা টাইপ পিওর নাম্বার ও স্ট্রিং ফরম্যাটিং করা হলো
+      items: (rawFormValues.items || []).map((item: any) => ({
+        type: item.type ? item.type.toString() : 'Service',
+        hsn: item.hsn ? item.hsn.toString() : '',
+        description: item.description ? item.description.toString() : '',
+        unit: item.unit ? item.unit.toString() : 'Pcs',
+        rate: Number(item.rate || 0),
+        qty: Number(item.qty || 0),
+        subTotal: Number(item.subTotal || 0),
+        gstRate: Number(item.gstRate || 0), // ড্রপডাউন স্ট্রিং থেকে পিওর নাম্বার
+        gstType: item.gstType ? item.gstType.toString() : 'CGST+SGST',
+        gstAmount: Number(item.gstAmount || 0),
+        total: Number(item.total || 0)
+      }))
     };
 
-    this.invoiceService.createInvoice(payload).subscribe({
+    console.log('Sending Pure Clean Payload to Backend API:', finalizedPayload);
+
+    // ৩. সাবমিশন কল
+    this.invoiceService.createInvoice(finalizedPayload).subscribe({
       next: (res) => {
-        this.alertService.success(res.message || 'Invoice Saved Successfully!');
+        this.alertService.success(res?.message || 'Invoice Saved Successfully in Database!');
         this.router.navigate(['/payment/other-list']);
       },
       error: (err) => {
-        this.alertService.error('Server Error: ' + err.message);
+        // যদি এখনও ব্যাকএন্ড থেকে এরর আসে, এপিআই এর পাঠানো আসল কারণটি এখানে দেখাবে
+        const serverErrorMessage = err.error?.message || err.error || err.message;
+        this.alertService.error('API validation failed: ' + JSON.stringify(serverErrorMessage));
       }
     });
   }
