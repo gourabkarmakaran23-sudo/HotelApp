@@ -1,0 +1,107 @@
+<div class="management-container">
+  <div class="header-panel">
+    <h2>Promo Code / Coupon Matrix</h2>
+    <button class="btn btn-primary" (click)="showModal = true; isEditMode = false; promoForm.reset({discountType: 'Percentage', isActive: true, discountValue: 0})">+ Add New Promo Code</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="management-table">
+      <thead>
+        <tr>
+          <th>SL</th>
+          <th>Promo Code</th>
+          <th>Discount Type</th>
+          <th>Value</th>
+          <th>Min Order</th>
+          <th>Max Discount</th>
+          <th>Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of promocodes; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><span class="code-badge">{{ item.code }}</span></td>
+          <td>{{ item.discountType }}</td>
+          <td>{{ item.discountValue }}{{ item.discountType === 'Percentage' ? '%' : '' }}</td>
+          <td>{{ item.minimumBookingAmount | number:'1.2-2' }}</td>
+          <td>{{ item.maxUses }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="item.isActive ? 'active' : 'inactive'">
+              {{ item.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="text-center actions-cell">
+            <button class="action-btn edit-btn" (click)="isEditMode = true; selectedId = item.id; promoForm.patchValue(item); showModal = true">
+              <i class="fa fa-pencil"></i> Edit
+            </button>
+            <button class="action-btn delete-btn" (click)="deleteItem(item.id)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showModal" (click)="showModal = false"></div>
+<div class="modal-container" *ngIf="showModal">
+  <div class="modal-header">
+    <h3>{{ isEditMode ? 'Modify Coupon parameters' : 'Create Coupon parameters' }}</h3>
+    <button class="close-x" (click)="showModal = false">&times;</button>
+  </div>
+  
+  <form [formGroup]="promoForm" class="modal-form">
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Promo Coupon Code <span class="required">*</span></label>
+        <input type="text" formControlName="code" placeholder="e.g. SUMMER50" class="form-control" />
+      </div>
+      <div class="form-group col">
+        <label>Discount Type</label>
+        <select formControlName="discountType" class="form-control">
+          <option value="Percentage">Percentage</option>
+          <option value="Fixed Amount">Fixed Amount</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Discount Value <span class="required">*</span></label>
+        <input type="number" formControlName="discountValue" class="form-control" />
+      </div>
+      <div class="form-group col">
+        <label>Minimum Booking Amount</label>
+        <input type="number" formControlName="minimumBookingAmount" class="form-control" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Start Date <span class="required">*</span></label>
+        <input type="date" formControlName="startDate" class="form-control" />
+      </div>
+      <div class="form-group col">
+        <label>End Date <span class="required">*</span></label>
+        <input type="date" formControlName="endDate" class="form-control" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Max Uses capped</label>
+        <input type="number" formControlName="maxUses" class="form-control" />
+      </div>
+    </div>
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="isActive" />
+        <span>Deploy this voucher into live booking grid</span>
+      </label>
+    </div>
+  </form>
+  
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="showModal = false">Cancel</button>
+    <button class="btn btn-primary" (click)="save()" [disabled]="promoForm.invalid">Save Voucher</button>
+  </div>
+</div>

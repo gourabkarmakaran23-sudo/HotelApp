@@ -111,6 +111,53 @@ F:\1_Holel_Projects_Techno\Hotel_App_2026_Lattest\client-app>
 npm start Or ng serve
 
 
+========================================================================================================
+Tax List,Promocode List,Cancellation Policy List , Aminities List,Other Payment List, Other Payment Entry   
+ai page legbe abar age Frontend a page gulo ready kore mane List Page and Add New a click korle Popup
+Page open hbe jemon age page gulo kor ache. Pore amra Backend Implementation korbo mane Entity, DTOs,
+Service, Controller, Migratation kore abar frontend a service integrate kore component thekhe call korbo.
+
+======================================================================================================
+App.routes a ar sidebar componment a page er menu gulo add kore de dekhbi already Tax Management ar
+Promocode Management main menu already ache sudhu submenu add korte hbe ar Amenties Management
+ar Other Payment Management main menu  ar submenu dutai nei dekh ai duto kotha add kora jai
+ai route management hoye gele amra backend implementation a jbo ai page gulor 
+
+=========================================================================
+Done! Now We can go for Backend Implementation 1st Create Entities() HotelRestaurant.Core project Entities Folder then
+Create DTO's in HotelRestaurant.Application\DTOs Folder and And Create Services in 
+HotelRestaurant.Application\Services Foleder(Interfaces and Implementations in Interfaces and Implementations folder inside Services )
+and Controllers HotelRestaurant.Api projects ControllerFolder, In AppDbContext.cs add the new Enitities and we used UnitOfWork
+so we need to add entities in UnitOfWork amd IUintOfWork and then We Add the Migration. And After All set we integrate backend services
+in our Frontend
+
+==============================================================
+Age Migration Na age Tax List,Promocode List,Cancellation Policy List , Aminities List aigulor Entity, DTOs, Services(Interfaces,Implementations), UnitOfWOrk,
+,Controller,AppDbContext, Program.cs a aigulo add kore dao age tarpor Migration Add korbo eksaathe understood?
+#region  Tax, Promocode, CancellationPolicies,Amenities
+
+        #endregion
+
+
+dotnet ef migrations add AddInvoiceAndExtendedMasterModules --project HotelRestaurant.Infrastructure --startup-project HotelRestaurant.Api
+dotnet ef database update --project HotelRestaurant.Infrastructure --startup-project HotelRestaurant.Api
+
+# ১. মেগা কম্বাইন্ড মাইগ্রেশন স্ক্রিপ্ট তৈরি করার কমান্ড
+dotnet ef migrations add AddInvoiceAndExtendedMasterModules
+
+# ২. ডেটাবেসে এক সাথে সব টেবিল রিফ্লেক্ট বা জেনারেট করার কমান্ড
+dotnet ef database update
+
+=====================================================================================================
+Migration Added Now we can Integrate this with ourFrontend App with New Service and Integrate in Component 
+For Tax List,Promocode List,Cancellation Policy List , Aminities List, Other Payment Entry and List 
+
+=====================================================================================
+GIve some data to entry Tax,Promocode,Cancellation Policy , Aminities, Other Payment Entry 
+
+Tax, Promocode, CancellationPolicy, Amenity add these in DB Set AppDbContext.cs
+
+
 
 
 

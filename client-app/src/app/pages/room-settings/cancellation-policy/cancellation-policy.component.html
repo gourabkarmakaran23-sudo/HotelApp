@@ -1,0 +1,93 @@
+<div class="management-container">
+  <div class="header-panel">
+    <h2>Cancellation Clauses & Policies</h2>
+    <!-- Add New ক্লিক করলে ফর্ম রিসেট হবে এবং ডিফোল্ট ডাটা বসবে -->
+    <button class="btn btn-primary" (click)="showModal = true; isEditMode = false; policyForm.reset({cancellationWindowHours: 24, chargePercentage: 100, isActive: true})">+ Add New Policy Rule</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="management-table">
+      <thead>
+        <tr>
+          <th>SL</th>
+          <th>Policy Rule Title</th>
+          <th>Time Cutoff (Hours)</th>
+          <th>Deduction Charge (%)</th>
+          <th>Brief Matrix description</th>
+          <th>Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- collectionList পরিবর্তন করে TS ফাইলের 'policies' ব্যবহার করা হলো -->
+        <tr *ngFor="let item of policies; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><strong>{{ item.policyName }}</strong></td>
+          <!-- TS ফিল্ড নেম অনুযায়ী ডেটা ম্যাপ করা হলো -->
+          <td>{{ item.cancellationWindowHours }} Hrs</td>
+          <td>{{ item.chargePercentage }}%</td>
+          <td>{{ item.description || '---' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="item.isActive ? 'active' : 'inactive'">
+              {{ item.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="text-center actions-cell">
+            <!-- Edit বাটনে ক্লিক করলে ডাটা ফর্মে প্যাচ হবে এবং মোডাল দেখাবে -->
+            <button class="action-btn edit-btn" (click)="isEditMode = true; selectedId = item.id; policyForm.patchValue(item); showModal = true">
+              <i class="fa fa-pencil"></i> Edit
+            </button>
+            <!-- TS ফাইলের ডিলিট মেথড ম্যাপ করা হলো -->
+            <button class="action-btn delete-btn" (click)="deleteItem(item.id)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showModal" (click)="showModal = false"></div>
+<div class="modal-container" *ngIf="showModal">
+  <div class="modal-header">
+    <h3>{{ isEditMode ? 'Modify Settlement Term' : 'Create Settlement Term' }}</h3>
+    <button class="close-x" (click)="showModal = false">&times;</button>
+  </div>
+  
+  <!-- [formGroup]="policyForm" দিয়ে ফর্ম কন্ট্রোল বাইন্ড করা হলো -->
+  <form [formGroup]="policyForm" class="modal-form">
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Policy Framework Title <span class="required">*</span></label>
+        <input type="text" formControlName="policyName" placeholder="e.g. 48hr Free Refund" class="form-control" />
+      </div>
+      <div class="form-group col">
+        <label>Hour Threshold Limit Before Checkin <span class="required">*</span></label>
+        <input type="number" formControlName="cancellationWindowHours" class="form-control" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Penalty Charge Percentage (%) <span class="required">*</span></label>
+        <input type="number" formControlName="chargePercentage" class="form-control" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Internal/External Explanatory Terms</label>
+      <textarea rows="2" formControlName="description" placeholder="Type core statement details rules..." class="form-control"></textarea>
+    </div>
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="isActive" />
+        <span>Enforce clause restrictions across reservation structures</span>
+      </label>
+    </div>
+  </form>
+  
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="showModal = false">Cancel</button>
+    <!-- TS ফাইলের save() মেথড এবং ভ্যালিডেশন রুলস এখানে ম্যাপ করা হয়েছে -->
+    <button class="btn btn-primary" (click)="save()" [disabled]="policyForm.invalid">Enact Policy</button>
+  </div>
+</div>

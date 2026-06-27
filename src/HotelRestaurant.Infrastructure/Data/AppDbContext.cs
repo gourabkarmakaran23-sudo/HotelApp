@@ -46,7 +46,21 @@ namespace HotelRestaurant.Infrastructure.Data
         public DbSet<OpeningBalance> OpeningBalances => Set<OpeningBalance>();
 
         #endregion
+        #region Other Payment
+        // DbSet রেজিস্টার করুন
+        public DbSet<OtherPaymentInvoice> OtherPaymentInvoices => Set<OtherPaymentInvoice>();
+        public DbSet<OtherPaymentInvoiceItem> OtherPaymentInvoiceItems => Set<OtherPaymentInvoiceItem>();
+        #endregion
+        #region Tax, Promocode, Amenities
+        // ==========================================================
+        // 🆕 নতুন ৪টি Master Data ও Room Settings DbSet যুক্ত করা হলো
+        // ==========================================================
+        public DbSet<Tax> Taxes => Set<Tax>();
+        public DbSet<Promocode> Promocodes => Set<Promocode>();
+        public DbSet<CancellationPolicy> CancellationPolicies => Set<CancellationPolicy>();
+        public DbSet<Amenity> Amenities => Set<Amenity>();
 
+        #endregion
         // 1. Expose DbSets
         public DbSet<BedType> BedTypes => Set<BedType>();
         public DbSet<BookingType> BookingTypes => Set<BookingType>();
@@ -61,11 +75,34 @@ namespace HotelRestaurant.Infrastructure.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<WakeUpCall>(entity =>
-    {
-        // Enforce exact table name configuration mapping rule matching PostgreSQL context
-        entity.ToTable("WakeUpCalls");
-        entity.HasKey(e => e.Id);
-    });
+            {
+                // Enforce exact table name configuration mapping rule matching PostgreSQL context
+                entity.ToTable("WakeUpCalls");
+                entity.HasKey(e => e.Id);
+            });
+            #region Other Payment
+            modelBuilder.Entity<OtherPaymentInvoice>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.InvoiceNo).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.CustomerName).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Mobile).IsRequired().HasMaxLength(15);
+
+                // One-To-Many config with cascade delete for grid items
+                entity.HasMany(e => e.Items)
+                    .WithOne(d => d.OtherPaymentInvoice)
+                    .HasForeignKey(d => d.OtherPaymentInvoiceId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<OtherPaymentInvoiceItem>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Description).IsRequired().HasMaxLength(250);
+            });
+
+            #endregion
+
             // Configuration rules for Purchase Item Tracking Ledger
             modelBuilder.Entity<PurchaseItem>(entity =>
             {
@@ -208,20 +245,20 @@ namespace HotelRestaurant.Infrastructure.Data
             });
 
             modelBuilder.Entity<Order>(entity =>
-   {
-       entity.Property(o => o.TotalAmount)
-       .HasPrecision(12, 2);
+            {
+                entity.Property(o => o.TotalAmount)
+                .HasPrecision(12, 2);
 
-       entity.HasOne(o => o.Booking)
-      .WithMany()
-      .HasForeignKey(o => o.BookingId)
-      .OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(o => o.Booking)
+                .WithMany()
+                .HasForeignKey(o => o.BookingId)
+                .OnDelete(DeleteBehavior.SetNull);
 
-       entity.HasOne(o => o.Guest)
-      .WithMany()
-      .HasForeignKey(o => o.GuestId)
-      .OnDelete(DeleteBehavior.SetNull);
-   });
+                entity.HasOne(o => o.Guest)
+                .WithMany()
+                .HasForeignKey(o => o.GuestId)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
 
             modelBuilder.Entity<OrderItem>(entity =>
             {
@@ -315,6 +352,42 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.FloorName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Remarks).HasMaxLength(500);
+            });
+
+            // ==========================================================
+            // 🆕 নতুন টেবিলগুলোর ডাটাবেজ কলাম কনফিগারেশন (Fluent API)
+            // ==========================================================
+            modelBuilder.Entity<Tax>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.TaxName).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.TaxCode).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.TaxRate).HasColumnType("decimal(18,2)");
+            });
+
+            modelBuilder.Entity<Promocode>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Code).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.DiscountType).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.DiscountValue).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.MinimumBookingAmount).HasColumnType("decimal(18,2)");
+            });
+
+            modelBuilder.Entity<CancellationPolicy>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.PolicyName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.ChargePercentage).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.Description).HasMaxLength(1000);
+            });
+
+            modelBuilder.Entity<Amenity>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.AmenityName).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.IconClass).HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(500);
             });
         }
     }

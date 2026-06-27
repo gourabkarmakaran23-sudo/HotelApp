@@ -28,9 +28,18 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             BookingSources = new GenericRepository<BookingSource>(_context);
             Complementaries = new GenericRepository<Complementary>(_context);
             FloorPlans = new GenericRepository<FloorPlan>(_context);
-            
-
-
+            #endregion
+            #region  Other Payment
+            // Constructor এর ভেতর ইন্সট্যান্স তৈরি করুন:
+            OtherPaymentInvoices = new GenericRepository<OtherPaymentInvoice>(_context);
+            OtherPaymentInvoiceItems = new GenericRepository<OtherPaymentInvoiceItem>(_context);
+            #endregion
+            #region  Tax, Promocode, CancellationPolicies,Amenities
+            // Constructor এর ভেতর ইন্সট্যান্স তৈরি করুন:
+            Taxes = new GenericRepository<Tax>(_context);
+            Promocodes = new GenericRepository<Promocode>(_context);
+            CancellationPolicies = new GenericRepository<CancellationPolicy>(_context);
+            Amenities = new GenericRepository<Amenity>(_context);
             #endregion
             Hotels = new GenericRepository<Hotel>(_context);
             Rooms = new GenericRepository<Room>(_context);
@@ -89,6 +98,19 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         public IGenericRepository<Invoice> Invoices { get; }
         public IGenericRepository<Payment> Payments { get; }
         public IGenericRepository<InventoryItem> InventoryItems { get; }
+        #region  Other Payment
+        // এবং প্রপার্টি এক্সপোজ করুন:
+        public IGenericRepository<OtherPaymentInvoice> OtherPaymentInvoices { get; }
+        public IGenericRepository<OtherPaymentInvoiceItem> OtherPaymentInvoiceItems { get; }
+        #endregion
+
+        #region  Tax, Promocode, CancellationPolicies,Amenities
+        // এবং প্রপার্টি গেটার এক্সপোজ করুন:
+        public IGenericRepository<Tax> Taxes { get; }
+        public IGenericRepository<Promocode> Promocodes { get; }
+        public IGenericRepository<CancellationPolicy> CancellationPolicies { get; }
+        public IGenericRepository<Amenity> Amenities { get; }
+        #endregion
 
         public IUserRepository ApplicationUsers
         => _users ??= new UserRepository(_context);

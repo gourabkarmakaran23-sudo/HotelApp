@@ -1,0 +1,51 @@
+<div class="management-container">
+  <div class="header-panel">
+    <h2>Other Revenue & Payment Invoices Master</h2>
+    <button class="btn btn-primary" routerLink="/payment/other-entry">
+      <i class="fa fa-plus"></i> Generate New Invoice
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="management-table">
+      <thead>
+        <tr>
+          <th>Sl.</th>
+          <th>Invoice No.</th>
+          <th>Invoice Date</th>
+          <th>Customer Name</th>
+          <th>Phone Number</th>
+          <th>GSTIN</th>
+          <th class="text-right">Invoice Amt</th>
+          <th class="text-right">Paid Amt</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of savedInvoices; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><strong>{{ item.invoiceNo }}</strong></td>
+          <td>{{ item.invoiceDate | date:'dd-MMM-yyyy' }}</td>
+          <td>{{ item.customerName }}</td>
+          <td>{{ item.mobile }}</td>
+          <td>
+            <span class="gstin-badge" *ngIf="item.gstin">{{ item.gstin }}</span>
+            <span *ngIf="!item.gstin">---</span>
+          </td>
+          <td class="text-right font-weight-bold">₹ {{ item.invoiceAmount | number:'1.2-2' }}</td>
+          <td class="text-right text-success">₹ {{ item.paidAmount | number:'1.2-2' }}</td>
+          <td class="text-center actions-cell">
+            <button class="action-btn delete-btn" (click)="deleteInvoice(item.id)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngFor="let item of savedInvoices; let i = index">
+          <td colspan="9" class="text-center" style="padding: 2rem; color: #94a3b8;">
+            No invoices found. Click "Generate New Invoice" to create one.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

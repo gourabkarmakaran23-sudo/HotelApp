@@ -1,0 +1,88 @@
+<div class="management-container">
+  <div class="header-panel">
+    <h2>Hotel & Room Amenities Catalog</h2>
+    <!--AddNew ক্লিক করলে সরাসরি ফর্ম রিসেট এবং মোডাল ওপেন হবে-->
+    <button class="btn btn-primary" (click)="showModal = true; isEditMode = false; amenityForm.reset({iconClass: 'fa-wifi', isActive: true})">+ Add New Amenity</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="management-table">
+      <thead>
+        <tr>
+          <th>SL</th>
+          <th>Icon</th>
+          <th>Amenity Label</th>
+          <th>Specification Details</th>
+          <th>Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- collectionList বদলে TS ফাইলের 'amenities' ভেরিয়েবল ব্যবহার করা হলো -->
+        <tr *ngFor="let item of amenities; let i = index">
+          <td>{{ i + 1 }}</td>
+          <!-- TS এর স্ট্রাকচার অনুযায়ী item.iconClass ব্যবহার করা হলো -->
+          <td><i class="fa" [ngClass]="item.iconClass || 'fa-tag'"></i></td>
+          <td><strong>{{ item.amenityName }}</strong></td>
+          <td>{{ item.description || '---' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="item.isActive ? 'active' : 'inactive'">
+              {{ item.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="text-center actions-cell">
+            <!-- Edit বাটনে ক্লিক করলে ফর্ম প্যাচ হবে এবং মোডাল ওপেন হবে -->
+            <button class="action-btn edit-btn" (click)="isEditMode = true; selectedId = item.id; amenityForm.patchValue(item); showModal = true">
+              <i class="fa fa-pencil"></i> Edit
+            </button>
+            <!-- TS ফাইলের deleteItem মেথড ম্যাপ করা হলো -->
+            <button class="action-btn delete-btn" (click)="deleteItem(item.id)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TS ফাইলের closeModal() মেথড ব্যবহার করা হলো -->
+<div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()"></div>
+<div class="modal-container" *ngIf="showModal">
+  <div class="modal-header">
+    <h3>{{ isEditMode ? 'Modify Amenity Specification' : 'Register New Amenity Profile' }}</h3>
+    <button class="close-x" (click)="closeModal()">&times;</button>
+  </div>
+  
+  <!-- [formGroup]="amenityForm" যুক্ত করা হলো -->
+  <form [formGroup]="amenityForm" class="modal-form">
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Amenity Display Title <span class="required">*</span></label>
+        <input type="text" formControlName="amenityName" placeholder="e.g. Smart LED TV" class="form-control" />
+      </div>
+      <div class="form-group col">
+        <label>FontAwesome CSS Icon Class</label>
+        <input type="text" formControlName="iconClass" placeholder="e.g. fa-tv" class="form-control" />
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>Catalog Description</label>
+      <input type="text" formControlName="description" placeholder="Short description notes..." class="form-control" />
+    </div>
+    
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="isActive" />
+        <span>Expose item inside active room blueprint inventory systems</span>
+      </label>
+    </div>
+  </form>
+  
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+    <!-- TS ফাইলের save() মেথড কল করা হলো এবং ফর্ম ইনভ্যালিড হলে বাটন ডিজেবল থাকবে -->
+    <button class="btn btn-primary" (click)="save()" [disabled]="amenityForm.invalid">Save Amenity</button>
+  </div>
+</div>
