@@ -2,6 +2,7 @@ namespace HotelRestaurant.Application.DTOs.OtherPayment
 {
     public class OtherPaymentInvoiceItemDto
     {
+       public int Id { get; set; }
         public string Type { get; set; } = "Service";
         public string? Hsn { get; set; }
         public string Description { get; set; } = string.Empty;

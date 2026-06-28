@@ -47,9 +47,17 @@ namespace HotelRestaurant.Application.Services.Implementations
 
         public async Task<OtherPaymentInvoiceDto?> GetInvoiceByIdAsync(int id)
         {
+            // ১. প্রথমে মাস্টার টেবিল থেকে ইনভয়েস মেইন ডাটা তোলা হলো
             var x = await _unitOfWork.OtherPaymentInvoices.GetByIdAsync(id);
             if (x == null || x.IsDeleted) return null;
 
+            // ২. 🎯 এবার চাইল্ড টেবিল থেকে এই ইনভয়েস আইডির আন্ডারে যতগুলো আইটেম আছে সব কুয়েরি করা হলো
+            // (নোট: আপনার জেনেরিক রিপোজিটরিতে যদি GetAllAsync বা FindAsync থাকে, সেটি ব্যবহার করবেন)
+            var allItems = await _unitOfWork.OtherPaymentInvoiceItems.GetAllAsync();
+            var invoiceItems = allItems.Where(item => item.OtherPaymentInvoiceId == id).ToList();
+            // 💡 (যদি আপনার মডেলে ফরেন কি-র নাম 'InvoiceId' বা অন্য কিছু হয়, সেটি OtherPaymentInvoiceId এর জায়গায় বসাবেন)
+
+            // ৩. DTO ম্যাপ করে রিটার্ন করা
             return new OtherPaymentInvoiceDto
             {
                 Id = x.Id,
@@ -61,10 +69,26 @@ namespace HotelRestaurant.Application.Services.Implementations
                 Gstin = x.Gstin,
                 Remarks = x.Remarks,
                 AttachmentName = x.AttachmentName,
-                InvoiceAmount = x.InvoiceAmount
+                InvoiceAmount = x.InvoiceAmount,
+
+                // 🎯 চাইল্ড আইটেম ডাটা ম্যাপ করে ফ্রন্টএন্ডের জন্য পাঠানো হলো
+                Items = invoiceItems.Select(item => new OtherPaymentInvoiceItemDto
+                {
+                    Id = item.Id,
+                    Type = item.Type,
+                    Hsn = item.Hsn,
+                    Description = item.Description,
+                    Unit = item.Unit,
+                    Rate = item.Rate,
+                    Qty = item.Qty,
+                    SubTotal = item.SubTotal,
+                    GstRate = item.GstRate,
+                    GstType = item.GstType,
+                    GstAmount = item.GstAmount,
+                    Total = item.Total
+                }).ToList()
             };
         }
-
         public async Task<int> CreateInvoiceAsync(OtherPaymentInvoiceDto dto)
         {
             var masterEntity = new OtherPaymentInvoice

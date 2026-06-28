@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router'; // 👈 ActivatedRoute নিশ্চিত করুন
 import { CustomAlertService } from '../../../services/custom-alert.service'; 
 import { OtherPaymentService } from '../../../services/other-payment.service';
 
@@ -20,7 +20,7 @@ export class OtherPaymentEntryComponent implements OnInit {
   constructor(
     private fb: FormBuilder, 
     private router: Router,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute, // 👈 আইডি রিড করার জন্য
     private invoiceService: OtherPaymentService,
     private alertService: CustomAlertService
   ) {}
@@ -28,20 +28,22 @@ export class OtherPaymentEntryComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     
-    this.invoiceId = this.route.snapshot.params['id'] ? +this.route.snapshot.params['id'] : null;
+    // 🔍 ইউআরএল থেকে আইডি প্যারামিটার রিড করা হচ্ছে
+    const idParam = this.route.snapshot.paramMap.get('id');
+    this.invoiceId = idParam ? +idParam : null;
+
     if (this.invoiceId) {
       this.loadInvoiceDetails(this.invoiceId);
     } else {
-      this.addItemRow(); 
+      this.addItemRow(); // নতুন ইনভয়েসের জন্য ফাঁকা রো
     }
   }
 
   initForm(): void {
     this.invoiceForm = this.fb.group({
       invoiceNo: ['', Validators.required],
-      invoiceDate: [new Date().toISOString().substring(0, 10), Validators.required],
+      invoiceDate: ['', Validators.required],
       customerName: ['', Validators.required],
-      // 📱 মোবাইল নম্বর ভ্যালিডেশন ১০ থেকে ১৫ ডিজিটের জন্য সহজ ও ফ্লুয়েন্ট করা হলো
       mobile: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(15)]],
       customerAddress: [''],
       gstin: [''],
@@ -61,7 +63,7 @@ export class OtherPaymentEntryComponent implements OnInit {
 
   addItemRow(): void {
     const itemGroup = this.fb.group({
-      type: ['Service'], // ভ্যালিডেটর শিথিল করা হলো যেন ব্যাকএন্ডে লক না হয়ে যায়
+      type: ['Service'],
       hsn: [''],
       description: ['', Validators.required],
       unit: ['Pcs'],
@@ -78,6 +80,85 @@ export class OtherPaymentEntryComponent implements OnInit {
     this.calculateTotals();
   }
 
+  // 🔄 ডাটাবেজ থেকে এক্সিস্টিং ডাটা এনে ফর্মে ডিসপ্লে করার মূল মেথড
+  // 🔄 ডাটাবেজ থেকে এক্সিস্টিং ডাটা এনে ফর্মে ডিসপ্লে করার ১০০% সেফ মেথড
+  // 🔄 ডাটাবেজ থেকে এক্সিস্টিং ডাটা এনে ফর্মে ডিসপ্লে করার ১০০% ফুল-প্রুফ মেথড
+  // 🔄 ডাটাবেজ থেকে এক্সিস্টিং ডাটা এনে ফর্মে ডিসপ্লে করার ১০০% পিওর মেথড
+  loadInvoiceDetails(id: number): void {
+    this.invoiceService.getInvoiceById(id).subscribe({
+      next: (data) => {
+        if (data) {
+          console.log('Database API Response Raw Data:', data);
+
+          // ১. মেইন মাস্টার ফর্ম ডেটা ম্যাপ করা
+          this.invoiceForm.patchValue({
+            invoiceNo: data.invoiceNo || data.InvoiceNo,
+            invoiceDate: (data.invoiceDate || data.InvoiceDate) ? (data.invoiceDate || data.InvoiceDate).substring(0, 10) : '',
+            customerName: data.customerName || data.CustomerName,
+            mobile: data.mobile || data.Mobile,
+            customerAddress: data.customerAddress || data.CustomerAddress || '',
+            gstin: data.gstin || data.Gstin || '',
+            remarks: data.remarks || data.Remarks || '',
+            subTotalSummary: data.subTotalSummary || data.SubTotalSummary || 0,
+            totalGstSummary: data.totalGstSummary || data.TotalGstSummary || 0,
+            adjustment: data.adjustment || data.Adjustment || 0,
+            roundOff: data.roundOff || data.RoundOff || 0,
+            invoiceAmount: data.invoiceAmount || data.InvoiceAmount || 0
+          });
+
+          // ২. আইটেম গ্রিড ফর্মঅ্যারে ট্র্যাকিং রেফারেন্স নেওয়া এবং মেমোরি ফ্লাশ করা
+          const itemFormArray = this.invoiceForm.get('items') as FormArray;
+          itemFormArray.clear(); 
+
+          // ৩. ব্যাকএন্ড DTO থেকে ম্যাপ হয়ে আসা Items কালেকশন রিড করা
+          const dbItems = data.items || data.Items || [];
+
+          if (dbItems && dbItems.length > 0) {
+            dbItems.forEach((item: any) => {
+              // ডেটা টাইপ সেফটি কনভার্সন
+              const currentRate = Number(item.rate || item.Rate || 0);
+              const currentQty = Number(item.qty || item.Qty || 1);
+              const currentGstRate = Number(item.gstRate || item.GstRate || 0);
+
+              const calculatedSubTotal = currentQty * currentRate;
+              const calculatedGstAmount = (calculatedSubTotal * currentGstRate) / 100;
+              const calculatedTotal = calculatedSubTotal + calculatedGstAmount;
+
+              const itemGroup = this.fb.group({
+                type: [item.type || item.Type || 'Service'],
+                hsn: [item.hsn || item.Hsn || ''],
+                description: [item.description || item.Description || '', Validators.required],
+                unit: [item.unit || item.Unit || 'Pcs'],
+                rate: [currentRate, [Validators.required, Validators.min(0)]],
+                qty: [currentQty, [Validators.required, Validators.min(1)]],
+                subTotal: [{ value: item.subTotal || item.SubTotal || calculatedSubTotal, disabled: true }],
+                gstRate: [currentGstRate],
+                gstType: [item.gstType || item.GstType || 'CGST+SGST'],
+                gstAmount: [{ value: item.gstAmount || item.GstAmount || calculatedGstAmount, disabled: true }],
+                total: [{ value: item.total || item.Total || calculatedTotal, disabled: true }]
+              });
+
+              itemFormArray.push(itemGroup);
+            });
+          } else {
+            // যদি ডাটাবেজে ওল্ড কোনো রো কোনো কারণে না পাওয়া যায়
+            this.addItemRow();
+          }
+
+          // ৪. ডম (DOM) রিঅ্যাক্টিভিটি ফোর্সড রিলিজ এবং টোটাল সামারি রিক্যালকুলেশন
+          setTimeout(() => {
+            this.calculateTotals();
+            this.invoiceForm.updateValueAndValidity();
+          }, 50);
+        }
+      },
+      error: (err) => {
+        this.alertService.error('Failed to load existing invoice: ' + err.message);
+      }
+    });
+  }
+
+  
   removeItemRow(index: number): void {
     if (this.items.length > 1) {
       this.items.removeAt(index);
@@ -85,46 +166,11 @@ export class OtherPaymentEntryComponent implements OnInit {
     }
   }
 
-  loadInvoiceDetails(id: number): void {
-    this.invoiceService.getInvoiceById(id).subscribe({
-      next: (data) => {
-        if (data) {
-          this.invoiceForm.patchValue(data);
-          while (this.items.length) {
-            this.items.removeAt(0);
-          }
-          if (data.items && data.items.length > 0) {
-            data.items.forEach((item: any) => {
-              const itemGroup = this.fb.group({
-                type: [item.type || 'Service'],
-                hsn: [item.hsn || ''],
-                description: [item.description || '', Validators.required],
-                unit: [item.unit || 'Pcs'],
-                rate: [item.rate || 0, [Validators.required, Validators.min(0)]],
-                qty: [item.qty || 1, [Validators.required, Validators.min(1)]],
-                subTotal: [{ value: item.subTotal || 0, disabled: true }],
-                gstRate: [item.gstRate || 0],
-                gstType: [item.gstType || 'CGST+SGST'],
-                gstAmount: [{ value: item.gstAmount || 0, disabled: true }],
-                total: [{ value: item.total || 0, disabled: true }]
-              });
-              this.items.push(itemGroup);
-            });
-          }
-          this.calculateTotals();
-        }
-      },
-      error: (err) => {
-        this.alertService.error('Failed to load invoice details: ' + err.message);
-      }
-    });
-  }
-
   onItemValueChange(index: number): void {
     const row = this.items.at(index);
     const qty = row.get('qty')?.value || 0;
     const rate = row.get('rate')?.value || 0;
-    const gstRate = +row.get('gstRate')?.value || 0; // সংখ্যায় কনভার্ট নিশ্চিত করা হলো
+    const gstRate = +row.get('gstRate')?.value || 0;
 
     const subTotal = qty * rate;
     const gstAmount = (subTotal * gstRate) / 100;
@@ -174,29 +220,23 @@ export class OtherPaymentEntryComponent implements OnInit {
     }
   }
 
-  // 🛠️ স্মার্ট ডায়াগনস্টিক মেথড যা নিখুঁতভাবে ইনভ্যালিড ফিল্ডের নাম খুঁজে বের করবে
   getFormValidationErrors(): string[] {
     const errors: string[] = [];
-    
-    // মেইন ফর্ম ইনপুট চেক
     Object.keys(this.invoiceForm.controls).forEach(key => {
       const controlErrors = this.invoiceForm.get(key)?.errors;
       if (controlErrors != null) {
-        errors.push(`${key.toUpperCase()} is required or invalid`);
+        errors.push(`${key.toUpperCase()}`);
       }
     });
-
-    // টেবিল গ্রিড রো ইনপুট চেক
     this.items.controls.forEach((element, index) => {
       const rowGroup = element as FormGroup;
       Object.keys(rowGroup.controls).forEach(key => {
         const rowControlErrors = rowGroup.get(key)?.errors;
         if (rowControlErrors != null) {
-          errors.push(`Row ${index + 1} -> ${key.toUpperCase()} is required/invalid`);
+          errors.push(`Row ${index + 1} -> ${key.toUpperCase()}`);
         }
       });
     });
-
     return errors;
   }
 
@@ -204,18 +244,11 @@ export class OtherPaymentEntryComponent implements OnInit {
     if (this.invoiceForm.invalid) {
       this.invoiceForm.markAllAsTouched();
       const errorList = this.getFormValidationErrors();
-      const detailedMessage = errorList.length > 0 
-        ? `Missing Fields: ${errorList.join(', ')}` 
-        : 'Please fill out all mandatory fields correctly.';
-        
-      this.alertService.error(detailedMessage);
+      this.alertService.error(`Missing or Invalid Fields: ${errorList.join(', ')}`);
       return;
     }
     
-    // ১. ফর্মের ডিজেবল্ড (Sub Total, GST Amt, Total Gross) সহ সব রিয়েল ভ্যালু এক্সট্র্যাক্ট করা হলো
     const rawFormValues = this.invoiceForm.getRawValue();
-
-    // ২. ব্যাকএন্ড ডাটাবেজের জন্য পেলোড ডাটা টাইপগুলো নিখুঁতভাবে কনভার্ট করা হলো
     const finalizedPayload = {
       invoiceNo: rawFormValues.invoiceNo ? rawFormValues.invoiceNo.toString() : '',
       invoiceDate: rawFormValues.invoiceDate,
@@ -224,17 +257,14 @@ export class OtherPaymentEntryComponent implements OnInit {
       customerAddress: rawFormValues.customerAddress || '',
       gstin: rawFormValues.gstin || '',
       remarks: rawFormValues.remarks || '',
-      
-      // প্রধান সামারি ফিল্ডগুলোকে ফ্লোট/নাম্বার নিশ্চিত করা
       subTotalSummary: Number(rawFormValues.subTotalSummary || 0),
       totalGstSummary: Number(rawFormValues.totalGstSummary || 0),
       adjustment: Number(rawFormValues.adjustment || 0),
       roundOff: Number(rawFormValues.roundOff || 0),
       invoiceAmount: Number(rawFormValues.invoiceAmount || 0),
-      id: this.invoiceId ? Number(this.invoiceId) : 0, // ডাটাবেজ ইন্টিজারের জন্য ০ অথবা আইডি
+      id: this.invoiceId ? Number(this.invoiceId) : 0, 
       attachmentName: this.selectedFile ? this.selectedFile.name : null,
 
-      // টেবিল গ্রিডের প্রতিটি অবজেক্টের ডাটা টাইপ পিওর নাম্বার ও স্ট্রিং ফরম্যাটিং করা হলো
       items: (rawFormValues.items || []).map((item: any) => ({
         type: item.type ? item.type.toString() : 'Service',
         hsn: item.hsn ? item.hsn.toString() : '',
@@ -243,25 +273,21 @@ export class OtherPaymentEntryComponent implements OnInit {
         rate: Number(item.rate || 0),
         qty: Number(item.qty || 0),
         subTotal: Number(item.subTotal || 0),
-        gstRate: Number(item.gstRate || 0), // ড্রপডাউন স্ট্রিং থেকে পিওর নাম্বার
+        gstRate: Number(item.gstRate || 0),
         gstType: item.gstType ? item.gstType.toString() : 'CGST+SGST',
         gstAmount: Number(item.gstAmount || 0),
         total: Number(item.total || 0)
       }))
     };
 
-    console.log('Sending Pure Clean Payload to Backend API:', finalizedPayload);
-
-    // ৩. সাবমিশন কল
     this.invoiceService.createInvoice(finalizedPayload).subscribe({
       next: (res) => {
-        this.alertService.success(res?.message || 'Invoice Saved Successfully in Database!');
+        this.alertService.success(res?.message || 'Invoice Saved Successfully!');
         this.router.navigate(['/payment/other-list']);
       },
       error: (err) => {
-        // যদি এখনও ব্যাকএন্ড থেকে এরর আসে, এপিআই এর পাঠানো আসল কারণটি এখানে দেখাবে
         const serverErrorMessage = err.error?.message || err.error || err.message;
-        this.alertService.error('API validation failed: ' + JSON.stringify(serverErrorMessage));
+        this.alertService.error('API Save Error: ' + JSON.stringify(serverErrorMessage));
       }
     });
   }

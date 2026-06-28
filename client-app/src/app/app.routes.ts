@@ -129,6 +129,7 @@ export const routes: Routes = [
     path: 'payment/other-entry', 
     loadComponent: () => import('./pages/payments/other-payment-entry/other-payment-entry.component').then(m => m.OtherPaymentEntryComponent), 
     canActivate: [AuthGuard] 
-  }
+  },
+  { path: 'payment/other-entry/:id', loadComponent: () => import('./pages/payments/other-payment-entry/other-payment-entry.component').then(m => m.OtherPaymentEntryComponent), canActivate: [AuthGuard] },
   //#endregion
 ];

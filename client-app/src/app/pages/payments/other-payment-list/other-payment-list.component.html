@@ -35,12 +35,17 @@
           <td class="text-right font-weight-bold">₹ {{ item.invoiceAmount | number:'1.2-2' }}</td>
           <td class="text-right text-success">₹ {{ item.paidAmount | number:'1.2-2' }}</td>
           <td class="text-center actions-cell">
-            <button class="action-btn delete-btn" (click)="deleteInvoice(item.id)">
+            <button class="action-btn edit-btn" title="Edit/Modify Invoice" [routerLink]="['/payment/other-entry', item.id]" style="margin-right: 6px; background-color: #3b82f6; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+              <i class="fa fa-pencil"></i>
+            </button>
+            
+            <button class="action-btn delete-btn" title="Delete Permanent" (click)="deleteInvoice(item.id)">
               <i class="fa fa-trash"></i>
             </button>
           </td>
         </tr>
-        <tr *ngFor="let item of savedInvoices; let i = index">
+        
+        <tr *ngIf="savedInvoices.length === 0">
           <td colspan="9" class="text-center" style="padding: 2rem; color: #94a3b8;">
             No invoices found. Click "Generate New Invoice" to create one.
           </td>
