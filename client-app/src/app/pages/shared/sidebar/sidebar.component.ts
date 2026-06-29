@@ -122,6 +122,16 @@ export class SidebarComponent implements OnInit {
         { label: 'Other Payment List', route: '/payment/other-list' },
         { label: 'Other Payment Entry', route: '/payment/other-entry' }
       ]
+    },
+    { 
+      icon: '❌', 
+      label: 'Cancellation Management', 
+      open: false,
+      children: [
+        { label: 'Refund Due (Non-Website)', route: '/cancellation/refund-due' },
+        { label: 'Refund Under Process', route: '/cancellation/refund-process' },
+        { label: 'Refunded Archives', route: '/cancellation/refunded-archive' }
+      ]
     }
   ];
 

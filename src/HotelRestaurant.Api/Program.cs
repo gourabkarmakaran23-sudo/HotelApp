@@ -70,7 +70,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 // Dependency Injection mapping entries inside Program.cs
 builder.Services.AddScoped<IOtherPaymentService, OtherPaymentService>();
 builder.Services.AddScoped<IMasterServiceExtension, MasterServiceExtension>();
-
+builder.Services.AddScoped<IRefundService, RefundService>();
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

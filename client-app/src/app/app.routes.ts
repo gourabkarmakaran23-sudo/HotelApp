@@ -132,4 +132,24 @@ export const routes: Routes = [
   },
   { path: 'payment/other-entry/:id', loadComponent: () => import('./pages/payments/other-payment-entry/other-payment-entry.component').then(m => m.OtherPaymentEntryComponent), canActivate: [AuthGuard] },
   //#endregion
+
+  //#region Cancellation Management
+   //#region Cancellation & Refund Management
+  { 
+    path: 'cancellation/refund-due', 
+    loadComponent: () => import('./pages/cancellation/refund-due/refund-due.component').then(m => m.RefundDueComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'cancellation/refund-process', 
+    loadComponent: () => import('./pages/cancellation/refund-process/refund-process.component').then(m => m.RefundProcessComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'cancellation/refunded-archive', 
+    loadComponent: () => import('./pages/cancellation/refunded-archive/refunded-archive.component').then(m => m.RefundedArchiveComponent), 
+    canActivate: [AuthGuard] 
+  },
+  //#endregion
+  //#endregion
 ];

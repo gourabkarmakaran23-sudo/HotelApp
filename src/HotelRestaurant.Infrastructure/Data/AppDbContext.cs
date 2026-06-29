@@ -61,6 +61,10 @@ namespace HotelRestaurant.Infrastructure.Data
         public DbSet<Amenity> Amenities => Set<Amenity>();
 
         #endregion
+        #region Cancellation & Refund Management
+        public DbSet<RefundRecord> RefundRecords { get; set; } = null!;
+        #endregion
+
         // 1. Expose DbSets
         public DbSet<BedType> BedTypes => Set<BedType>();
         public DbSet<BookingType> BookingTypes => Set<BookingType>();
@@ -388,6 +392,11 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.Property(e => e.AmenityName).IsRequired().HasMaxLength(150);
                 entity.Property(e => e.IconClass).HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(500);
+
+                // Refund Amount এর জন্য ডেসিমেল টাইপ ফিক্স করা
+                modelBuilder.Entity<RefundRecord>()
+                    .Property(r => r.RefundAmount)
+                    .HasColumnType("decimal(18,2)");
             });
         }
     }

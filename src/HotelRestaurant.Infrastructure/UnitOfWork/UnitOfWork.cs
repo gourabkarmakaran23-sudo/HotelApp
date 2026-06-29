@@ -57,6 +57,8 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             Invoices = new GenericRepository<Invoice>(_context);
             Payments = new GenericRepository<Payment>(_context);
             InventoryItems = new GenericRepository<InventoryItem>(_context);
+            // কনস্ট্রাক্টরের ভেতরে বসান:
+            RefundRecords = new GenericRepository<RefundRecord>(_context);
         }
         #region Master Data Repositories
         public IGenericRepository<OpeningBalance> OpeningBalances { get; }
@@ -110,6 +112,10 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         public IGenericRepository<Promocode> Promocodes { get; }
         public IGenericRepository<CancellationPolicy> CancellationPolicies { get; }
         public IGenericRepository<Amenity> Amenities { get; }
+        #endregion
+        #region  Cancellation Management
+        // নিচে প্রোপার্টি গেটার হিসেবে এক্সপোজ করুন:
+        public IGenericRepository<RefundRecord> RefundRecords { get; }
         #endregion
 
         public IUserRepository ApplicationUsers

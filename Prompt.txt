@@ -42,3 +42,15 @@ git remote add origin https://github.com/gourabkarmakaran23-sudo/HotelApp.git
 ent-app
 └── ag-grid-angular@31.3.4
 
+==================================================================
+
+Refund Due (Non-Website Booking): যেখানে গেস্ট নেম, বুকিং সোর্স, রিফান্ড অ্যামাউন্ট ইত্যাদি থাকবে।
+
+Refund Under Process: প্রসেসিং ট্র্যাকিং ইনফরমেশন।
+
+Refunded: ট্রানজেকশন আইডি, ডেট এবং রিফান্ড মেথড সহ ফাইনাল হিস্ট্রি।
+
+Routing a ki kore Add korbo ai 3ti form
+Ekta Notun Manu Hbe Cancelllation Management, Tax
+Management er moddhe tar moddhe ai 3 ta form thekbe
+apni kintu ekta form add korechen dekhlam

@@ -55,6 +55,8 @@ namespace HotelRestaurant.Core.Interfaces
         IGenericRepository<Payment> Payments { get; }
         IGenericRepository<InventoryItem> InventoryItems { get; }
         IUserRepository ApplicationUsers { get; }
+        public IGenericRepository<RefundRecord> RefundRecords { get; }
+        
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     }
