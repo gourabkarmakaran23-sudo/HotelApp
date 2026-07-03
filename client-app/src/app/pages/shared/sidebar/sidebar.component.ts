@@ -50,12 +50,25 @@ export class SidebarComponent implements OnInit {
     ]},
     //Single Menu
     { icon: '🛏️', label: 'Room Types', route: '/room-types' },
+    { icon: '🛏️', label: 'Rooms', route: '/rooms' },
     { icon: '💳', label: 'Payment Setting', route: '/payment' },
     { icon: '🛒', label: 'Purchase Manage', route: '/purchase' },
     { icon: '📈', label: 'Reports', route: '/reports' },
     { icon: '🏨', label: 'Room Facilities', route: '/facilities' },
     { icon: '📦', label: 'Unit and Products', route: '/products' },
-    { icon: '🔖', label: 'House Keeping', route: '/housekeeping' },
+    { 
+  icon: '🔖', 
+  label: 'House Keeping', 
+  children: [
+    { label: 'Assign Room Cleaning', route: '/housekeeping/assign-room-cleaning' },
+    { label: 'Room Cleaning', route: '/housekeeping/room-cleaning' },
+    { label: 'Checklist', route: '/housekeeping/checklist' },
+    { label: 'Room Qr List', route: '/housekeeping/room-qrcode' },
+    { label: 'Laundry Product List', route: '/housekeeping/product-laundry' },
+    { label: 'Laundry', route: '/housekeeping/laundry' },
+    { label: 'Laundry Payment', route: '/housekeeping/payment-record' }
+  ]
+},
 
      //Single Menu
      //Add master pages here like Room Rerrvation and submenu

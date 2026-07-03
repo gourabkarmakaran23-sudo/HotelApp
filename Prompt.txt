@@ -54,3 +54,23 @@ Routing a ki kore Add korbo ai 3ti form
 Ekta Notun Manu Hbe Cancelllation Management, Tax
 Management er moddhe tar moddhe ai 3 ta form thekbe
 apni kintu ekta form add korechen dekhlam
+
+=========================================================
+Promlem in Assign Room Cleaning Screen
+1. In Assign Room Cleaning Page Rooms are comes form Rooms tales
+I mean Rooms and Floor API or how  http://localhost:5287/api/room 
+2.  Assign Room Cleaning Page Room Type should comes from RoomType 
+API http://localhost:5287/api/RoomType 
+3. House Keeper should comes from API as well but I think 
+   that House Keeping Or Staff API is not created yet so here Now
+   we can hused JSON data or some array data with atleast 5-6 employee
+   here I see only one employee
+4. And Status Dropdown I see blank there shuould be CheckIn, Ready,
+   In Progress status 
+5. And Therir will be an save button to save and assign for Cleaning
+    and an Cancel button. And After Saved then only Room showing
+    with status by default we can se status as In Progress or something
+    like this
+Please fixed Assign Room Cleaning then We go for Room CLeaning Screen
+
+Status

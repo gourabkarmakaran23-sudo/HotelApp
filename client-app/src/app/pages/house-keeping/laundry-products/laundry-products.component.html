@@ -1,0 +1,15 @@
+<div class="hk-container">
+  <div class="hk-header"><h2>Laundry Products List</h2></div>
+  <table class="hk-table">
+    <thead>
+      <tr><th>SL</th><th>Product Name</th><th>Category Name</th><th>In Use</th><th>In Laundry</th><th>Ready</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of products; let i = index">
+        <td>{{ i + 1 }}</td><td>{{ p.productName }}</td><td>{{ p.categoryName }}</td>
+        <td>{{ p.inUse }}</td><td>{{ p.inLaundry }}</td><td>{{ p.ready }}</td>
+      </tr>
+      <tr *ngIf="products.length === 0"><td colspan="6" style="text-align: center; color: #999;">No data available in table</td></tr>
+    </tbody>
+  </table>
+</div>

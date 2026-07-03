@@ -1,4 +1,5 @@
 using HotelRestaurant.Core.Entities;
+using HotelRestaurant.Core.Entities.HouseKeeping;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelRestaurant.Infrastructure.Data
@@ -73,6 +74,14 @@ namespace HotelRestaurant.Infrastructure.Data
         // 1. Append definitions to your DbSets entries
         public DbSet<Complementary> Complementaries => Set<Complementary>();
         public DbSet<FloorPlan> FloorPlans => Set<FloorPlan>();
+
+        #region  House Keeping
+        // AppDbContext.cs এর ভেতরে এই লাইনগুলো যোগ করুন:
+        public DbSet<RoomCleaning> RoomCleanings { get; set; }
+        public DbSet<HouseKeepingChecklist> HouseKeepingChecklists { get; set; }
+        public DbSet<LaundryLog> LaundryLogs { get; set; }
+        public DbSet<LaundryPayment> LaundryPayments { get; set; }
+        #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

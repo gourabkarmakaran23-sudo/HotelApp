@@ -71,6 +71,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IOtherPaymentService, OtherPaymentService>();
 builder.Services.AddScoped<IMasterServiceExtension, MasterServiceExtension>();
 builder.Services.AddScoped<IRefundService, RefundService>();
+builder.Services.AddScoped<IHouseKeepingService, HouseKeepingService>();
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

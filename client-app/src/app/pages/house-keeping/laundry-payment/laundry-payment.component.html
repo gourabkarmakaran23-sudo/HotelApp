@@ -1,0 +1,36 @@
+<div class="hk-container">
+  <div class="hk-header">
+    <h2>Laundry Payment</h2>
+    <button style="background: #28a745; color: white; padding: 8px 15px; border:none;" (click)="openModal()">+ Add New Payment</button>
+  </div>
+  <table class="hk-table">
+    <thead>
+      <tr><th>SL</th><th>Name</th><th>Invoice No.</th><th>Laundry Name</th><th>Total Amount</th><th>Due Amount</th><th>Paid Amount</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of payments; let i = index">
+        <td>{{ i + 1 }}</td><td>{{ p.name }}</td><td>{{ p.invoiceNo }}</td><td>{{ p.laundryName }}</td><td>₹{{ p.totalAmount }}</td><td>₹{{ p.dueAmount }}</td><td>₹{{ p.paidAmount }}</td>
+        <td>
+          <button (click)="openModal(p)">Edit</button>
+          <button style="color: red;">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-backdrop-custom" *ngIf="isModalOpen">
+  <div class="modal-box-custom">
+    <h3>Manage Laundry Payment</h3>
+    <form [formGroup]="paymentForm" (ngSubmit)="isModalOpen=false">
+      <div class="form-group-custom"><label>Name *</label><input formControlName="name" class="form-control-custom"></div>
+      <div class="form-group-custom"><label>Invoice No *</label><input formControlName="invoiceNo" class="form-custom-control form-control-custom"></div>
+      <div class="form-group-custom"><label>Laundry Name *</label><input formControlName="laundryName" class="form-control-custom"></div>
+      <div style="display: flex; gap: 10px;">
+        <div class="form-group-custom"><label>Total</label><input type="number" formControlName="totalAmount" class="form-control-custom"></div>
+        <div class="form-group-custom"><label>Paid</label><input type="number" formControlName="paidAmount" class="form-control-custom"></div>
+      </div>
+      <button type="submit">Execute</button><button type="button" (click)="isModalOpen=false">Close</button>
+    </form>
+  </div>
+</div>

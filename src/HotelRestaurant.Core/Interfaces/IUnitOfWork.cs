@@ -1,4 +1,5 @@
 using HotelRestaurant.Core.Entities;
+using HotelRestaurant.Core.Entities.HouseKeeping;
 
 namespace HotelRestaurant.Core.Interfaces
 {
@@ -56,8 +57,16 @@ namespace HotelRestaurant.Core.Interfaces
         IGenericRepository<InventoryItem> InventoryItems { get; }
         IUserRepository ApplicationUsers { get; }
         public IGenericRepository<RefundRecord> RefundRecords { get; }
-        
+
+        #region  House Keeping
+        // IUnitOfWork.cs এর ভেতরে এই রেপোজিটরি প্রোপার্টিগুলো যোগ করুন:
+        IGenericRepository<RoomCleaning> RoomCleanings { get; }
+        IGenericRepository<HouseKeepingChecklist> HouseKeepingChecklists { get; }
+        IGenericRepository<LaundryLog> LaundryLogs { get; }
+        IGenericRepository<LaundryPayment> LaundryPayments { get; }
+        #endregion        
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
 
     }
 }

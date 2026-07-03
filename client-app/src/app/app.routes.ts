@@ -11,6 +11,15 @@ import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { UpcomingCheckinComponent } from './pages/upcoming-checkin/upcoming-checkin.component';
 import { PaymentListComponent } from './pages/payment-list/payment-list.component';
 import { AuthGuard } from './guards/auth.guard';
+import { AssignRoomCleaningComponent } from './pages/house-keeping/assign-room-cleaning/assign-room-cleaning.component';
+import { RoomCleaningComponent } from './pages/house-keeping/room-cleaning/room-cleaning.component';
+import { ChecklistComponent } from './pages/house-keeping/checklist/checklist.component';
+import { RoomQrListComponent } from './pages/house-keeping/room-qr-list/room-qr-list.component';
+import { LaundryProductsComponent } from './pages/house-keeping/laundry-products/laundry-products.component';
+import { LaundryComponent } from './pages/house-keeping/laundry/laundry.component';
+import { LaundryPaymentComponent } from './pages/house-keeping/laundry-payment/laundry-payment.component';
+
+
 
 export const routes: Routes = [
   { path: '',           redirectTo: 'dashboard', pathMatch: 'full' },
@@ -151,5 +160,20 @@ export const routes: Routes = [
     canActivate: [AuthGuard] 
   },
   //#endregion
+  //#endregion
+
+  //#region House Keeping
+{
+    path: 'housekeeping',
+    children: [
+      { path: 'assign-room-cleaning', component: AssignRoomCleaningComponent },
+      { path: 'room-cleaning', component: RoomCleaningComponent },
+      { path: 'checklist', component: ChecklistComponent },
+      { path: 'room-qrcode', component: RoomQrListComponent },
+      { path: 'product-laundry', component: LaundryProductsComponent },
+      { path: 'laundry', component: LaundryComponent },
+      { path: 'payment-record', component: LaundryPaymentComponent }
+    ]
+  }
   //#endregion
 ];

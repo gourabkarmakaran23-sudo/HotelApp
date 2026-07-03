@@ -43,22 +43,22 @@ feature/reservationstandard
 16.I  Maintenance List  :Not Done
 
 17. Tax Management
-17.A. Tax List          :Not Done
-17.B. Promocode List    :Not Done
-17.C. Cancellation Policy List :Not Done
-17.D. Aminities List    :Not Done
-17.E. Other Payment Entry      :Not Done
+17.A. Tax List          :Done
+17.B. Promocode List    :Done
+17.C. Cancellation Policy List :Done
+17.D. Aminities List    :Done
+17.E. Other Payment Entry      :Done
 
-18. Cancellation Management
-18.A. Refund Due Non-website Booking
-18.B. Refund Under Process
-18.C. Refunded
-18.D. COA(Chart-Of-Account)
+18. Cancellation Management             :Done
+18.A. Refund Due Non-website Booking    :Done
+18.B. Refund Under Process              :Done
+18.C. Refunded                          :Done
+18.D. COA(Chart-Of-Account)             :Not Done
 
 19. Room Reservation
 19.A. Booking List: Done
 19.B. Upcoming CheckIn: DOne
-19.C. Check In: DOne
+19.C. Check In: Done
 19.D. Direct CheckOut: Not DOne
 19.E. Room Status: Not Done
 19.F. Booking Extend: Not Done

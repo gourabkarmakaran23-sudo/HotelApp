@@ -1,4 +1,5 @@
 using HotelRestaurant.Core.Entities;
+using HotelRestaurant.Core.Entities.HouseKeeping;
 using HotelRestaurant.Core.Interfaces;
 using HotelRestaurant.Infrastructure.Data;
 using HotelRestaurant.Infrastructure.Repositories;
@@ -59,6 +60,12 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             InventoryItems = new GenericRepository<InventoryItem>(_context);
             // কনস্ট্রাক্টরের ভেতরে বসান:
             RefundRecords = new GenericRepository<RefundRecord>(_context);
+
+            //(Constructor) এর ভেতরে এগুলো এসাইন করুন:
+            RoomCleanings = new GenericRepository<RoomCleaning>(_context);
+            HouseKeepingChecklists = new GenericRepository<HouseKeepingChecklist>(_context);
+            LaundryLogs = new GenericRepository<LaundryLog>(_context);
+            LaundryPayments = new GenericRepository<LaundryPayment>(_context);
         }
         #region Master Data Repositories
         public IGenericRepository<OpeningBalance> OpeningBalances { get; }
@@ -116,6 +123,14 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         #region  Cancellation Management
         // নিচে প্রোপার্টি গেটার হিসেবে এক্সপোজ করুন:
         public IGenericRepository<RefundRecord> RefundRecords { get; }
+        #endregion
+        // UnitOfWork.cs এর ভেতরে এই সেকশনটি অ্যাড করুন:
+
+        #region House Keeping & Laundry Repositories
+        public IGenericRepository<RoomCleaning> RoomCleanings { get; }
+        public IGenericRepository<HouseKeepingChecklist> HouseKeepingChecklists { get; }
+        public IGenericRepository<LaundryLog> LaundryLogs { get; }
+        public IGenericRepository<LaundryPayment> LaundryPayments { get; }
         #endregion
 
         public IUserRepository ApplicationUsers
