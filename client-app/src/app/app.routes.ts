@@ -97,6 +97,13 @@ export const routes: Routes = [
     component: UpcomingCheckinComponent,
     canActivate: [AuthGuard]
   },
+//#region Dynamic Auditing Reports Engine Engine Configuration Route
+  {
+    path: 'reports/:reportType',
+    loadComponent: () => import('./pages/reports/report-engine/report-engine.component').then(m => m.ReportEngineComponent),
+    canActivate: [AuthGuard]
+  },
+  //#endregion
   //Add all Master pages here
   { path: 'currencies', loadComponent: () => import('./pages/masters/currency/currency.component').then(m => m.CurrencyComponent), canActivate: [AuthGuard] },
   { path: 'payment-methods', loadComponent: () => import('./pages/masters/payment-method/payment-method.component').then(m => m.PaymentMethodComponent), canActivate: [AuthGuard] },
