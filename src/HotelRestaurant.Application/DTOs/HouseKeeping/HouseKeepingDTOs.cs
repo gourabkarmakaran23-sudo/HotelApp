@@ -34,6 +34,13 @@ namespace HotelRestaurant.Application.DTOs
         public DateTime? ReceivedDate { get; set; }
         public string PaymentStatus { get; set; }
         public string Comments { get; set; }
+
+        // 🚀 ADD THESE THREE MISSING FIELDS FOR INVENTORY COUNTS
+        public int InUse { get; set; }
+        public int InLaundry { get; set; }
+        public int Ready { get; set; }
+
+        
     }
 
     public class LaundryPaymentDto

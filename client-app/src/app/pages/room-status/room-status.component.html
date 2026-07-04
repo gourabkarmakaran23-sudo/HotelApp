@@ -1,0 +1,38 @@
+<div class="room-status-page">
+  <div class="page-toolbar">
+    <div class="page-title">
+      <h1>Room status</h1>
+    </div>
+    <div class="search-filters">
+      <input type="date" [(ngModel)]="filterDate" class="filter-input" />
+      <select [(ngModel)]="filterStatus" class="filter-input">
+        <option value="All">All Status</option>
+        <option value="Available">Available</option>
+        <option value="Booked">Booked</option>
+      </select>
+      <input type="text" placeholder="Floor Name" [(ngModel)]="floorName" class="filter-input" />
+      <button class="btn-search" type="button">Search</button>
+    </div>
+  </div>
+
+  <div class="room-grid">
+    <div class="room-card" *ngFor="let card of filteredRooms" [class.booked]="card.status === 'Booked'">
+      <div class="room-card-content">
+        <div class="room-header">
+          <span class="floor-title">{{ card.floorName }}</span>
+          <span class="room-number">Room No. {{ card.roomNo }}</span>
+        </div>
+        <div class="room-body">
+          <p class="room-type">Room Type :{{ card.roomType }}</p>
+          <p class="room-checkout">Check Out :{{ card.checkOut }}</p>
+          <p class="room-price">{{ card.price }}</p>
+        </div>
+        <div class="room-footer">
+          <button class="status-btn" [class.booked-btn]="card.status === 'Booked'" [class.available-btn]="card.status === 'Available'">
+            {{ card.status }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

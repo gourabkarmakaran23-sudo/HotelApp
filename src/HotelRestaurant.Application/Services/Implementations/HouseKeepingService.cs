@@ -113,8 +113,8 @@ namespace HotelRestaurant.Application.Services.Implementations
         // --- Laundry Logs & Payments ---
         public async Task<IEnumerable<LaundryLogDto>> GetAllLaundryLogsAsync()
         {
-            var logs = await _uow.LaundryLogs.GetAllAsync();
-            return logs.Where(x => !x.IsDeleted).Select(x => new LaundryLogDto
+            var data = await _uow.LaundryLogs.GetAllAsync();
+            return data.Where(x => !x.IsDeleted).Select(x => new LaundryLogDto
             {
                 Id = x.Id,
                 InvoiceNo = x.InvoiceNo,
@@ -126,10 +126,14 @@ namespace HotelRestaurant.Application.Services.Implementations
                 Quantity = x.Quantity,
                 Type = x.Type,
                 SendDate = x.SendDate,
-                ReceivedDate = x.ReceivedDate,
                 PaymentStatus = x.PaymentStatus,
-                Comments = x.Comments
-            });
+                Comments = x.Comments,
+
+                // 🚀 FETCH FROM DB TO DISPLAY IN ANGULAR TABLE
+                InUse = x.InUse,
+                InLaundry = x.InLaundry,
+                Ready = x.Ready
+            }).ToList();
         }
 
         public async Task<bool> SaveLaundryLogAsync(LaundryLogDto dto)
@@ -138,8 +142,21 @@ namespace HotelRestaurant.Application.Services.Implementations
             {
                 var ex = await _uow.LaundryLogs.GetByIdAsync(dto.Id);
                 if (ex == null) return false;
-                ex.InvoiceNo = dto.InvoiceNo; ex.LaundryName = dto.LaundryName; ex.ItemName = dto.ItemName;
-                ex.ItemCost = dto.ItemCost; ex.Quantity = dto.Quantity; ex.PaymentStatus = dto.PaymentStatus;
+
+                ex.InvoiceNo = dto.InvoiceNo;
+                ex.LaundryName = dto.LaundryName;
+                ex.ItemName = dto.ItemName;
+                ex.ItemCost = dto.ItemCost;
+                ex.Quantity = dto.Quantity;
+                ex.PaymentStatus = dto.PaymentStatus;
+                ex.Comments = dto.Comments;
+                ex.Type = dto.Type;
+
+                // 🚀 UPDATE VALUES FOR EXISTING LOG ROW
+                ex.InUse = dto.InUse;
+                ex.InLaundry = dto.InLaundry;
+                ex.Ready = dto.Ready;
+
                 _uow.LaundryLogs.Update(ex);
             }
             else
@@ -156,12 +173,16 @@ namespace HotelRestaurant.Application.Services.Implementations
                     Type = dto.Type,
                     SendDate = dto.SendDate,
                     PaymentStatus = dto.PaymentStatus,
-                    Comments = dto.Comments
+                    Comments = dto.Comments,
+
+                    // 🚀 SAVE VALUES FOR NEW ROW INSERTS
+                    InUse = dto.InUse,
+                    InLaundry = dto.InLaundry,
+                    Ready = dto.Ready
                 });
             }
             return await _uow.SaveChangesAsync() > 0;
         }
-
         public async Task<IEnumerable<LaundryPaymentDto>> GetAllLaundryPaymentsAsync()
         {
             var data = await _uow.LaundryPayments.GetAllAsync();

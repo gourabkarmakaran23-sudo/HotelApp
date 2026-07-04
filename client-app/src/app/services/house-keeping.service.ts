@@ -60,6 +60,7 @@ export class HouseKeepingService {
   saveLaundryLog(dto: any): Observable<boolean> {
     return this.http.post<boolean>(`${this.hkUrl}/laundry/logs/save`, dto);
   }
+  
 
   // --- 4. Laundry Payments API Call ---
   getLaundryPayments(): Observable<any[]> {
@@ -70,9 +71,16 @@ export class HouseKeepingService {
     return this.http.post<boolean>(`${this.hkUrl}/laundry/payments/save`, dto);
   }
 
+  // 🚀 ADD THIS MISSING METHOD FOR DELETING LOGS
+  deleteLaundryLog(id: number): Observable<boolean> {
+    return this.http.delete<boolean>(`${this.hkUrl}/laundry/logs/delete/${id}`);
+  }
+
+  
   deleteLaundryPayment(id: number): Observable<boolean> {
     return this.http.delete<boolean>(`${this.hkUrl}/laundry/payments/delete/${id}`);
   }
+  
 
   getRoomQrCode(roomNo: string): Observable<Blob> {
     return this.http.get(`${this.hkUrl}/room-qr/${roomNo}`, { responseType: 'blob' });

@@ -27,5 +27,12 @@ namespace HotelRestaurant.Core.Entities.HouseKeeping
         public string PaymentStatus { get; set; } = "Pending"; // Paid, Due, Partial
         public string Comments { get; set; }
         public bool IsDeleted { get; set; } = false;
+
+        // 🚀 ADD THESE FIELDS SO ENTITY FRAMEWORK GENERATES DATABASE COLUMNS
+        public int InUse { get; set; }
+        public int InLaundry { get; set; }
+        public int Ready { get; set; }
+
+        
     }
 }
