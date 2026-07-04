@@ -1,36 +1,109 @@
-<div class="hk-container">
-  <div class="hk-header">
-    <h2>Laundry Payment</h2>
-    <button style="background: #28a745; color: white; padding: 8px 15px; border:none;" (click)="openModal()">+ Add New Payment</button>
+<div class="hk-container" style="padding: 25px; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+  
+  <div class="hk-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f4f5f7; padding-bottom: 15px;">
+    <h2 style="margin: 0; color: #2c3e50; font-weight: 700; font-size: 22px;">💰 Laundry Payment Tracking</h2>
+    <button type="button" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.2s;" (click)="openModal()">
+      + Add New Payment
+    </button>
   </div>
-  <table class="hk-table">
-    <thead>
-      <tr><th>SL</th><th>Name</th><th>Invoice No.</th><th>Laundry Name</th><th>Total Amount</th><th>Due Amount</th><th>Paid Amount</th><th>Action</th></tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let p of payments; let i = index">
-        <td>{{ i + 1 }}</td><td>{{ p.name }}</td><td>{{ p.invoiceNo }}</td><td>{{ p.laundryName }}</td><td>₹{{ p.totalAmount }}</td><td>₹{{ p.dueAmount }}</td><td>₹{{ p.paidAmount }}</td>
-        <td>
-          <button (click)="openModal(p)">Edit</button>
-          <button style="color: red;">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+
+  <div style="overflow-x: auto; border: 1px solid #e1e4e8; border-radius: 6px;">
+    <table class="hk-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+      <thead>
+        <tr style="background: #f8f9fa; color: #4a5568; border-bottom: 2px solid #e1e4e8;">
+          <th style="padding: 12px;">SL</th>
+          <th style="padding: 12px;">Responsible Name</th>
+          <th style="padding: 12px;">Invoice No.</th>
+          <th style="padding: 12px;">Laundry Vendor</th>
+          <th style="padding: 12px;">Total Amount</th>
+          <th style="padding: 12px;">Paid Amount</th>
+          <th style="padding: 12px;">Due Balance</th>
+          <th style="padding: 12px; text-align: center;">Status Badge</th>
+          <th style="padding: 12px; text-align: center;">Action Steps</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of payments; let i = index" style="border-bottom: 1px solid #edf2f7; transition: background 0.15s;">
+          <td style="padding: 12px;">{{ i + 1 }}</td>
+          <td style="padding: 12px; font-weight: 600; color: #1a202c;">{{ p.name }}</td>
+          <td style="padding: 12px; font-family: monospace; font-weight: 600; color: #4a5568;">{{ p.invoiceNo }}</td>
+          <td style="padding: 12px; color: #4a5568;">{{ p.laundryName }}</td>
+          <td style="padding: 12px; font-weight: 600; color: #2d3748;">₹{{ p.totalAmount }}</td>
+          <td style="padding: 12px; font-weight: 600; color: #38a169;">₹{{ p.paidAmount }}</td>
+          <td style="padding: 12px; font-weight: 600;" [style.color]="p.dueAmount > 0 ? '#e53e3e' : '#4a5568'">
+            ₹{{ p.dueAmount }}
+          </td>
+          <td style="padding: 12px; text-align: center;">
+            <span [style.background]="p.dueAmount <= 0 ? '#c6f6d5' : '#feebc8'" 
+                  [style.color]="p.dueAmount <= 0 ? '#22543d' : '#744210'"
+                  style="padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block;">
+              {{ p.dueAmount <= 0 ? 'Settled' : 'Due Pending' }}
+            </span>
+          </td>
+          <td style="padding: 12px; text-align: center; white-space: nowrap;">
+            <button type="button" style="background: #3182ce; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; margin-right: 8px; font-size: 13px; font-weight: 500;" (click)="openModal(p)">
+              Edit
+            </button>
+            <button type="button" style="background: #e53e3e; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500;" (click)="deletePayment(p.id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="payments.length === 0">
+          <td colspan="9" style="text-align: center; padding: 30px; color: #a0aec0; font-size: 14px;">No payment entries logged in database ledger.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
-<div class="modal-backdrop-custom" *ngIf="isModalOpen">
-  <div class="modal-box-custom">
-    <h3>Manage Laundry Payment</h3>
-    <form [formGroup]="paymentForm" (ngSubmit)="isModalOpen=false">
-      <div class="form-group-custom"><label>Name *</label><input formControlName="name" class="form-control-custom"></div>
-      <div class="form-group-custom"><label>Invoice No *</label><input formControlName="invoiceNo" class="form-custom-control form-control-custom"></div>
-      <div class="form-group-custom"><label>Laundry Name *</label><input formControlName="laundryName" class="form-control-custom"></div>
-      <div style="display: flex; gap: 10px;">
-        <div class="form-group-custom"><label>Total</label><input type="number" formControlName="totalAmount" class="form-control-custom"></div>
-        <div class="form-group-custom"><label>Paid</label><input type="number" formControlName="paidAmount" class="form-control-custom"></div>
+<div class="modal-backdrop-custom" *ngIf="isModalOpen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.4); display: flex; justify-content: center; align-items: center; z-index: 1050;">
+  <div class="modal-box-custom" style="background: #fff; border-radius: 8px; width: 600px; padding: 25px; box-sizing: border-box; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
+    
+    <h3 style="margin-top: 0; margin-bottom: 25px; color: #2d3748; border-bottom: 1px solid #edf2f7; padding-bottom: 10px;">
+      {{ paymentForm.get('id')?.value ? 'Modify' : 'Log New' }} Laundry Voucher Payment
+    </h3>
+    
+    <form [formGroup]="paymentForm" (ngSubmit)="savePayment()">
+      <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+        
+        <div class="form-group-custom">
+          <label style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px;">Responsible Staff Name *</label>
+          <input formControlName="name" class="form-control-custom" placeholder="e.g. Supervisor Name" style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+        </div>
+        
+        <div class="form-group-custom">
+          <label style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px;">Invoice No *</label>
+          <input formControlName="invoiceNo" class="form-control-custom" placeholder="e.g. INV-2024" style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+        </div>
+        
+        <div class="form-group-custom">
+          <label style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px;">Laundry Vendor Name *</label>
+          <input formControlName="laundryName" class="form-control-custom" placeholder="e.g. Apex Luxury Cleaners" style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="form-group-custom">
+            <label style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px;">Total Bill Amount (₹) *</label>
+            <input type="number" formControlName="totalAmount" class="form-control-custom" style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+          </div>
+          
+          <div class="form-group-custom">
+            <label style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px;">Paid Amount (₹) *</label>
+            <input type="number" formControlName="paidAmount" class="form-control-custom" style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+          </div>
+        </div>
+
       </div>
-      <button type="submit">Execute</button><button type="button" (click)="isModalOpen=false">Close</button>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid #edf2f7; padding-top: 18px;">
+        <button type="button" style="background: #edf2f7; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; color: #4a5568; font-weight: 500;" (click)="closeModal()">
+          Cancel
+        </button>
+        <button type="submit" style="background: #28a745; color: white; border: none; padding: 10px 24px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+          Save Transaction
+        </button>
+      </div>
     </form>
   </div>
 </div>
