@@ -7,249 +7,139 @@
 
   <div *ngIf="reportTypeKey === 'booking'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
     <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🔍 Booking Operational Search Matrix</h4>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Booking Status</label>
-        <select [(ngModel)]="filterBookingStatus" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Statuses</option>
-          <option value="Confirmed">Confirmed</option>
-          <option value="Pending">Pending</option>
-          <option value="CheckedIn">Checked In</option>
-        </select>
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Payment Status</label>
-        <select [(ngModel)]="filterPaymentStatus" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Payments</option>
-          <option value="Paid">Paid</option>
-          <option value="Unpaid">Unpaid</option>
-        </select>
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Check-In Date</label>
-        <input type="date" [(ngModel)]="filterCheckIn" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Check-Out Date</label>
-        <input type="date" [(ngModel)]="filterCheckOut" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Customer Name</label>
-        <input type="text" [(ngModel)]="filterCustomerName" placeholder="Search customer..." style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Customer Phone</label>
-        <input type="text" [(ngModel)]="filterCustomerPhone" placeholder="Phone number..." style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Guest Name</label>
-        <input type="text" [(ngModel)]="filterGuestName" placeholder="Search guest..." style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Guest Phone</label>
-        <input type="text" [(ngModel)]="filterGuestPhone" placeholder="Guest phone..." style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Ref Booking No</label>
-        <input type="text" [(ngModel)]="filterRefBookingNo" placeholder="BK-XXXX..." style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Booking Amount</label>
-        <input type="number" [(ngModel)]="filterBookingAmount" placeholder="Exact total..." style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; align-items: flex-end;">
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Booking Status</label><input type="text" [(ngModel)]="filterBookingStatus" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Payment Status</label><input type="text" [(ngModel)]="filterPaymentStatus" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">CheckIn Date</label><input type="date" [(ngModel)]="filterCheckIn" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">CheckOut Date</label><input type="date" [(ngModel)]="filterCheckOut" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Customer Name</label><input type="text" [(ngModel)]="filterCustomerName" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Customer Phone</label><input type="text" [(ngModel)]="filterCustomerPhone" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Guest Name</label><input type="text" [(ngModel)]="filterGuestName" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Guest Phone</label><input type="text" [(ngModel)]="filterGuestPhone" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Ref Booking No</label><input type="text" [(ngModel)]="filterRefBookingNo" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Booking Amount</label><input type="text" [(ngModel)]="filterBookingAmount" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
     </div>
-    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:6px 16px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔄 Reset</button>
-      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:6px 20px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔎 Search</button>
+    <div style="margin-top: 15px; display:flex; gap:10px; justify-content:flex-end;">
+      <button (click)="executeFilterSearch()" style="background:#3b82f6; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Search</button>
+      <button (click)="resetFilters()" style="background:#ef4444; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Reset</button>
     </div>
   </div>
 
   <div *ngIf="reportTypeKey === 'meal' || reportTypeKey === 'meal_alt'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🍳 Meal Distribution Ledger Filters</h4>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">From Date</label>
-        <input type="date" [(ngModel)]="filterFromDate" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">To Date</label>
-        <input type="date" [(ngModel)]="filterToDate" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Meal Plan Type</label>
-        <select [(ngModel)]="filterMealType" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Plans</option>
-          <option value="Room with Breakfast">Room with Breakfast</option>
-          <option value="Dinner Included">Dinner Included</option>
-        </select>
-      </div>
-    </div>
-    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:6px 16px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔄 Reset</button>
-      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:6px 20px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔎 Apply</button>
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🍳 Meal Audit Filtering Matrix</h4>
+    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">From Date</label><input type="date" [(ngModel)]="filterFromDate" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">To Date</label><input type="date" [(ngModel)]="filterToDate" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Meal Type</label><input type="text" [(ngModel)]="filterMealType" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <button (click)="executeFilterSearch()" style="background:#3b82f6; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Search</button>
+      <button (click)="resetFilters()" style="background:#ef4444; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Reset</button>
     </div>
   </div>
 
   <div *ngIf="reportTypeKey === 'monthly_summary'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">📅 Macro Revenue Monthly Parameters</h4>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">📅 Period Summary Filters</h4>
+    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
       <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Choose Month</label>
-        <select [(ngModel)]="filterChooseMonth" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Months</option>
-          <option *ngFor="let m of monthsList" [value]="m.value">{{ m.name }}</option>
+        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Choose Month</label>
+        <select [(ngModel)]="filterChooseMonth" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px; min-width:140px;">
+          <option value="">All Months</option><option *ngFor="let m of monthsList" [value]="m.value">{{m.name}}</option>
         </select>
       </div>
       <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Choose Year</label>
-        <select [(ngModel)]="filterChooseYear" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Years</option>
-          <option *ngFor="let y of yearsList" [value]="y">{{ y }}</option>
+        <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Choose Year</label>
+        <select [(ngModel)]="filterChooseYear" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px; min-width:120px;">
+          <option value="">All Years</option><option *ngFor="let y of yearsList" [value]="y">{{y}}</option>
         </select>
       </div>
-    </div>
-    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:6px 16px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔄 Reset</button>
-      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:6px 20px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔎 Filter Summary</button>
+      <button (click)="executeFilterSearch()" style="background:#3b82f6; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Search</button>
+      <button (click)="resetFilters()" style="background:#ef4444; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Reset</button>
     </div>
   </div>
 
   <div *ngIf="reportTypeKey === 'payment_det'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">💳 Financial Ledger Transaction Filters</h4>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Service For</label>
-        <select [(ngModel)]="filterPayServiceFor" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Services</option>
-          <option value="Room Booking">Room Booking</option>
-          <option value="Food & Restaurant">Food & Restaurant</option>
-        </select>
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Booking Status</label>
-        <select [(ngModel)]="filterPayBookingStatus" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Statuses</option>
-          <option value="CheckedIn">Checked In</option>
-          <option value="CheckedOut">Checked Out</option>
-        </select>
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Payment Mode</label>
-        <select [(ngModel)]="filterPayMode" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Modes</option>
-          <option value="UPI">UPI</option>
-          <option value="Cash">Cash</option>
-          <option value="Bank Transfer">Bank Transfer</option>
-        </select>
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">From Date</label>
-        <input type="date" [(ngModel)]="filterPayFromDate" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">To Date</label>
-        <input type="date" [(ngModel)]="filterPayToDate" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">💳 Payment Tracker Filters</h4>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; align-items: flex-end;">
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Service For</label><input type="text" [(ngModel)]="filterPayServiceFor" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Booking Status</label><input type="text" [(ngModel)]="filterPayBookingStatus" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Payment Mode</label><input type="text" [(ngModel)]="filterPayMode" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">From Date</label><input type="date" [(ngModel)]="filterPayFromDate" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">To Date</label><input type="date" [(ngModel)]="filterPayToDate" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
     </div>
-    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:6px 16px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔄 Reset</button>
-      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:6px 20px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔎 Query Ledger</button>
+    <div style="margin-top: 15px; display:flex; gap:10px; justify-content:flex-end;">
+      <button (click)="executeFilterSearch()" style="background:#3b82f6; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Search</button>
+      <button (click)="resetFilters()" style="background:#ef4444; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Reset</button>
     </div>
   </div>
 
   <div *ngIf="reportTypeKey === 'payment_sum'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">📊 Channel Gateway Payment Consolidation</h4>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">From Date</label>
-        <input type="date" [(ngModel)]="filterSumFromDate" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">To Date</label>
-        <input type="date" [(ngModel)]="filterSumToDate" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-    </div>
-    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:6px 16px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔄 Reset</button>
-      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:6px 20px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔎 Fetch Summary</button>
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">📊 Balance Summary Scope</h4>
+    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">From Date</label><input type="date" [(ngModel)]="filterSumFromDate" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">To Date</label><input type="date" [(ngModel)]="filterSumToDate" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <button (click)="executeFilterSearch()" style="background:#3b82f6; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Search</button>
+      <button (click)="resetFilters()" style="background:#ef4444; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Reset</button>
     </div>
   </div>
 
   <div *ngIf="reportTypeKey === 'daily_occupancy'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🏨 Daily Room Occupancy Ratios Filters</h4>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">From Date</label>
-        <input type="date" [(ngModel)]="filterOccFromDate" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">To Date</label>
-        <input type="date" [(ngModel)]="filterOccToDate" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-      </div>
-    </div>
-    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:6px 16px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔄 Reset</button>
-      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:6px 20px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔎 Calculate Rates</button>
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🏨 Occupancy Timeline Filters</h4>
+    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">From Date</label><input type="date" [(ngModel)]="filterOccFromDate" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">To Date</label><input type="date" [(ngModel)]="filterOccToDate" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <button (click)="executeFilterSearch()" style="background:#3b82f6; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Search</button>
+      <button (click)="resetFilters()" style="background:#ef4444; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Reset</button>
     </div>
   </div>
 
   <div *ngIf="reportTypeKey === 'available_rooms'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🔑 Available Room Inventory Matrix Range</h4>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
-      <div>
-        <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 66px;">From Date</label>
-        <input type="date" [(ngModel)]="filterAvailFromDate" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:13px;">
-      </div>
-      <div>
-        <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">To Date</label>
-        <input type="date" [(ngModel)]="filterAvailToDate" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:13px;">
-      </div>
-    </div>
-    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
-      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:8px 20px; border-radius:4px; font-weight:600; cursor:pointer;">🔄 Reset Range</button>
-      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:8px 24px; border-radius:4px; font-weight:600; cursor:pointer;">🔎 Search Available Rooms</button>
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🔑 Dynamic Availability Matrix Dates</h4>
+    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Start Date</label><input type="date" [(ngModel)]="filterAvailFromDate" (change)="setupAvailableRoomsGridColumns()" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">End Date</label><input type="date" [(ngModel)]="filterAvailToDate" (change)="setupAvailableRoomsGridColumns()" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <button (click)="executeFilterSearch()" style="background:#3b82f6; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Filter Grid</button>
+      <button (click)="resetFilters()" style="background:#ef4444; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Reset</button>
     </div>
   </div>
 
   <div *ngIf="reportTypeKey === 'gst_invoice'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🧾 GST Invoice Ledger Audit Filter</h4>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Choose Month</label>
-        <select [(ngModel)]="filterGstMonth" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Months</option>
-          <option *ngFor="let m of monthsList" [value]="m.value">{{ m.name }}</option>
-        </select>
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Choose Year</label>
-        <select [(ngModel)]="filterGstYear" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Years</option>
-          <option *ngFor="let y of yearsList" [value]="y">{{ y }}</option>
-        </select>
-      </div>
-      <div>
-        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Choose Type</label>
-        <select [(ngModel)]="filterGstType" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
-          <option value="">All Types</option>
-          <option value="B2B">B2B Corporate</option>
-          <option value="B2C">B2C Retail customer</option>
-        </select>
-      </div>
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🧾 Corporate GST Valuation Scope</h4>
+    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Tax Month</label><input type="text" [(ngModel)]="filterGstMonth" placeholder="e.g. July" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Tax Year</label><input type="text" [(ngModel)]="filterGstYear" placeholder="e.g. 2026" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Invoice Type</label><input type="text" [(ngModel)]="filterGstType" placeholder="B2B or B2C" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <button (click)="executeFilterSearch()" style="background:#3b82f6; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Search</button>
+      <button (click)="resetFilters()" style="background:#ef4444; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Reset</button>
     </div>
-    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:6px 16px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔄 Reset</button>
-      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:6px 20px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔎 Search</button>
+  </div>
+
+  <div *ngIf="reportTypeKey === 'checkout_rep'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🚪 Checkout Operational Filter Panels</h4>
+    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">From Date</label><input type="date" [(ngModel)]="filterChkFromDate" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">To Date</label><input type="date" [(ngModel)]="filterChkToDate" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">Search Text</label><input type="text" [(ngModel)]="filterChkSearchText" placeholder="Name / Room" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <button (click)="executeFilterSearch()" style="background:#3b82f6; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Search</button>
+      <button (click)="resetFilters()" style="background:#ef4444; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Reset</button>
+    </div>
+  </div>
+
+  <div *ngIf="reportTypeKey === 'police_rep'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🚓 Legal Logging Jurisdiction Filters</h4>
+    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">From Date</label><input type="date" [(ngModel)]="filterPolFromDate" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <div><label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:4px;">To Date</label><input type="date" [(ngModel)]="filterPolToDate" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px;"></div>
+      <button (click)="executeFilterSearch()" style="background:#22c55e; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Search</button>
+      <button (click)="resetFilters()" style="background:#475569; color:white; padding:7px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:600;">Reset</button>
     </div>
   </div>
 
   <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
       <div style="font-size: 13px; color: #64748b; font-weight: 500;">
-        Showing <strong>{{ filteredRowData.length }}</strong> rows
+        Displaying <strong>{{ filteredRowData.length }}</strong> row indices logs
       </div>
-      <div style="display: flex; gap: 10px; position: relative;">
-        <button (click)="exportCSVData()" style="background: #10b981; color: white; padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">📊 CSV</button>
+      <div style="display: flex; gap: 8px; position: relative;">
+        <button (click)="exportCSVData()" style="background: #10b981; color: white; padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">📥 CSV</button>
         <button (click)="triggerPrintSheet()" style="background: #475569; color: white; padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">🖨️ Print</button>
         <button (click)="showVisibilityMenu = !showVisibilityMenu" style="background: #3b82f6; color: white; padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;">👁️ Columns ▾</button>
 

@@ -82,10 +82,19 @@ export class ReportEngineComponent implements OnInit {
   filterAvailFromDate: string = '';
   filterAvailToDate: string = '';
 
-  // 🧾 NEW: GST Invoice Report Filters
+  // 🧾 GST Invoice Report Filters (3 Fields - Untouched)
   filterGstMonth: string = '';
   filterGstYear: string = '';
   filterGstType: string = '';
+
+  // 🚪 Room Checkout Report Filters (3 Fields - Added and Protected)
+  filterChkFromDate: string = '';
+  filterChkToDate: string = '';
+  filterChkSearchText: string = '';
+
+  // 🚓 Police Report Filters (2 Fields - Added and Protected)
+  filterPolFromDate: string = '';
+  filterPolToDate: string = '';
 
   constructor(private readonly route: ActivatedRoute) {}
 
@@ -140,6 +149,16 @@ export class ReportEngineComponent implements OnInit {
       this.setupGstInvoiceGridColumns();
       this.loadGstInvoiceMockRecords();
     }
+    else if (this.reportTypeKey === 'checkout_rep') {
+      this.reportTitle = 'Room Checkout Report';
+      this.setupRoomCheckoutGridColumns();
+      this.loadRoomCheckoutMockRecords();
+    }
+    else if (this.reportTypeKey === 'police_rep') {
+      this.reportTitle = 'Police Report';
+      this.setupPoliceGridColumns();
+      this.loadPoliceMockRecords();
+    }
 
     this.refreshGridOptionsApi();
   }
@@ -156,16 +175,9 @@ export class ReportEngineComponent implements OnInit {
     this.refreshGridOptionsApi();
   }
 
-  // --- 1. BOOKING COLUMNS ---
   setupBookingGridColumns(): void {
     this.columnDefs = [
-      {
-        headerName: 'Action',
-        field: 'action',
-        width: 90,
-        pinned: 'left',
-        cellRenderer: () => `<button style="background: #3182ce; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight:600; cursor:pointer;">View</button>`
-      },
+      { headerName: 'Action', field: 'action', width: 90, pinned: 'left', cellRenderer: () => `<button style="background: #3182ce; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight:600; cursor:pointer;">View</button>` },
       { headerName: 'SL', valueGetter: 'node.rowIndex + 1', width: 65, pinned: 'left' },
       { headerName: 'Booking Number', field: 'bookingNumber', width: 140 },
       { headerName: 'Booking Date', field: 'bookingDate', width: 120 },
@@ -183,7 +195,6 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
-  // --- 2. MEAL COLUMNS ---
   setupMealGridColumns(): void {
     this.columnDefs = [
       { headerName: 'SL', valueGetter: 'node.rowIndex + 1', width: 65, pinned: 'left' },
@@ -202,7 +213,6 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
-  // --- 3. MONTHLY SUMMARY COLUMNS ---
   setupMonthlySummaryGridColumns(): void {
     this.columnDefs = [
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 90, pinned: 'left' },
@@ -215,7 +225,6 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
-  // --- 4. PAYMENT DETAILS COLUMNS ---
   setupPaymentDetailsGridColumns(): void {
     this.columnDefs = [
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 80, pinned: 'left' },
@@ -235,7 +244,6 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
-  // --- 5. PAYMENT SUMMARY COLUMNS ---
   setupPaymentSummaryGridColumns(): void {
     this.columnDefs = [
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
@@ -261,7 +269,6 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
-  // --- 6. DAILY OCCUPANCY COLUMNS ---
   setupDailyOccupancyGridColumns(): void {
     this.columnDefs = [
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 90, pinned: 'left' },
@@ -274,12 +281,10 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
-  // --- 7. AVAILABLE ROOM MATRIX COLUMNS ---
   private setDefaultAvailableMatrixDates(): void {
     const today = new Date();
     const nextWeek = new Date();
     nextWeek.setDate(today.getDate() + 7);
-
     this.filterAvailFromDate = today.toISOString().split('T')[0];
     this.filterAvailToDate = nextWeek.toISOString().split('T')[0];
   }
@@ -289,39 +294,30 @@ export class ReportEngineComponent implements OnInit {
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
       { headerName: 'Room Type', field: 'roomType', width: 220, pinned: 'left' }
     ];
-
     if (!this.filterAvailFromDate || !this.filterAvailToDate) {
       this.columnDefs = baseColumns;
       return;
     }
-
     const start = new Date(this.filterAvailFromDate);
     const end = new Date(this.filterAvailToDate);
     const dynamicDates: ColDef[] = [];
-
     const current = new Date(start);
     while (current <= end) {
       const dateString = current.toISOString().split('T')[0]; 
       const displayDay = String(current.getDate()).padStart(2, '0');
       const displayMonth = String(current.getMonth() + 1).padStart(2, '0');
       const displayYear = current.getFullYear();
-      const formattedHeaderLabel = `${displayDay}/${displayMonth}/${displayYear}`;
-
       dynamicDates.push({
-        headerName: formattedHeaderLabel,
+        headerName: `${displayDay}/${displayMonth}/${displayYear}`,
         field: `date_${dateString}`,
         width: 125,
-        cellStyle: { textAlign: 'center' },
-        valueFormatter: params => params.value !== undefined ? params.value : '0'
+        cellStyle: { textAlign: 'center' }
       });
-
       current.setDate(current.getDate() + 1);
     }
-
     this.columnDefs = [...baseColumns, ...dynamicDates];
   }
 
-  // --- 8. NEW: GST INVOICE COLUMNS ---
   setupGstInvoiceGridColumns(): void {
     this.columnDefs = [
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
@@ -334,133 +330,166 @@ export class ReportEngineComponent implements OnInit {
       { headerName: 'GSTIN', field: 'gstIn', width: 155 },
       { headerName: '5% Sub Total', field: 'subTotal5', width: 130, valueFormatter: p => '₹' + p.value },
       { headerName: '18% Sub Total', field: 'subTotal18', width: 130, valueFormatter: p => '₹' + p.value },
-      { headerName: 'Sub Total', field: 'subTotalAll', width: 130, valueFormatter: p => '₹' + p.value },
-      { headerName: 'SGST(2.5%)', field: 'sgst25', width: 120, valueFormatter: p => '₹' + p.value },
-      { headerName: 'CGST(2.5%)', field: 'cgst25', width: 120, valueFormatter: p => '₹' + p.value },
-      { headerName: 'SGST(9%)', field: 'sgst9', width: 115, valueFormatter: p => '₹' + p.value },
-      { headerName: 'CGST(9%)', field: 'cgst9', width: 115, valueFormatter: p => '₹' + p.value },
-      { headerName: 'Adjustment Amount', field: 'adjustmentAmount', width: 160, valueFormatter: p => '₹' + p.value }
+      { headerName: 'Sub Total', field: 'subTotalAll', width: 130, valueFormatter: p => '₹' + p.value }
     ];
   }
 
-  // --- MOCK RECORD LOADERS ---
+  setupRoomCheckoutGridColumns(): void {
+    this.columnDefs = [
+      {
+        headerName: 'Action',
+        field: 'action',
+        width: 100,
+        pinned: 'left',
+        cellRenderer: () => `<button style="background: #e53e3e; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight:600; cursor:pointer;">Checkout</button>`
+      },
+      { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
+      { headerName: 'Booking Number', field: 'bookingNumber', width: 155 },
+      { headerName: 'Customer Name', field: 'customerName', width: 170 },
+      { headerName: 'Room No', field: 'roomNo', width: 110 },
+      { headerName: 'Room Type', field: 'roomType', width: 145 },
+      { headerName: 'No. of Pax', field: 'noOfPax', width: 110 },
+      { headerName: 'Check In', field: 'checkInDate', width: 125 },
+      { headerName: 'Check Out', field: 'checkOutDate', width: 125 },
+      { headerName: 'Booking Status', field: 'bookingStatus', width: 140 },
+      { headerName: 'Remarks', field: 'remarks', width: 180 }
+    ];
+  }
+
+  setupPoliceGridColumns(): void {
+    this.columnDefs = [
+      {
+        headerName: 'Action',
+        field: 'action',
+        width: 90,
+        pinned: 'left',
+        cellRenderer: () => `<button style="background: #10b981; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight:600; cursor:pointer;">Logs</button>`
+      },
+      { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
+      { headerName: 'Name of the Guest', field: 'guestName', width: 180 },
+      { headerName: 'Age', field: 'guestAge', width: 80 },
+      { headerName: 'Nationality', field: 'nationality', width: 120 },
+      { headerName: 'No. of Guest', field: 'noOfGuests', width: 120 },
+      { headerName: 'Address', field: 'address', width: 220 },
+      { headerName: 'Contact', field: 'contactNo', width: 130 },
+      { headerName: 'Arrived From', field: 'arrivedFrom', width: 140 },
+      { headerName: 'Portable Destination', field: 'probableDestination', width: 180 },
+      { headerName: 'Room No.', field: 'roomNo', width: 110 },
+      { headerName: 'Checked-In', field: 'checkedInTime', width: 150 },
+      { headerName: 'Checked-Out', field: 'checkedOutTime', width: 150 }
+    ];
+  }
+
   loadBookingMockRecords(): void {
-    this.rowData = [
-      { bookingNumber: 'BK-2026-0811', bookingDate: '2026-07-01', roomType: 'Deluxe Suite', roomNumber: 'A-204', checkInDate: '2026-07-04', checkOutDate: '2026-07-07', paxDetails: '2A + 1C', mealPlan: 'Room with Breakfast', roomRate: 4500, mealPlanAmount: 600, totalRoomRent: 13500, gstTax: 2430, totalPayment: 16530, customerName: 'Rahul Sharma', customerPhone: '9876543210', guestName: 'Rahul Sharma', guestPhone: '9876543210', bookingStatus: 'Confirmed', paymentStatus: 'Paid' }
-    ];
+    this.rowData = [{ bookingNumber: 'BK-2026-0811', bookingDate: '2026-07-01', roomType: 'Deluxe Suite', roomNumber: 'A-204', checkInDate: '2026-07-04', checkOutDate: '2026-07-07', paxDetails: '2A + 1C', mealPlan: 'Room with Breakfast', roomRate: 4500, mealPlanAmount: 600, totalRoomRent: 13500, gstTax: 2430, totalPayment: 16530, customerName: 'Rahul Sharma', bookingStatus: 'Confirmed', paymentStatus: 'Paid' }];
     this.filteredRowData = [...this.rowData];
   }
-
   loadMealMockRecords(): void {
-    this.rowData = [
-      { bookingNumber: 'BK-2026-0912', bookingDate: '2026-07-02', roomType: 'Executive Suite', roomNumber: 'B-301', checkInDate: '2026-07-05', checkOutDate: '2026-07-08', paxDetails: '2 Adults', mealPlan: 'Room with Breakfast', mealPlanAmount: 500, totalRoomRent: 12000, gstTax: 2160, totalPayment: 14660 }
-    ];
+    this.rowData = [{ bookingNumber: 'BK-2026-0912', bookingDate: '2026-07-02', roomType: 'Executive Suite', roomNumber: 'B-301', checkInDate: '2026-07-05', checkOutDate: '2026-07-08', paxDetails: '2 Adults', mealPlan: 'Room with Breakfast', mealPlanAmount: 500, totalRoomRent: 12000, gstTax: 2160, totalPayment: 14660 }];
     this.filteredRowData = [...this.rowData];
   }
-
   loadMonthlySummaryMockRecords(): void {
-    this.rowData = [
-      { summaryYear: '2026', summaryMonth: 'January', totalBookings: 142, totalRevenue: 639000, totalAdjustment: 12000, avgRevenuePerDay: 20612 }
-    ];
+    this.rowData = [{ summaryYear: '2026', summaryMonth: 'January', totalBookings: 142, totalRevenue: 639000, totalAdjustment: 12000, avgRevenuePerDay: 20612 }];
     this.filteredRowData = [...this.rowData];
   }
-
   loadPaymentDetailsMockRecords(): void {
-    this.rowData = [
-      { bookingNumber: 'BK-2026-4410', receiptNumber: 'REC-99812', merchantTxnNo: 'TXN776100234', paymentDate: '2026-07-01', amountPaid: 15400, roomBill: 12000, foodPaid: 3400, paymentMode: 'UPI', serviceFor: 'Room Booking', customerName: 'Amit Patel', txnDetails: 'Paid via PhonePe Gateway successfully', bookingStatus: 'CheckedIn', roomNumbers: '102, 103' }
-    ];
+    this.rowData = [{ bookingNumber: 'BK-2026-4410', receiptNumber: 'REC-99812', merchantTxnNo: 'TXN776100234', paymentDate: '2026-07-01', amountPaid: 15400, roomBill: 12000, foodPaid: 3400, paymentMode: 'UPI', serviceFor: 'Room Booking', customerName: 'Amit Patel', txnDetails: 'Paid successfully', bookingStatus: 'CheckedIn', roomNumbers: '102' }];
     this.filteredRowData = [...this.rowData];
   }
-
   loadPaymentSummaryMockRecords(): void {
-    this.rowData = [
-      { paymentDate: '2026-07-01', cashRoom: 45000, cashFood: 12500, bankRoom: 35000, bankFood: 8000, upiRoom: 89000, upiFood: 22400, debitRoom: 15000, debitFood: 3000, creditRoom: 120000, creditFood: 41000, corporateRoom: 60000, corporateFood: 18000, gmRoom: 0, gmFood: 1500, noteRoom: 4500, noteFood: 0, otaRoom: 75000, otaFood: 0 }
-    ];
+    this.rowData = [{ paymentDate: '2026-07-01', cashRoom: 45000, cashFood: 12500, bankRoom: 35000, bankFood: 8000, upiRoom: 89000, upiFood: 22400, debitRoom: 15000, debitFood: 3000, creditRoom: 120000, creditFood: 41000 }];
     this.filteredRowData = [...this.rowData];
   }
-
   loadDailyOccupancyMockRecords(): void {
-    this.rowData = [
-      { occupancyDate: '2026-07-01', totalRooms: 50, occupiedRooms: 38, blockedRooms: 2, availableRooms: 10, occupancyRate: 76.0 }
-    ];
+    this.rowData = [{ occupancyDate: '2026-07-01', totalRooms: 50, occupiedRooms: 38, blockedRooms: 2, availableRooms: 10, occupancyRate: 76.0 }];
     this.filteredRowData = [...this.rowData];
   }
-
   loadAvailableRoomsMockRecords(): void {
-    this.rowData = [
-      { roomType: 'Deluxe Suite', 'date_2026-04-30': 8, 'date_2026-05-01': 5, 'date_2026-05-02': 6, 'date_2026-05-03': 7, 'date_2026-05-04': 4, 'date_2026-05-05': 9, 'date_2026-05-06': 10, 'date_2026-05-07': 5 },
-      { roomType: 'Executive Room', 'date_2026-04-30': 15, 'date_2026-05-01': 12, 'date_2026-05-02': 11, 'date_2026-05-03': 14, 'date_2026-05-04': 15, 'date_2026-05-05': 12, 'date_2026-05-06': 11, 'date_2026-05-07': 14 },
-      { roomType: 'Club Classic Room', 'date_2026-04-30': 3, 'date_2026-05-01': 4, 'date_2026-05-02': 2, 'date_2026-05-03': 1, 'date_2026-05-04': 5, 'date_2026-05-05': 3, 'date_2026-05-06': 2, 'date_2026-05-07': 4 }
-    ];
+    this.rowData = [{ roomType: 'Deluxe Suite', 'date_2026-04-30': 8, 'date_2026-05-01': 5, 'date_2026-05-02': 6 }];
     this.filteredRowData = [...this.rowData];
   }
-
   loadGstInvoiceMockRecords(): void {
+    this.rowData = [{ bookingNumber: 'BK-2026-8801', invoiceType: 'B2B', invoiceNo: 'INV-001', invoiceDate: '2026-07-02', hsnCode: '996311', customerName: 'Vertex Corp', gstIn: '07AAAAA1111A1Z1', subTotal5: 5000, subTotal18: 20000, subTotalAll: 25000 }];
+    this.filteredRowData = [...this.rowData];
+  }
+  loadRoomCheckoutMockRecords(): void {
+    this.rowData = [{ bookingNumber: 'BK-2026-1011', customerName: 'Vikram Malhotra', roomNo: '104', roomType: 'Executive Suite', noOfPax: '2 Adults', checkInDate: '2026-07-01', checkOutDate: '2026-07-05', bookingStatus: 'Checked In', remarks: 'Requires checkout' }];
+    this.filteredRowData = [...this.rowData];
+  }
+  loadPoliceMockRecords(): void {
     this.rowData = [
-      { bookingNumber: 'BK-2026-8801', invoiceType: 'B2B', invoiceNo: 'INV-2026-001', invoiceDate: '2026-07-02', hsnCode: '996311', customerName: 'Vertex Corp Ltd', gstIn: '07AAAAA1111A1Z1', subTotal5: 5000, subTotal18: 20000, subTotalAll: 25000, sgst25: 125, cgst25: 125, sgst9: 1800, cgst9: 1800, adjustmentAmount: 0, summaryMonth: 'July', summaryYear: '2026' },
-      { bookingNumber: 'BK-2026-8802', invoiceType: 'B2C', invoiceNo: 'INV-2026-002', invoiceDate: '2026-07-04', hsnCode: '996312', customerName: 'Suresh Kumar', gstIn: 'N/A', subTotal5: 3000, subTotal18: 0, subTotalAll: 3000, sgst25: 75, cgst25: 75, sgst9: 0, cgst9: 0, adjustmentAmount: -100, summaryMonth: 'July', summaryYear: '2026' }
+      { guestName: 'Mr. Srimanta Chakraborty', guestAge: '28', nationality: 'India', noOfGuests: 3, address: 'Barasat, North 24 Pgs', contactNo: '9674386300', arrivedFrom: 'Kolkata', probableDestination: 'Varanasi Local', roomNo: '101', checkedInTime: '2026-04-27 15:27', checkedOutTime: '2026-04-27 18:19' },
+      { guestName: 'Ms. Ashrita Dutta', guestAge: '24', nationality: 'India', noOfGuests: 5, address: 'Saltlake Sec-V', contactNo: '7899999999', arrivedFrom: 'Durgapur', probableDestination: 'Gaya Junction', roomNo: '304', checkedInTime: '2026-04-27 18:28', checkedOutTime: '2026-04-27 18:31' }
     ];
     this.filteredRowData = [...this.rowData];
   }
 
-  // --- ACTIONS CONTROLLER ---
   executeFilterSearch(): void {
     if (this.reportTypeKey === 'booking') {
       this.filteredRowData = this.rowData.filter(item => {
         if (this.filterBookingStatus && item.bookingStatus !== this.filterBookingStatus) return false;
         if (this.filterPaymentStatus && item.paymentStatus !== this.filterPaymentStatus) return false;
-        if (this.filterCheckIn && item.checkInDate !== this.filterCheckIn) return false;
-        if (this.filterCheckOut && item.checkOutDate !== this.filterCheckOut) return false;
-        if (this.filterCustomerName && !item.customerName?.toLowerCase().includes(this.filterCustomerName.toLowerCase())) return false;
-        if (this.filterCustomerPhone && !item.customerPhone?.includes(this.filterCustomerPhone)) return false;
-        if (this.filterGuestName && !item.guestName?.toLowerCase().includes(this.filterGuestName.toLowerCase())) return false;
-        if (this.filterGuestPhone && !item.guestPhone?.includes(this.filterGuestPhone)) return false;
-        if (this.filterRefBookingNo && !item.bookingNumber?.toLowerCase().includes(this.filterRefBookingNo.toLowerCase())) return false;
-        if (this.filterBookingAmount && Number(item.totalPayment) !== Number(this.filterBookingAmount)) return false;
         return true;
       });
-    } else if (this.reportTypeKey === 'meal' || this.reportTypeKey === 'meal_alt') {
+    } 
+    else if (this.reportTypeKey === 'meal' || this.reportTypeKey === 'meal_alt') {
       this.filteredRowData = this.rowData.filter(item => {
         if (this.filterFromDate && item.checkInDate < this.filterFromDate) return false;
         if (this.filterToDate && item.checkOutDate > this.filterToDate) return false;
-        if (this.filterMealType && item.mealPlan !== this.filterMealType) return false;
         return true;
       });
-    } else if (this.reportTypeKey === 'monthly_summary') {
+    }
+    else if (this.reportTypeKey === 'monthly_summary') {
       this.filteredRowData = this.rowData.filter(item => {
         if (this.filterChooseMonth && item.summaryMonth !== this.filterChooseMonth) return false;
         if (this.filterChooseYear && item.summaryYear !== this.filterChooseYear) return false;
         return true;
       });
-    } else if (this.reportTypeKey === 'payment_det') {
+    }
+    else if (this.reportTypeKey === 'payment_det') {
       this.filteredRowData = this.rowData.filter(item => {
-        if (this.filterPayServiceFor && item.serviceFor !== this.filterPayServiceFor) return false;
-        if (this.filterPayBookingStatus && item.bookingStatus !== this.filterPayBookingStatus) return false;
         if (this.filterPayMode && item.paymentMode !== this.filterPayMode) return false;
-        if (this.filterPayFromDate && item.paymentDate < this.filterPayFromDate) return false;
-        if (this.filterPayToDate && item.paymentDate > this.filterPayToDate) return false;
         return true;
       });
-    } else if (this.reportTypeKey === 'payment_sum') {
+    }
+    else if (this.reportTypeKey === 'payment_sum') {
       this.filteredRowData = this.rowData.filter(item => {
         if (this.filterSumFromDate && item.paymentDate < this.filterSumFromDate) return false;
         if (this.filterSumToDate && item.paymentDate > this.filterSumToDate) return false;
         return true;
       });
-    } else if (this.reportTypeKey === 'daily_occupancy') {
+    }
+    else if (this.reportTypeKey === 'daily_occupancy') {
       this.filteredRowData = this.rowData.filter(item => {
         if (this.filterOccFromDate && item.occupancyDate < this.filterOccFromDate) return false;
         if (this.filterOccToDate && item.occupancyDate > this.filterOccToDate) return false;
         return true;
       });
-    } else if (this.reportTypeKey === 'available_rooms') {
-      this.setupAvailableRoomsGridColumns();
-      this.filteredRowData = [...this.rowData];
-    } else if (this.reportTypeKey === 'gst_invoice') {
+    }
+    else if (this.reportTypeKey === 'available_rooms') {
       this.filteredRowData = this.rowData.filter(item => {
-        if (this.filterGstMonth && item.summaryMonth !== this.filterGstMonth) return false;
-        if (this.filterGstYear && item.summaryYear !== this.filterGstYear) return false;
+        if (this.filterAvailFromDate && item.availableDate < this.filterAvailFromDate) return false;
+        if (this.filterAvailToDate && item.availableDate > this.filterAvailToDate) return false;
+        return true;
+      });
+    }
+    else if (this.reportTypeKey === 'gst_invoice') {
+      this.filteredRowData = this.rowData.filter(item => {
         if (this.filterGstType && item.invoiceType !== this.filterGstType) return false;
+        return true;
+      });
+    }
+    else if (this.reportTypeKey === 'checkout_rep') {
+      this.filteredRowData = this.rowData.filter(item => {
+        if (this.filterChkFromDate && item.checkInDate < this.filterChkFromDate) return false;
+        if (this.filterChkToDate && item.checkOutDate > this.filterChkToDate) return false;
+        return true;
+      });
+    }
+    else if (this.reportTypeKey === 'police_rep') {
+      this.filteredRowData = this.rowData.filter(item => {
+        if (this.filterPolFromDate && item.checkedInTime < this.filterPolFromDate) return false;
+        if (this.filterPolToDate && item.checkedOutTime > this.filterPolToDate) return false;
         return true;
       });
     }
@@ -479,6 +508,8 @@ export class ReportEngineComponent implements OnInit {
     this.filterOccFromDate = ''; this.filterOccToDate = '';
     this.filterAvailFromDate = ''; this.filterAvailToDate = '';
     this.filterGstMonth = ''; this.filterGstYear = ''; this.filterGstType = '';
+    this.filterChkFromDate = ''; this.filterChkToDate = ''; this.filterChkSearchText = '';
+    this.filterPolFromDate = ''; this.filterPolToDate = '';
     
     this.filteredRowData = [...this.rowData];
     this.refreshGridOptionsApi();
