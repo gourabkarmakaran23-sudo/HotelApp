@@ -82,15 +82,10 @@ export class ReportEngineComponent implements OnInit {
   filterAvailFromDate: string = '';
   filterAvailToDate: string = '';
 
-  // 🧾 GST Invoice Report Filters (3 Fields - Untouched)
+  // 🧾 NEW: GST Invoice Report Filters
   filterGstMonth: string = '';
   filterGstYear: string = '';
   filterGstType: string = '';
-
-  // 🚪 NEW: Room Checkout Report Filters
-  filterChkFromDate: string = '';
-  filterChkToDate: string = '';
-  filterChkSearchText: string = '';
 
   constructor(private readonly route: ActivatedRoute) {}
 
@@ -144,11 +139,6 @@ export class ReportEngineComponent implements OnInit {
       this.reportTitle = 'GST Invoice Report';
       this.setupGstInvoiceGridColumns();
       this.loadGstInvoiceMockRecords();
-    }
-    else if (this.reportTypeKey === 'checkout_rep') {
-      this.reportTitle = 'Room Checkout Report';
-      this.setupRoomCheckoutGridColumns();
-      this.loadRoomCheckoutMockRecords();
     }
 
     this.refreshGridOptionsApi();
@@ -331,7 +321,7 @@ export class ReportEngineComponent implements OnInit {
     this.columnDefs = [...baseColumns, ...dynamicDates];
   }
 
-  // --- 8. GST INVOICE COLUMNS ---
+  // --- 8. NEW: GST INVOICE COLUMNS ---
   setupGstInvoiceGridColumns(): void {
     this.columnDefs = [
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
@@ -350,29 +340,6 @@ export class ReportEngineComponent implements OnInit {
       { headerName: 'SGST(9%)', field: 'sgst9', width: 115, valueFormatter: p => '₹' + p.value },
       { headerName: 'CGST(9%)', field: 'cgst9', width: 115, valueFormatter: p => '₹' + p.value },
       { headerName: 'Adjustment Amount', field: 'adjustmentAmount', width: 160, valueFormatter: p => '₹' + p.value }
-    ];
-  }
-
-  // --- 9. NEW: ROOM CHECKOUT COLUMNS ---
-  setupRoomCheckoutGridColumns(): void {
-    this.columnDefs = [
-      {
-        headerName: 'Action',
-        field: 'action',
-        width: 100,
-        pinned: 'left',
-        cellRenderer: () => `<button style="background: #e53e3e; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight:600; cursor:pointer;">Checkout</button>`
-      },
-      { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
-      { headerName: 'Booking Number', field: 'bookingNumber', width: 155 },
-      { headerName: 'Customer Name', field: 'customerName', width: 170 },
-      { headerName: 'Room No', field: 'roomNo', width: 110 },
-      { headerName: 'Room Type', field: 'roomType', width: 145 },
-      { headerName: 'No. of Pax', field: 'noOfPax', width: 110 },
-      { headerName: 'Check In', field: 'checkInDate', width: 125 },
-      { headerName: 'Check Out', field: 'checkOutDate', width: 125 },
-      { headerName: 'Booking Status', field: 'bookingStatus', width: 140 },
-      { headerName: 'Remarks', field: 'remarks', width: 180 }
     ];
   }
 
@@ -430,15 +397,8 @@ export class ReportEngineComponent implements OnInit {
 
   loadGstInvoiceMockRecords(): void {
     this.rowData = [
-      { bookingNumber: 'BK-2026-8801', invoiceType: 'B2B', invoiceNo: 'INV-2026-001', invoiceDate: '2026-07-02', hsnCode: '996311', customerName: 'Vertex Corp Ltd', gstIn: '07AAAAA1111A1Z1', subTotal5: 5000, subTotal18: 20000, subTotalAll: 25000, sgst25: 125, cgst25: 125, sgst9: 1800, cgst9: 1800, adjustmentAmount: 0, summaryMonth: 'July', summaryYear: '2026' }
-    ];
-    this.filteredRowData = [...this.rowData];
-  }
-
-  loadRoomCheckoutMockRecords(): void {
-    this.rowData = [
-      { bookingNumber: 'BK-2026-1011', customerName: 'Vikram Malhotra', roomNo: '104', roomType: 'Executive Suite', noOfPax: '2 Adults', checkInDate: '2026-07-01', checkOutDate: '2026-07-05', bookingStatus: 'Checked In', remarks: 'Requires early check-out billing' },
-      { bookingNumber: 'BK-2026-1012', customerName: 'Priya Sundaram', roomNo: '205', roomType: 'Deluxe Suite', noOfPax: '1 Adult', checkInDate: '2026-07-02', checkOutDate: '2026-07-06', bookingStatus: 'Checked In', remarks: 'Corporate bill settlement pending' }
+      { bookingNumber: 'BK-2026-8801', invoiceType: 'B2B', invoiceNo: 'INV-2026-001', invoiceDate: '2026-07-02', hsnCode: '996311', customerName: 'Vertex Corp Ltd', gstIn: '07AAAAA1111A1Z1', subTotal5: 5000, subTotal18: 20000, subTotalAll: 25000, sgst25: 125, cgst25: 125, sgst9: 1800, cgst9: 1800, adjustmentAmount: 0, summaryMonth: 'July', summaryYear: '2026' },
+      { bookingNumber: 'BK-2026-8802', invoiceType: 'B2C', invoiceNo: 'INV-2026-002', invoiceDate: '2026-07-04', hsnCode: '996312', customerName: 'Suresh Kumar', gstIn: 'N/A', subTotal5: 3000, subTotal18: 0, subTotalAll: 3000, sgst25: 75, cgst25: 75, sgst9: 0, cgst9: 0, adjustmentAmount: -100, summaryMonth: 'July', summaryYear: '2026' }
     ];
     this.filteredRowData = [...this.rowData];
   }
@@ -503,21 +463,6 @@ export class ReportEngineComponent implements OnInit {
         if (this.filterGstType && item.invoiceType !== this.filterGstType) return false;
         return true;
       });
-    } else if (this.reportTypeKey === 'checkout_rep') {
-      this.filteredRowData = this.rowData.filter(item => {
-        if (this.filterChkFromDate && item.checkOutDate < this.filterChkFromDate) return false;
-        if (this.filterChkToDate && item.checkOutDate > this.filterChkToDate) return false;
-        if (this.filterChkSearchText) {
-          const matchTerm = this.filterChkSearchText.toLowerCase();
-          const matchesText = 
-            item.bookingNumber?.toLowerCase().includes(matchTerm) ||
-            item.customerName?.toLowerCase().includes(matchTerm) ||
-            item.roomNo?.toLowerCase().includes(matchTerm) ||
-            item.remarks?.toLowerCase().includes(matchTerm);
-          if (!matchesText) return false;
-        }
-        return true;
-      });
     }
 
     this.refreshGridOptionsApi();
@@ -534,7 +479,6 @@ export class ReportEngineComponent implements OnInit {
     this.filterOccFromDate = ''; this.filterOccToDate = '';
     this.filterAvailFromDate = ''; this.filterAvailToDate = '';
     this.filterGstMonth = ''; this.filterGstYear = ''; this.filterGstType = '';
-    this.filterChkFromDate = ''; this.filterChkToDate = ''; this.filterChkSearchText = '';
     
     this.filteredRowData = [...this.rowData];
     this.refreshGridOptionsApi();

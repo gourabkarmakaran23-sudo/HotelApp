@@ -191,6 +191,16 @@ Remarks, Search Textbox AGGrid Tables Along with
 CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
 working reports just add these Reports features after that we go for 
 Next reports. Understood.
+===========================================================
+Cool! Now we can go for another Report I mean Police
+Report ( { label: 'Police Report', route: '/reports/police_rep' },)
+with From Date, To Date Textbox  and Search and Reset button
+and with Action, Sl. No, Name of the Guest, Age, Nationality,
+No. of Guest, Address, Contact, Arrived From, Portable Destination, 
+Room No., Checked-In, Checked-Out AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
 
 
 
