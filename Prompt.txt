@@ -170,7 +170,16 @@ as From Date and End Date should be like a weak. For example if
 todayh is 30/04/2026 then the From Date should be 07/05/26
 and When we  change the Date Range column changes dynamically
 based on the Start (From) Date and End(To) Date. Understood?
-
+======================================================================
+Cool! Now we can go for another Report I mean GST Invoice Report
+Report (     { label: 'GST Invoice Report', route: '/reports/gst_invoice' })
+with Choose Month, Choose Year, Choose TYpe, Dropown and Search and Reset button
+and with Sl. No, Booking Number, Type, Invoice No., Invoice Date, HSN Code,
+Customer Name, GSTIN, 5% Sub Total, 18% Sub Total, Sub TOtal, SGST(2.5%) 
+,CGST(2.5%),SGST(9%), CGST(9%), Adjustment AMount AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
 
 
 
