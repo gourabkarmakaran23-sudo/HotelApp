@@ -155,6 +155,19 @@ Available Rooms, Occupancy Rate AGGrid Tables Along with
 CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
 working reports just add these Reports features after that we go for 
 Next reports. Understood.
+=========================================================================
+Cool! Now we can go for another Report I mean Available Room  
+Report ( { label: 'Available Room Report', route: '/reports/available_rooms' })
+with From Date and To Date Textbox Dropown and Search and Reset button
+and with Sl. No, Roo TYpe, Date that select as from to to date AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+
+
+
+
 
 
 

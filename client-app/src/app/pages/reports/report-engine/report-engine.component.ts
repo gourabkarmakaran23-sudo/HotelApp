@@ -70,9 +70,13 @@ export class ReportEngineComponent implements OnInit {
   filterPayFromDate: string = '';
   filterPayToDate: string = '';
 
-  // 📊 NEW: Payment Summary Report Filters (2 Fields)
+  // 📊 Payment Summary Report Filters (2 Fields - Untouched)
   filterSumFromDate: string = '';
   filterSumToDate: string = '';
+
+  // 🏨 NEW: Daily Room Occupancy Report Filters (2 Fields)
+  filterOccFromDate: string = '';
+  filterOccToDate: string = '';
 
   constructor(private readonly route: ActivatedRoute) {}
 
@@ -110,6 +114,11 @@ export class ReportEngineComponent implements OnInit {
       this.reportTitle = 'Payment Summary Report';
       this.setupPaymentSummaryGridColumns();
       this.loadPaymentSummaryMockRecords();
+    }
+    else if (this.reportTypeKey === 'daily_occupancy') {
+      this.reportTitle = 'Daily Room Occupancy Report';
+      this.setupDailyOccupancyGridColumns();
+      this.loadDailyOccupancyMockRecords();
     }
   }
 
@@ -213,6 +222,18 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
+  setupDailyOccupancyGridColumns(): void {
+    this.columnDefs = [
+      { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 90, pinned: 'left' },
+      { headerName: 'Date', field: 'occupancyDate', width: 140, pinned: 'left' },
+      { headerName: 'Total Rooms', field: 'totalRooms', width: 140 },
+      { headerName: 'Occupied Rooms', field: 'occupiedRooms', width: 160 },
+      { headerName: 'Blocked Rooms', field: 'blockedRooms', width: 150 },
+      { headerName: 'Available Rooms', field: 'availableRooms', width: 160 },
+      { headerName: 'Occupancy Rate', field: 'occupancyRate', width: 160, valueFormatter: p => p.value + '%' }
+    ];
+  }
+
   loadBookingMockRecords(): void {
     this.rowData = [
       { bookingNumber: 'BK-2026-0811', bookingDate: '2026-07-01', roomType: 'Deluxe Suite', roomNumber: 'A-204', checkInDate: '2026-07-04', checkOutDate: '2026-07-07', paxDetails: '2A + 1C', mealPlan: 'Room with Breakfast', roomRate: 4500, mealPlanAmount: 600, totalRoomRent: 13500, gstTax: 2430, totalPayment: 16530, customerName: 'Rahul Sharma', customerPhone: '9876543210', guestName: 'Rahul Sharma', guestPhone: '9876543210', bookingStatus: 'Confirmed', paymentStatus: 'Paid' }
@@ -243,8 +264,16 @@ export class ReportEngineComponent implements OnInit {
 
   loadPaymentSummaryMockRecords(): void {
     this.rowData = [
-      { paymentDate: '2026-07-01', cashRoom: 45000, cashFood: 12500, bankRoom: 35000, bankFood: 8000, upiRoom: 89000, upiFood: 22400, debitRoom: 15000, debitFood: 3000, creditRoom: 120000, creditFood: 41000, corporateRoom: 60000, corporateFood: 18000, gmRoom: 0, gmFood: 1500, noteRoom: 4500, noteFood: 0, otaRoom: 75000, otaFood: 0 },
-      { paymentDate: '2026-07-02', cashRoom: 32000, cashFood: 9400, bankRoom: 22000, bankFood: 4500, upiRoom: 94000, upiFood: 31000, debitRoom: 8000, debitFood: 1200, creditRoom: 145000, creditFood: 38000, corporateRoom: 45000, corporateFood: 12000, gmRoom: 1200, gmFood: 800, noteRoom: 0, noteFood: 500, otaRoom: 91000, otaFood: 0 }
+      { paymentDate: '2026-07-01', cashRoom: 45000, cashFood: 12500, bankRoom: 35000, bankFood: 8000, upiRoom: 89000, upiFood: 22400, debitRoom: 15000, debitFood: 3000, creditRoom: 120000, creditFood: 41000, corporateRoom: 60000, corporateFood: 18000, gmRoom: 0, gmFood: 1500, noteRoom: 4500, noteFood: 0, otaRoom: 75000, otaFood: 0 }
+    ];
+    this.filteredRowData = [...this.rowData];
+  }
+
+  loadDailyOccupancyMockRecords(): void {
+    this.rowData = [
+      { occupancyDate: '2026-07-01', totalRooms: 50, occupiedRooms: 38, blockedRooms: 2, availableRooms: 10, occupancyRate: 76.0 },
+      { occupancyDate: '2026-07-02', totalRooms: 50, occupiedRooms: 42, blockedRooms: 1, availableRooms: 7, occupancyRate: 84.0 },
+      { occupancyDate: '2026-07-03', totalRooms: 50, occupiedRooms: 45, blockedRooms: 1, availableRooms: 4, occupancyRate: 90.0 }
     ];
     this.filteredRowData = [...this.rowData];
   }
@@ -298,6 +327,12 @@ export class ReportEngineComponent implements OnInit {
         if (this.filterSumToDate && item.paymentDate > this.filterSumToDate) return false;
         return true;
       });
+    } else if (this.reportTypeKey === 'daily_occupancy') {
+      this.filteredRowData = this.rowData.filter(item => {
+        if (this.filterOccFromDate && item.occupancyDate < this.filterOccFromDate) return false;
+        if (this.filterOccToDate && item.occupancyDate > this.filterOccToDate) return false;
+        return true;
+      });
     }
   }
 
@@ -309,6 +344,7 @@ export class ReportEngineComponent implements OnInit {
     this.filterChooseMonth = ''; this.filterChooseYear = '';
     this.filterPayServiceFor = ''; this.filterPayBookingStatus = ''; this.filterPayMode = ''; this.filterPayFromDate = ''; this.filterPayToDate = '';
     this.filterSumFromDate = ''; this.filterSumToDate = '';
+    this.filterOccFromDate = ''; this.filterOccToDate = '';
     this.filteredRowData = [...this.rowData];
   }
 }

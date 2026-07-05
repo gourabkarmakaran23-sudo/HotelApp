@@ -64,20 +64,20 @@ feature/reservationstandard
 19.F. Booking Extend: Not Done
 
 20. House Keeping(Not Done ALL)
-20. A. Assign Room Cleaning
-20. B. Room Cleaning
-20. C. CheckList
-20. D. Room QR List
-20. E. Laundry Products List
-20. F. Laundry
-20. G. Laundry Payment
+20. A. Assign Room Cleaning :Done
+20. B. Room Cleaning :Done
+20. C. CheckList :Done
+20. D. Room QR List :Done
+20. E. Laundry Products List :Done
+20. F. Laundry :Done
+20. G. Laundry Payment :Done
 
 21. Reports(Not Done ALL)
-21. A. Booking Report
-21. B. Meal Details Report
-21. C. Monthly Summary Report
-21. D. Payment Details Report
-21. E. Payment Summary Report
+21. A. Booking Report      :Done(Without Backend)
+21. B. Meal Details Report    ::Done(Without Backend)
+21. C. Monthly Summary Report  :Done(Without Backend)
+21. D. Payment Details Report  :Done(Without Backend)
+21. E. Payment Summary Report  :Done(Without Backend)
 21. F. Daily Room Occupancy Report
 21. G. Available ROom Report
 21. H. GST Invoice Report

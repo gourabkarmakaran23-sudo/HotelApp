@@ -177,6 +177,24 @@
     </div>
   </div>
 
+  <div *ngIf="reportTypeKey === 'daily_occupancy'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🏨 Daily Room Occupancy Logs</h4>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
+      <div>
+        <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">From Date</label>
+        <input type="date" [(ngModel)]="filterOccFromDate" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:13px;">
+      </div>
+      <div>
+        <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">To Date</label>
+        <input type="date" [(ngModel)]="filterOccToDate" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:13px;">
+      </div>
+    </div>
+    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:8px 20px; border-radius:4px; font-weight:600; cursor:pointer;">🔄 Reset</button>
+      <button type="button" (click)="executeFilterSearch()" style="background:#10b981; color:#fff; border:none; padding:8px 24px; border-radius:4px; font-weight:600; cursor:pointer;">🔎 Search Occupancy</button>
+    </div>
+  </div>
+
   <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
       <div style="font-size: 13px; color: #64748b; font-weight: 500;">
