@@ -74,3 +74,56 @@ API http://localhost:5287/api/RoomType
 Please fixed Assign Room Cleaning then We go for Room CLeaning Screen
 
 Status
+
+==============================5th Julyy============================
+
+Each employee has different purpose don't change the existing 
+report filters just add new features/filters , Datatable,
+YOu can do create an shared files where each reports html are Therir
+and then we add theses page in out main report-engine.html or 
+if you better approach that also we can do 
+but don't change the existing filters or data. We go one by one
+report and fixed the filter and Datable values understood? 
+
+Each employee has different purpose don't change the existing 
+
+report filters just add new features/filters , Datatable,
+
+YOu can do create an shared files where each reports html are Therir
+
+and then we add theses page in out main report-engine.html or 
+
+if you better approach that also we can do 
+
+but don't change the existing filters or data. We go one by one
+
+report and fixed the filter and Datable values understood? 
+
+Each employee has different purpose don't change the existing 
+
+report filters just add new features/filters , Datatable,
+
+YOu can do create an shared files where each reports html are Therir
+
+and then we add theses page in out main report-engine.html or 
+
+if you better approach that also we can do 
+
+but don't change the existing filters or data. We go one by one
+
+report and fixed the filter and Datable values understood?  Both report correct screenshot given and other reports we do one by one means after these 2 completes we go for next
+
+========================================
+Why you remove Meal Details Report Filter  I mean From Date,
+
+To Date, Meal Plan Classification in the new version why and why?
+
+
+Now you break/change Booking Report Filter  why and why bro We need both filter in both page when we in Booking Report 
+filter should be Booking Status,Payment Status,Check In Date,
+Check Out Date, Customer Name, Customer Phone No.,
+Guest Name, Guest Phone No., Ref. Booking No., Booking Amount (Gross)
+and Meal Details Report filters should be From Date, To Date,
+Meal Plan Classification understood?
+
+===========================end 5th July 2026==========================
