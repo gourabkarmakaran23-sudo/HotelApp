@@ -163,7 +163,13 @@ and with Sl. No, Roo TYpe, Date that select as from to to date AGGrid Tables Alo
 CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
 working reports just add these Reports features after that we go for 
 Next reports. Understood.
-
+====================================================================
+For Available Room  Report
+Date are not coming based on Date Field. By Default Set Today's Date
+as From Date and End Date should be like a weak. For example if 
+todayh is 30/04/2026 then the From Date should be 07/05/26
+and When we  change the Date Range column changes dynamically
+based on the Start (From) Date and End(To) Date. Understood?
 
 
 

@@ -74,9 +74,13 @@ export class ReportEngineComponent implements OnInit {
   filterSumFromDate: string = '';
   filterSumToDate: string = '';
 
-  // 🏨 NEW: Daily Room Occupancy Report Filters (2 Fields)
+  // 🏨 Daily Room Occupancy Report Filters (2 Fields - Untouched)
   filterOccFromDate: string = '';
   filterOccToDate: string = '';
+
+  // 🔑 NEW: Available Room Report Filters (2 Fields)
+  filterAvailFromDate: string = '';
+  filterAvailToDate: string = '';
 
   constructor(private readonly route: ActivatedRoute) {}
 
@@ -120,8 +124,32 @@ export class ReportEngineComponent implements OnInit {
       this.setupDailyOccupancyGridColumns();
       this.loadDailyOccupancyMockRecords();
     }
+    else if (this.reportTypeKey === 'available_rooms') {
+      this.reportTitle = 'Available Room Report';
+      this.setDefaultAvailableMatrixDates(); // Automatically sets Today & 1 week ahead defaults
+      this.setupAvailableRoomsGridColumns();  // Dynamically calculates date ranges as matrix headers
+      this.loadAvailableRoomsMockRecords();   // Loads distinct Matrix-mapped records
+    }
+
+    // Direct hard refresh to AG-Grid options so switching tabs updates columns instantly
+    this.refreshGridOptionsApi();
   }
 
+  // Force push column and row state update directly into grid API
+  private refreshGridOptionsApi(): void {
+    if (this.gridApi) {
+      this.gridApi.setGridOption('columnDefs', this.columnDefs);
+      this.gridApi.setGridOption('rowData', this.filteredRowData);
+    }
+  }
+
+  onGridReady(params: GridReadyEvent): void {
+    this.gridApi = params.api;
+    // Ensures clean binding when the component mounts or updates for the first time
+    this.refreshGridOptionsApi();
+  }
+
+  // --- 1. BOOKING COLUMNS ---
   setupBookingGridColumns(): void {
     this.columnDefs = [
       {
@@ -148,6 +176,7 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
+  // --- 2. MEAL COLUMNS ---
   setupMealGridColumns(): void {
     this.columnDefs = [
       { headerName: 'SL', valueGetter: 'node.rowIndex + 1', width: 65, pinned: 'left' },
@@ -166,6 +195,7 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
+  // --- 3. MONTHLY SUMMARY COLUMNS ---
   setupMonthlySummaryGridColumns(): void {
     this.columnDefs = [
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 90, pinned: 'left' },
@@ -178,6 +208,7 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
+  // --- 4. PAYMENT DETAILS COLUMNS ---
   setupPaymentDetailsGridColumns(): void {
     this.columnDefs = [
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 80, pinned: 'left' },
@@ -197,6 +228,7 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
+  // --- 5. PAYMENT SUMMARY COLUMNS ---
   setupPaymentSummaryGridColumns(): void {
     this.columnDefs = [
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
@@ -222,6 +254,7 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
+  // --- 6. DAILY OCCUPANCY COLUMNS ---
   setupDailyOccupancyGridColumns(): void {
     this.columnDefs = [
       { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 90, pinned: 'left' },
@@ -234,6 +267,55 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
+  // --- 7. DYNAMIC AVAILABLE ROOM MATRIX COLUMNS (Isolate Range Columns ONLY Here) ---
+  private setDefaultAvailableMatrixDates(): void {
+    const today = new Date();
+    const nextWeek = new Date();
+    nextWeek.setDate(today.getDate() + 7);
+
+    this.filterAvailFromDate = today.toISOString().split('T')[0];
+    this.filterAvailToDate = nextWeek.toISOString().split('T')[0];
+  }
+
+  setupAvailableRoomsGridColumns(): void {
+    const baseColumns: ColDef[] = [
+      { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
+      { headerName: 'Room Type', field: 'roomType', width: 220, pinned: 'left' }
+    ];
+
+    if (!this.filterAvailFromDate || !this.filterAvailToDate) {
+      this.columnDefs = baseColumns;
+      return;
+    }
+
+    const start = new Date(this.filterAvailFromDate);
+    const end = new Date(this.filterAvailToDate);
+    const dynamicDates: ColDef[] = [];
+
+    const current = new Date(start);
+    while (current <= end) {
+      const dateString = current.toISOString().split('T')[0]; 
+      
+      const displayDay = String(current.getDate()).padStart(2, '0');
+      const displayMonth = String(current.getMonth() + 1).padStart(2, '0');
+      const displayYear = current.getFullYear();
+      const formattedHeaderLabel = `${displayDay}/${displayMonth}/${displayYear}`;
+
+      dynamicDates.push({
+        headerName: formattedHeaderLabel,
+        field: `date_${dateString}`,
+        width: 125,
+        cellStyle: { textAlign: 'center' },
+        valueFormatter: params => params.value !== undefined ? params.value : '0'
+      });
+
+      current.setDate(current.getDate() + 1);
+    }
+
+    this.columnDefs = [...baseColumns, ...dynamicDates];
+  }
+
+  // --- MOCK RECORD LOADERS ---
   loadBookingMockRecords(): void {
     this.rowData = [
       { bookingNumber: 'BK-2026-0811', bookingDate: '2026-07-01', roomType: 'Deluxe Suite', roomNumber: 'A-204', checkInDate: '2026-07-04', checkOutDate: '2026-07-07', paxDetails: '2A + 1C', mealPlan: 'Room with Breakfast', roomRate: 4500, mealPlanAmount: 600, totalRoomRent: 13500, gstTax: 2430, totalPayment: 16530, customerName: 'Rahul Sharma', customerPhone: '9876543210', guestName: 'Rahul Sharma', guestPhone: '9876543210', bookingStatus: 'Confirmed', paymentStatus: 'Paid' }
@@ -271,19 +353,22 @@ export class ReportEngineComponent implements OnInit {
 
   loadDailyOccupancyMockRecords(): void {
     this.rowData = [
-      { occupancyDate: '2026-07-01', totalRooms: 50, occupiedRooms: 38, blockedRooms: 2, availableRooms: 10, occupancyRate: 76.0 },
-      { occupancyDate: '2026-07-02', totalRooms: 50, occupiedRooms: 42, blockedRooms: 1, availableRooms: 7, occupancyRate: 84.0 },
-      { occupancyDate: '2026-07-03', totalRooms: 50, occupiedRooms: 45, blockedRooms: 1, availableRooms: 4, occupancyRate: 90.0 }
+      { occupancyDate: '2026-07-01', totalRooms: 50, occupiedRooms: 38, blockedRooms: 2, availableRooms: 10, occupancyRate: 76.0 }
     ];
     this.filteredRowData = [...this.rowData];
   }
 
-  onGridReady(params: GridReadyEvent): void { this.gridApi = params.api; }
-  exportCSVData(): void { if (this.gridApi) this.gridApi.exportDataAsCsv(); }
-  triggerPrintSheet(): void { window.print(); }
-  isColumnHidden(field: string): boolean { return this.gridApi ? !!this.gridApi.getColumnDef(field)?.hide : false; }
-  toggleColumnSelectVisibility(field: string): void { if (this.gridApi) this.gridApi.setColumnsVisible([field], !this.isColumnHidden(field)); }
+  loadAvailableRoomsMockRecords(): void {
+    // Simulated fields matching keys mapping onto `date_YYYY-MM-DD`
+    this.rowData = [
+      { roomType: 'Deluxe Suite', 'date_2026-04-30': 8, 'date_2026-05-01': 5, 'date_2026-05-02': 6, 'date_2026-05-03': 7, 'date_2026-05-04': 4, 'date_2026-05-05': 9, 'date_2026-05-06': 10, 'date_2026-05-07': 5 },
+      { roomType: 'Executive Room', 'date_2026-04-30': 15, 'date_2026-05-01': 12, 'date_2026-05-02': 11, 'date_2026-05-03': 14, 'date_2026-05-04': 15, 'date_2026-05-05': 12, 'date_2026-05-06': 11, 'date_2026-05-07': 14 },
+      { roomType: 'Club Classic Room', 'date_2026-04-30': 3, 'date_2026-05-01': 4, 'date_2026-05-02': 2, 'date_2026-05-03': 1, 'date_2026-05-04': 5, 'date_2026-05-05': 3, 'date_2026-05-06': 2, 'date_2026-05-07': 4 }
+    ];
+    this.filteredRowData = [...this.rowData];
+  }
 
+  // --- ACTIONS CONTROLLER ---
   executeFilterSearch(): void {
     if (this.reportTypeKey === 'booking') {
       this.filteredRowData = this.rowData.filter(item => {
@@ -333,7 +418,14 @@ export class ReportEngineComponent implements OnInit {
         if (this.filterOccToDate && item.occupancyDate > this.filterOccToDate) return false;
         return true;
       });
+    } else if (this.reportTypeKey === 'available_rooms') {
+      // Regenerate the matrix column list if date fields have been changed by user
+      this.setupAvailableRoomsGridColumns();
+      this.filteredRowData = [...this.rowData];
     }
+
+    // Dynamic layout redraw injection
+    this.refreshGridOptionsApi();
   }
 
   resetFilters(): void {
@@ -345,6 +437,14 @@ export class ReportEngineComponent implements OnInit {
     this.filterPayServiceFor = ''; this.filterPayBookingStatus = ''; this.filterPayMode = ''; this.filterPayFromDate = ''; this.filterPayToDate = '';
     this.filterSumFromDate = ''; this.filterSumToDate = '';
     this.filterOccFromDate = ''; this.filterOccToDate = '';
+    this.filterAvailFromDate = ''; this.filterAvailToDate = '';
+    
     this.filteredRowData = [...this.rowData];
+    this.refreshGridOptionsApi();
   }
+
+  exportCSVData(): void { if (this.gridApi) this.gridApi.exportDataAsCsv(); }
+  triggerPrintSheet(): void { window.print(); }
+  isColumnHidden(field: string): boolean { return this.gridApi ? !!this.gridApi.getColumnDef(field)?.hide : false; }
+  toggleColumnSelectVisibility(field: string): void { if (this.gridApi) this.gridApi.setColumnsVisible([field], !this.isColumnHidden(field)); }
 }
