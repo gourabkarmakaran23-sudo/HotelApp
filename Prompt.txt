@@ -146,6 +146,16 @@ Customer Name, Transation Details, Booking Status, Room Numbers AGGrid Tables Al
 CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
 working reports just add these Reports features after that we go for 
 Next reports. Understood.
+====================================================================
+Cool! Now we can go for another Report I mean Daily Room Occupancy 
+Report (  { label: 'Daily Room Occupancy', route: '/reports/daily_occupancy' })
+with From Date and TO Date Textbox Dropown and Search and Reset button
+and with Sl. No, Date, Total Rooms, Occupied Rooms, BLocked Rooms,
+Available Rooms, Occupancy Rate AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
 
 
 

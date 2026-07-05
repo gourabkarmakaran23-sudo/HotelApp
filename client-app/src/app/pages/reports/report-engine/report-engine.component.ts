@@ -49,7 +49,7 @@ export class ReportEngineComponent implements OnInit {
   filterToDate: string = '';
   filterMealType: string = '';
 
-  // 📅 Monthly Summary Report Filters (2 Fields)
+  // 📅 Monthly Summary Report Filters (2 Fields - Untouched)
   filterChooseMonth: string = '';
   filterChooseYear: string = '';
 
@@ -62,6 +62,17 @@ export class ReportEngineComponent implements OnInit {
     { name: 'November', value: 'November' }, { name: 'December', value: 'December' }
   ];
   yearsList = ['2024', '2025', '2026', '2027'];
+
+  // 💳 Monthly Payment Details Report Filters (5 Fields - Untouched)
+  filterPayServiceFor: string = '';
+  filterPayBookingStatus: string = '';
+  filterPayMode: string = '';
+  filterPayFromDate: string = '';
+  filterPayToDate: string = '';
+
+  // 📊 NEW: Payment Summary Report Filters (2 Fields)
+  filterSumFromDate: string = '';
+  filterSumToDate: string = '';
 
   constructor(private readonly route: ActivatedRoute) {}
 
@@ -89,6 +100,16 @@ export class ReportEngineComponent implements OnInit {
       this.reportTitle = 'Monthly Summary Report';
       this.setupMonthlySummaryGridColumns();
       this.loadMonthlySummaryMockRecords();
+    }
+    else if (this.reportTypeKey === 'payment_det') {
+      this.reportTitle = 'Payment Details Report';
+      this.setupPaymentDetailsGridColumns();
+      this.loadPaymentDetailsMockRecords();
+    }
+    else if (this.reportTypeKey === 'payment_sum') {
+      this.reportTitle = 'Payment Summary Report';
+      this.setupPaymentSummaryGridColumns();
+      this.loadPaymentSummaryMockRecords();
     }
   }
 
@@ -148,6 +169,50 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
+  setupPaymentDetailsGridColumns(): void {
+    this.columnDefs = [
+      { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 80, pinned: 'left' },
+      { headerName: 'Booking Number', field: 'bookingNumber', width: 140 },
+      { headerName: 'Receipt Number', field: 'receiptNumber', width: 140 },
+      { headerName: 'Merchant Transaction No.', field: 'merchantTxnNo', width: 190 },
+      { headerName: 'Payment Date', field: 'paymentDate', width: 120 },
+      { headerName: 'Amount Paid', field: 'amountPaid', width: 130, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Room Bill', field: 'roomBill', width: 120, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Food Paid', field: 'foodPaid', width: 120, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Payment Mode', field: 'paymentMode', width: 130 },
+      { headerName: 'Service For', field: 'serviceFor', width: 140 },
+      { headerName: 'Customer Name', field: 'customerName', width: 160 },
+      { headerName: 'Transaction Details', field: 'txnDetails', width: 220 },
+      { headerName: 'Booking Status', field: 'bookingStatus', width: 130 },
+      { headerName: 'Room Numbers', field: 'roomNumbers', width: 130 }
+    ];
+  }
+
+  setupPaymentSummaryGridColumns(): void {
+    this.columnDefs = [
+      { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
+      { headerName: 'Payment Date', field: 'paymentDate', width: 130, pinned: 'left' },
+      { headerName: 'Cash Payment Room', field: 'cashRoom', width: 160, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Cash Payment Food', field: 'cashFood', width: 160, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Bank Payment Room', field: 'bankRoom', width: 160, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Bank Payment Food', field: 'bankFood', width: 160, valueFormatter: p => '₹' + p.value },
+      { headerName: 'UPI Room', field: 'upiRoom', width: 130, valueFormatter: p => '₹' + p.value },
+      { headerName: 'UPI Food', field: 'upiFood', width: 130, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Debit Card Room', field: 'debitRoom', width: 150, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Debit Card Food', field: 'debitFood', width: 150, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Credit Card Room', field: 'creditRoom', width: 150, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Credit Card Food', field: 'creditFood', width: 150, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Corporate Credit Room', field: 'corporateRoom', width: 180, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Corporate Food', field: 'corporateFood', width: 150, valueFormatter: p => '₹' + p.value },
+      { headerName: 'GM Credit Room', field: 'gmRoom', width: 140, valueFormatter: p => '₹' + p.value },
+      { headerName: 'GM Credit Food', field: 'gmFood', width: 140, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Credit Note Room', field: 'noteRoom', width: 160, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Credit Note Food', field: 'noteFood', width: 160, valueFormatter: p => '₹' + p.value },
+      { headerName: 'OTA Credit Room', field: 'otaRoom', width: 150, valueFormatter: p => '₹' + p.value },
+      { headerName: 'OTA Credit Food', field: 'otaFood', width: 150, valueFormatter: p => '₹' + p.value }
+    ];
+  }
+
   loadBookingMockRecords(): void {
     this.rowData = [
       { bookingNumber: 'BK-2026-0811', bookingDate: '2026-07-01', roomType: 'Deluxe Suite', roomNumber: 'A-204', checkInDate: '2026-07-04', checkOutDate: '2026-07-07', paxDetails: '2A + 1C', mealPlan: 'Room with Breakfast', roomRate: 4500, mealPlanAmount: 600, totalRoomRent: 13500, gstTax: 2430, totalPayment: 16530, customerName: 'Rahul Sharma', customerPhone: '9876543210', guestName: 'Rahul Sharma', guestPhone: '9876543210', bookingStatus: 'Confirmed', paymentStatus: 'Paid' }
@@ -164,9 +229,22 @@ export class ReportEngineComponent implements OnInit {
 
   loadMonthlySummaryMockRecords(): void {
     this.rowData = [
-      { summaryYear: '2026', summaryMonth: 'January', totalBookings: 142, totalRevenue: 639000, totalAdjustment: 12000, avgRevenuePerDay: 20612 },
-      { summaryYear: '2026', summaryMonth: 'February', totalBookings: 115, totalRevenue: 517500, totalAdjustment: 8500, avgRevenuePerDay: 18482 },
-      { summaryYear: '2026', summaryMonth: 'March', totalBookings: 168, totalRevenue: 823000, totalAdjustment: 15000, avgRevenuePerDay: 26548 }
+      { summaryYear: '2026', summaryMonth: 'January', totalBookings: 142, totalRevenue: 639000, totalAdjustment: 12000, avgRevenuePerDay: 20612 }
+    ];
+    this.filteredRowData = [...this.rowData];
+  }
+
+  loadPaymentDetailsMockRecords(): void {
+    this.rowData = [
+      { bookingNumber: 'BK-2026-4410', receiptNumber: 'REC-99812', merchantTxnNo: 'TXN776100234', paymentDate: '2026-07-01', amountPaid: 15400, roomBill: 12000, foodPaid: 3400, paymentMode: 'UPI', serviceFor: 'Room Booking', customerName: 'Amit Patel', txnDetails: 'Paid via PhonePe Gateway successfully', bookingStatus: 'CheckedIn', roomNumbers: '102, 103' }
+    ];
+    this.filteredRowData = [...this.rowData];
+  }
+
+  loadPaymentSummaryMockRecords(): void {
+    this.rowData = [
+      { paymentDate: '2026-07-01', cashRoom: 45000, cashFood: 12500, bankRoom: 35000, bankFood: 8000, upiRoom: 89000, upiFood: 22400, debitRoom: 15000, debitFood: 3000, creditRoom: 120000, creditFood: 41000, corporateRoom: 60000, corporateFood: 18000, gmRoom: 0, gmFood: 1500, noteRoom: 4500, noteFood: 0, otaRoom: 75000, otaFood: 0 },
+      { paymentDate: '2026-07-02', cashRoom: 32000, cashFood: 9400, bankRoom: 22000, bankFood: 4500, upiRoom: 94000, upiFood: 31000, debitRoom: 8000, debitFood: 1200, creditRoom: 145000, creditFood: 38000, corporateRoom: 45000, corporateFood: 12000, gmRoom: 1200, gmFood: 800, noteRoom: 0, noteFood: 500, otaRoom: 91000, otaFood: 0 }
     ];
     this.filteredRowData = [...this.rowData];
   }
@@ -205,6 +283,21 @@ export class ReportEngineComponent implements OnInit {
         if (this.filterChooseYear && item.summaryYear !== this.filterChooseYear) return false;
         return true;
       });
+    } else if (this.reportTypeKey === 'payment_det') {
+      this.filteredRowData = this.rowData.filter(item => {
+        if (this.filterPayServiceFor && item.serviceFor !== this.filterPayServiceFor) return false;
+        if (this.filterPayBookingStatus && item.bookingStatus !== this.filterPayBookingStatus) return false;
+        if (this.filterPayMode && item.paymentMode !== this.filterPayMode) return false;
+        if (this.filterPayFromDate && item.paymentDate < this.filterPayFromDate) return false;
+        if (this.filterPayToDate && item.paymentDate > this.filterPayToDate) return false;
+        return true;
+      });
+    } else if (this.reportTypeKey === 'payment_sum') {
+      this.filteredRowData = this.rowData.filter(item => {
+        if (this.filterSumFromDate && item.paymentDate < this.filterSumFromDate) return false;
+        if (this.filterSumToDate && item.paymentDate > this.filterSumToDate) return false;
+        return true;
+      });
     }
   }
 
@@ -214,6 +307,8 @@ export class ReportEngineComponent implements OnInit {
     this.filterRefBookingNo = ''; this.filterBookingAmount = '';
     this.filterFromDate = ''; this.filterToDate = ''; this.filterMealType = '';
     this.filterChooseMonth = ''; this.filterChooseYear = '';
+    this.filterPayServiceFor = ''; this.filterPayBookingStatus = ''; this.filterPayMode = ''; this.filterPayFromDate = ''; this.filterPayToDate = '';
+    this.filterSumFromDate = ''; this.filterSumToDate = '';
     this.filteredRowData = [...this.rowData];
   }
 }
