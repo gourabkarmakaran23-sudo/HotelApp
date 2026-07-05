@@ -78,9 +78,14 @@ export class ReportEngineComponent implements OnInit {
   filterOccFromDate: string = '';
   filterOccToDate: string = '';
 
-  // 🔑 NEW: Available Room Report Filters (2 Fields)
+  // 🔑 Available Room Report Filters (2 Fields - Untouched)
   filterAvailFromDate: string = '';
   filterAvailToDate: string = '';
+
+  // 🧾 NEW: GST Invoice Report Filters
+  filterGstMonth: string = '';
+  filterGstYear: string = '';
+  filterGstType: string = '';
 
   constructor(private readonly route: ActivatedRoute) {}
 
@@ -126,16 +131,19 @@ export class ReportEngineComponent implements OnInit {
     }
     else if (this.reportTypeKey === 'available_rooms') {
       this.reportTitle = 'Available Room Report';
-      this.setDefaultAvailableMatrixDates(); // Automatically sets Today & 1 week ahead defaults
-      this.setupAvailableRoomsGridColumns();  // Dynamically calculates date ranges as matrix headers
-      this.loadAvailableRoomsMockRecords();   // Loads distinct Matrix-mapped records
+      this.setDefaultAvailableMatrixDates();
+      this.setupAvailableRoomsGridColumns();
+      this.loadAvailableRoomsMockRecords();
+    }
+    else if (this.reportTypeKey === 'gst_invoice') {
+      this.reportTitle = 'GST Invoice Report';
+      this.setupGstInvoiceGridColumns();
+      this.loadGstInvoiceMockRecords();
     }
 
-    // Direct hard refresh to AG-Grid options so switching tabs updates columns instantly
     this.refreshGridOptionsApi();
   }
 
-  // Force push column and row state update directly into grid API
   private refreshGridOptionsApi(): void {
     if (this.gridApi) {
       this.gridApi.setGridOption('columnDefs', this.columnDefs);
@@ -145,7 +153,6 @@ export class ReportEngineComponent implements OnInit {
 
   onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
-    // Ensures clean binding when the component mounts or updates for the first time
     this.refreshGridOptionsApi();
   }
 
@@ -267,7 +274,7 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
-  // --- 7. DYNAMIC AVAILABLE ROOM MATRIX COLUMNS (Isolate Range Columns ONLY Here) ---
+  // --- 7. AVAILABLE ROOM MATRIX COLUMNS ---
   private setDefaultAvailableMatrixDates(): void {
     const today = new Date();
     const nextWeek = new Date();
@@ -295,7 +302,6 @@ export class ReportEngineComponent implements OnInit {
     const current = new Date(start);
     while (current <= end) {
       const dateString = current.toISOString().split('T')[0]; 
-      
       const displayDay = String(current.getDate()).padStart(2, '0');
       const displayMonth = String(current.getMonth() + 1).padStart(2, '0');
       const displayYear = current.getFullYear();
@@ -313,6 +319,28 @@ export class ReportEngineComponent implements OnInit {
     }
 
     this.columnDefs = [...baseColumns, ...dynamicDates];
+  }
+
+  // --- 8. NEW: GST INVOICE COLUMNS ---
+  setupGstInvoiceGridColumns(): void {
+    this.columnDefs = [
+      { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 85, pinned: 'left' },
+      { headerName: 'Booking Number', field: 'bookingNumber', width: 155, pinned: 'left' },
+      { headerName: 'Type', field: 'invoiceType', width: 110 },
+      { headerName: 'Invoice No.', field: 'invoiceNo', width: 140 },
+      { headerName: 'Invoice Date', field: 'invoiceDate', width: 125 },
+      { headerName: 'HSN Code', field: 'hsnCode', width: 115 },
+      { headerName: 'Customer Name', field: 'customerName', width: 170 },
+      { headerName: 'GSTIN', field: 'gstIn', width: 155 },
+      { headerName: '5% Sub Total', field: 'subTotal5', width: 130, valueFormatter: p => '₹' + p.value },
+      { headerName: '18% Sub Total', field: 'subTotal18', width: 130, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Sub Total', field: 'subTotalAll', width: 130, valueFormatter: p => '₹' + p.value },
+      { headerName: 'SGST(2.5%)', field: 'sgst25', width: 120, valueFormatter: p => '₹' + p.value },
+      { headerName: 'CGST(2.5%)', field: 'cgst25', width: 120, valueFormatter: p => '₹' + p.value },
+      { headerName: 'SGST(9%)', field: 'sgst9', width: 115, valueFormatter: p => '₹' + p.value },
+      { headerName: 'CGST(9%)', field: 'cgst9', width: 115, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Adjustment Amount', field: 'adjustmentAmount', width: 160, valueFormatter: p => '₹' + p.value }
+    ];
   }
 
   // --- MOCK RECORD LOADERS ---
@@ -359,11 +387,18 @@ export class ReportEngineComponent implements OnInit {
   }
 
   loadAvailableRoomsMockRecords(): void {
-    // Simulated fields matching keys mapping onto `date_YYYY-MM-DD`
     this.rowData = [
       { roomType: 'Deluxe Suite', 'date_2026-04-30': 8, 'date_2026-05-01': 5, 'date_2026-05-02': 6, 'date_2026-05-03': 7, 'date_2026-05-04': 4, 'date_2026-05-05': 9, 'date_2026-05-06': 10, 'date_2026-05-07': 5 },
       { roomType: 'Executive Room', 'date_2026-04-30': 15, 'date_2026-05-01': 12, 'date_2026-05-02': 11, 'date_2026-05-03': 14, 'date_2026-05-04': 15, 'date_2026-05-05': 12, 'date_2026-05-06': 11, 'date_2026-05-07': 14 },
       { roomType: 'Club Classic Room', 'date_2026-04-30': 3, 'date_2026-05-01': 4, 'date_2026-05-02': 2, 'date_2026-05-03': 1, 'date_2026-05-04': 5, 'date_2026-05-05': 3, 'date_2026-05-06': 2, 'date_2026-05-07': 4 }
+    ];
+    this.filteredRowData = [...this.rowData];
+  }
+
+  loadGstInvoiceMockRecords(): void {
+    this.rowData = [
+      { bookingNumber: 'BK-2026-8801', invoiceType: 'B2B', invoiceNo: 'INV-2026-001', invoiceDate: '2026-07-02', hsnCode: '996311', customerName: 'Vertex Corp Ltd', gstIn: '07AAAAA1111A1Z1', subTotal5: 5000, subTotal18: 20000, subTotalAll: 25000, sgst25: 125, cgst25: 125, sgst9: 1800, cgst9: 1800, adjustmentAmount: 0, summaryMonth: 'July', summaryYear: '2026' },
+      { bookingNumber: 'BK-2026-8802', invoiceType: 'B2C', invoiceNo: 'INV-2026-002', invoiceDate: '2026-07-04', hsnCode: '996312', customerName: 'Suresh Kumar', gstIn: 'N/A', subTotal5: 3000, subTotal18: 0, subTotalAll: 3000, sgst25: 75, cgst25: 75, sgst9: 0, cgst9: 0, adjustmentAmount: -100, summaryMonth: 'July', summaryYear: '2026' }
     ];
     this.filteredRowData = [...this.rowData];
   }
@@ -419,12 +454,17 @@ export class ReportEngineComponent implements OnInit {
         return true;
       });
     } else if (this.reportTypeKey === 'available_rooms') {
-      // Regenerate the matrix column list if date fields have been changed by user
       this.setupAvailableRoomsGridColumns();
       this.filteredRowData = [...this.rowData];
+    } else if (this.reportTypeKey === 'gst_invoice') {
+      this.filteredRowData = this.rowData.filter(item => {
+        if (this.filterGstMonth && item.summaryMonth !== this.filterGstMonth) return false;
+        if (this.filterGstYear && item.summaryYear !== this.filterGstYear) return false;
+        if (this.filterGstType && item.invoiceType !== this.filterGstType) return false;
+        return true;
+      });
     }
 
-    // Dynamic layout redraw injection
     this.refreshGridOptionsApi();
   }
 
@@ -438,6 +478,7 @@ export class ReportEngineComponent implements OnInit {
     this.filterSumFromDate = ''; this.filterSumToDate = '';
     this.filterOccFromDate = ''; this.filterOccToDate = '';
     this.filterAvailFromDate = ''; this.filterAvailToDate = '';
+    this.filterGstMonth = ''; this.filterGstYear = ''; this.filterGstType = '';
     
     this.filteredRowData = [...this.rowData];
     this.refreshGridOptionsApi();
