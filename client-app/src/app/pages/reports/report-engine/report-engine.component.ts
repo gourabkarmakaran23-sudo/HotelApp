@@ -22,7 +22,6 @@ export class ReportEngineComponent implements OnInit {
   private gridApi!: GridApi;
   showVisibilityMenu: boolean = false;
 
-  // Grid Data Structure
   columnDefs: ColDef[] = [];
   defaultColDef: ColDef = {
     sortable: true,
@@ -33,9 +32,7 @@ export class ReportEngineComponent implements OnInit {
   rowData: any[] = [];
   filteredRowData: any[] = [];
 
-  // ==========================================================
-  // 📋 BOOKING REPORT FILTERS (ALL 10 VARIABLES RETAINED)
-  // ==========================================================
+  // 📋 Booking Report Filters (10 Fields - Untouched)
   filterBookingStatus: string = '';
   filterPaymentStatus: string = '';
   filterCheckIn: string = '';
@@ -47,12 +44,24 @@ export class ReportEngineComponent implements OnInit {
   filterRefBookingNo: string = '';
   filterBookingAmount: string = '';
 
-  // ==========================================================
-  // 🍳 MEAL DETAILS REPORT FILTERS (ALL 3 VARIABLES RETAINED)
-  // ==========================================================
+  // 🍳 Meal Details Report Filters (3 Fields - Untouched)
   filterFromDate: string = '';
   filterToDate: string = '';
   filterMealType: string = '';
+
+  // 📅 Monthly Summary Report Filters (2 Fields)
+  filterChooseMonth: string = '';
+  filterChooseYear: string = '';
+
+  monthsList = [
+    { name: 'January', value: 'January' }, { name: 'February', value: 'February' },
+    { name: 'March', value: 'March' }, { name: 'April', value: 'April' },
+    { name: 'May', value: 'May' }, { name: 'June', value: 'June' },
+    { name: 'July', value: 'July' }, { name: 'August', value: 'August' },
+    { name: 'September', value: 'September' }, { name: 'October', value: 'October' },
+    { name: 'November', value: 'November' }, { name: 'December', value: 'December' }
+  ];
+  yearsList = ['2024', '2025', '2026', '2027'];
 
   constructor(private readonly route: ActivatedRoute) {}
 
@@ -70,10 +79,16 @@ export class ReportEngineComponent implements OnInit {
       this.reportTitle = 'Booking Report';
       this.setupBookingGridColumns();
       this.loadBookingMockRecords();
-    } else {
+    } 
+    else if (this.reportTypeKey === 'meal' || this.reportTypeKey === 'meal_alt') {
       this.reportTitle = 'Meal Details Report';
       this.setupMealGridColumns();
       this.loadMealMockRecords();
+    } 
+    else if (this.reportTypeKey === 'monthly_summary') {
+      this.reportTitle = 'Monthly Summary Report';
+      this.setupMonthlySummaryGridColumns();
+      this.loadMonthlySummaryMockRecords();
     }
   }
 
@@ -121,6 +136,18 @@ export class ReportEngineComponent implements OnInit {
     ];
   }
 
+  setupMonthlySummaryGridColumns(): void {
+    this.columnDefs = [
+      { headerName: 'Sl. No', valueGetter: 'node.rowIndex + 1', width: 90, pinned: 'left' },
+      { headerName: 'Year', field: 'summaryYear', width: 120 },
+      { headerName: 'Month', field: 'summaryMonth', width: 150 },
+      { headerName: 'Total Bookings', field: 'totalBookings', width: 160 },
+      { headerName: 'Total Revenue', field: 'totalRevenue', width: 180, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Total Adjustment', field: 'totalAdjustment', width: 180, valueFormatter: p => '₹' + p.value },
+      { headerName: 'Avg Revenue/Day', field: 'avgRevenuePerDay', width: 180, valueFormatter: p => '₹' + p.value }
+    ];
+  }
+
   loadBookingMockRecords(): void {
     this.rowData = [
       { bookingNumber: 'BK-2026-0811', bookingDate: '2026-07-01', roomType: 'Deluxe Suite', roomNumber: 'A-204', checkInDate: '2026-07-04', checkOutDate: '2026-07-07', paxDetails: '2A + 1C', mealPlan: 'Room with Breakfast', roomRate: 4500, mealPlanAmount: 600, totalRoomRent: 13500, gstTax: 2430, totalPayment: 16530, customerName: 'Rahul Sharma', customerPhone: '9876543210', guestName: 'Rahul Sharma', guestPhone: '9876543210', bookingStatus: 'Confirmed', paymentStatus: 'Paid' }
@@ -130,8 +157,16 @@ export class ReportEngineComponent implements OnInit {
 
   loadMealMockRecords(): void {
     this.rowData = [
-      { bookingNumber: 'BK-2026-0912', bookingDate: '2026-07-02', roomType: 'Executive Suite', roomNumber: 'B-301', checkInDate: '2026-07-05', checkOutDate: '2026-07-08', paxDetails: '2 Adults', mealPlan: 'Room with Breakfast', mealPlanAmount: 500, totalRoomRent: 12000, gstTax: 2160, totalPayment: 14660 },
-      { bookingNumber: 'BK-2026-0955', bookingDate: '2026-07-03', roomType: 'Premium Double', roomNumber: 'C-102', checkInDate: '2026-07-05', checkOutDate: '2026-07-10', paxDetails: '3 Adults', mealPlan: 'Room with Breakfast and either Lunch or Dinner', mealPlanAmount: 1200, totalRoomRent: 25000, gstTax: 4500, totalPayment: 30700 }
+      { bookingNumber: 'BK-2026-0912', bookingDate: '2026-07-02', roomType: 'Executive Suite', roomNumber: 'B-301', checkInDate: '2026-07-05', checkOutDate: '2026-07-08', paxDetails: '2 Adults', mealPlan: 'Room with Breakfast', mealPlanAmount: 500, totalRoomRent: 12000, gstTax: 2160, totalPayment: 14660 }
+    ];
+    this.filteredRowData = [...this.rowData];
+  }
+
+  loadMonthlySummaryMockRecords(): void {
+    this.rowData = [
+      { summaryYear: '2026', summaryMonth: 'January', totalBookings: 142, totalRevenue: 639000, totalAdjustment: 12000, avgRevenuePerDay: 20612 },
+      { summaryYear: '2026', summaryMonth: 'February', totalBookings: 115, totalRevenue: 517500, totalAdjustment: 8500, avgRevenuePerDay: 18482 },
+      { summaryYear: '2026', summaryMonth: 'March', totalBookings: 168, totalRevenue: 823000, totalAdjustment: 15000, avgRevenuePerDay: 26548 }
     ];
     this.filteredRowData = [...this.rowData];
   }
@@ -157,11 +192,17 @@ export class ReportEngineComponent implements OnInit {
         if (this.filterBookingAmount && Number(item.totalPayment) !== Number(this.filterBookingAmount)) return false;
         return true;
       });
-    } else {
+    } else if (this.reportTypeKey === 'meal' || this.reportTypeKey === 'meal_alt') {
       this.filteredRowData = this.rowData.filter(item => {
         if (this.filterFromDate && item.checkInDate < this.filterFromDate) return false;
         if (this.filterToDate && item.checkOutDate > this.filterToDate) return false;
         if (this.filterMealType && item.mealPlan !== this.filterMealType) return false;
+        return true;
+      });
+    } else if (this.reportTypeKey === 'monthly_summary') {
+      this.filteredRowData = this.rowData.filter(item => {
+        if (this.filterChooseMonth && item.summaryMonth !== this.filterChooseMonth) return false;
+        if (this.filterChooseYear && item.summaryYear !== this.filterChooseYear) return false;
         return true;
       });
     }
@@ -172,6 +213,7 @@ export class ReportEngineComponent implements OnInit {
     this.filterCustomerName = ''; this.filterCustomerPhone = ''; this.filterGuestName = ''; this.filterGuestPhone = '';
     this.filterRefBookingNo = ''; this.filterBookingAmount = '';
     this.filterFromDate = ''; this.filterToDate = ''; this.filterMealType = '';
+    this.filterChooseMonth = ''; this.filterChooseYear = '';
     this.filteredRowData = [...this.rowData];
   }
 }

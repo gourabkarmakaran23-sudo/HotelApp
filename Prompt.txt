@@ -125,5 +125,28 @@ Check Out Date, Customer Name, Customer Phone No.,
 Guest Name, Guest Phone No., Ref. Booking No., Booking Amount (Gross)
 and Meal Details Report filters should be From Date, To Date,
 Meal Plan Classification understood?
+==================================================================
+
+Cool! Now we can go for another Report I mean Monthly Summary reports
+with Choose Month, Choose Year Dropown and Search and Reset button
+and with Sl. No, Year, Month, Total Bookings, Total Revenue,
+Total Adjustment, Avg Revenue/Day AGGrid Tables Along with 
+CSV, Print, Columns that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+============================================================
+Cool! Now we can go for another Report I mean Monthly Payment Details
+Report ( { label: 'Payment Details Report', route: '/reports/payment_det' })
+with Service For, Booking Status, Payment Mode dropdone
+and From Date and TO Date Textbox Dropown and Search and Reset button
+and with Sl. No, Booking Number, Receipt Number, Merchant Transaction No.,
+Payment Date, Amount Paid, Room Bill, Food Paid, Payment Mode, Service For,
+Customer Name, Transation Details, Booking Status, Room Numbers AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+
 
 ===========================end 5th July 2026==========================

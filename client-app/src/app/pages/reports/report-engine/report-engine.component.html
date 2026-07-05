@@ -2,12 +2,11 @@
   
   <div style="background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 20px; border-left: 4px solid #3b82f6;">
     <h2 style="margin: 0; color: #1e293b; font-size: 20px; font-weight: 700;">{{ reportTitle }}</h2>
-    <small style="color: #64748b;">Enterprise Analytical Auditing Portal</small>
+    <small style="color: #64748b;">Enterprise Analytical Auditing Portals Ledger</small>
   </div>
 
   <div *ngIf="reportTypeKey === 'booking'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🔍 Booking Filters Panel</h4>
-    
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🔍 Booking Operational Search Matrix</h4>
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
       <div>
         <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px;">Booking Status</label>
@@ -55,19 +54,17 @@
       </div>
       <div>
         <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px;">Booking Amount (Gross)</label>
-        <input type="number" [(ngModel)]="filterBookingAmount" placeholder="Total value" style="width:100%; padding:7px 10px; border:1px solid #cbd5e1; border-radius:4px; font-size:13px; box-sizing:border-box;">
+        <input type="number" [(ngModel)]="filterBookingAmount" placeholder="Total gross value" style="width:100%; padding:7px 10px; border:1px solid #cbd5e1; border-radius:4px; font-size:13px; box-sizing:border-box;">
       </div>
     </div>
-
     <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
       <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:8px 20px; border-radius:4px; font-weight:600; cursor:pointer;">🔄 Reset</button>
-      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:8px 24px; border-radius:4px; font-weight:600; cursor:pointer;">🔎 Search</button>
+      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:8px 24px; border-radius:4px; font-weight:600; cursor:pointer;">🔎 Search Ledger</button>
     </div>
   </div>
 
-  <div *ngIf="reportTypeKey !== 'booking'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🍳 Meal Details Filters Panel</h4>
-    
+  <div *ngIf="reportTypeKey === 'meal' || reportTypeKey === 'meal_alt'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🍳 Kitchen Catering Logistics Parameters</h4>
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
       <div>
         <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">From Date</label>
@@ -87,10 +84,33 @@
         </select>
       </div>
     </div>
-
     <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
       <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:8px 20px; border-radius:4px; font-weight:600; cursor:pointer;">🔄 Reset Parameters</button>
-      <button type="button" (click)="executeFilterSearch()" style="background:#10b981; color:#fff; border:none; padding:8px 24px; border-radius:4px; font-weight:600; cursor:pointer;">🍳 Extract Meals</button>
+      <button type="button" (click)="executeFilterSearch()" style="background:#10b981; color:#fff; border:none; padding:8px 24px; border-radius:4px; font-weight:600; cursor:pointer;">🍳 Extract Meal Records</button>
+    </div>
+  </div>
+
+  <div *ngIf="reportTypeKey === 'monthly_summary'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">📅 Monthly Operations Summary Parameters</h4>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+      <div>
+        <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">Choose Month</label>
+        <select [(ngModel)]="filterChooseMonth" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:13px; background:#fff;">
+          <option value="">-- All Months --</option>
+          <option *ngFor="let m of monthsList" [value]="m.value">{{ m.name }}</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">Choose Year</label>
+        <select [(ngModel)]="filterChooseYear" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:13px; background:#fff;">
+          <option value="">-- All Years --</option>
+          <option *ngFor="let y of yearsList" [value]="y">{{ y }}</option>
+        </select>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:8px 20px; border-radius:4px; font-weight:600; cursor:pointer;">🔄 Reset</button>
+      <button type="button" (click)="executeFilterSearch()" style="background:#4f46e5; color:#fff; border:none; padding:8px 24px; border-radius:4px; font-weight:600; cursor:pointer;">🔎 Search Summary</button>
     </div>
   </div>
 

@@ -61,7 +61,7 @@ export class SidebarComponent implements OnInit {
   children: [
     { label: 'Booking Report', route: '/reports/booking' },
     { label: 'Meal Details Report', route: '/reports/meal' },
-    { label: 'Monthly Summary Report', route: '/reports/monthly' },
+    { label: 'Monthly Summary Report', route: '/reports/monthly_summary' },
     { label: 'Payment Details Report', route: '/reports/payment_det' },
     { label: 'Payment Summary Report', route: '/reports/payment_sum' },
     { label: 'Daily Room Occupancy', route: '/reports/daily_occupancy' },
