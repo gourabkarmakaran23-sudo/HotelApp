@@ -95,14 +95,14 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
       <div>
         <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Choose Month</label>
-        <select [(ngModel)]="filterChooseMonth" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
+        <select style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
           <option value="">All Months</option>
           <option *ngFor="let m of monthsList" [value]="m.value">{{ m.name }}</option>
         </select>
       </div>
       <div>
         <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Choose Year</label>
-        <select [(ngModel)]="filterChooseYear" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
+        <select style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
           <option value="">All Years</option>
           <option *ngFor="let y of yearsList" [value]="y">{{ y }}</option>
         </select>
@@ -197,7 +197,7 @@
     <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🔑 Available Room Inventory Matrix Range</h4>
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
       <div>
-        <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 66px;">From Date</label>
+        <label style="display:block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">From Date</label>
         <input type="date" [(ngModel)]="filterAvailFromDate" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-size:13px;">
       </div>
       <div>
@@ -235,6 +235,28 @@
           <option value="B2B">B2B Corporate</option>
           <option value="B2C">B2C Retail customer</option>
         </select>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+      <button type="button" (click)="resetFilters()" style="background:#e2e8f0; color:#475569; border:none; padding:6px 16px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔄 Reset</button>
+      <button type="button" (click)="executeFilterSearch()" style="background:#2563eb; color:#fff; border:none; padding:6px 20px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">🔎 Search</button>
+    </div>
+  </div>
+
+  <div *ngIf="reportTypeKey === 'checkout_rep'" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
+    <h4 style="margin-top:0; margin-bottom: 15px; color: #334155; font-size: 14px; text-transform: uppercase;">🚪 Room Checkout Operational Tracker</h4>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
+      <div>
+        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">From Date</label>
+        <input type="date" [(ngModel)]="filterChkFromDate" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
+      </div>
+      <div>
+        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">To Date</label>
+        <input type="date" [(ngModel)]="filterChkToDate" style="width:100%; padding:5px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
+      </div>
+      <div>
+        <label style="display:block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px;">Search Textbox</label>
+        <input type="text" [(ngModel)]="filterChkSearchText" placeholder="Booking No, Name, Room..." style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px;">
       </div>
     </div>
     <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">

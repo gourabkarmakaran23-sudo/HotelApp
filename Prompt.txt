@@ -180,6 +180,18 @@ Customer Name, GSTIN, 5% Sub Total, 18% Sub Total, Sub TOtal, SGST(2.5%)
 CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
 working reports just add these Reports features after that we go for 
 Next reports. Understood.
+============================================================
+
+Cool! Now we can go for another Report I mean Room Checkout
+Report ( { label: 'Room Checkout Report', route: '/reports/checkout_rep' })
+with Date Range and Search and Reset button
+and with Action, Sl. No, Booking Number, Customer Name, Room No,
+Room Type, No. of Pax, Check In, CHeck Out, Booking Statusm
+Remarks, Search Textbox AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
 
 
 
