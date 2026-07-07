@@ -60,7 +60,8 @@ export class SidebarComponent implements OnInit {
   open: false,
   children: [
     { label: 'Booking Report', route: '/reports/booking' },
-    { label: 'Meal Details Report', route: '/reports/meal' },
+    // { label: 'Meal Details Report', route: '/reports/meal' },
+        { label: 'Meal Details Report (Alt)', route: '/reports/meal_alt' },
     { label: 'Monthly Summary Report', route: '/reports/monthly_summary' },
     { label: 'Payment Details Report', route: '/reports/payment_det' },
     { label: 'Payment Summary Report', route: '/reports/payment_sum' },
@@ -81,7 +82,7 @@ export class SidebarComponent implements OnInit {
     { label: 'Total Part Payment', route: '/reports/part_payment' },
     { label: 'Outstanding Room Revenue', route: '/reports/outstanding_rev' },
     { label: 'In-Store Wallet List', route: '/reports/wallet_list' },
-    { label: 'Meal Details Report (Alt)', route: '/reports/meal_alt' },
+
     { label: 'Payment Pending Report', route: '/reports/payment_pending' },
     { label: 'Cancelled Report', route: '/reports/cancelled' },
     { label: 'Purchase Report', route: '/reports/purchase_rep' },
