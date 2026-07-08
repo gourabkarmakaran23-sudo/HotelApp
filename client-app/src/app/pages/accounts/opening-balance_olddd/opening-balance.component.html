@@ -1,0 +1,109 @@
+<div class="management-container">
+  <div class="header-panel">
+    <h2>Opening Balance Management</h2>
+    <button class="btn btn-primary" (click)="addNew()">+ Add Opening Balance</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="management-table">
+      <thead>
+        <tr>
+          <th>SL</th>
+          <th>Account Name</th>
+          <th>Account Type</th>
+          <th>Balance Type</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of balances; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><strong>{{ item.accountName }}</strong></td>
+          <td><span class="type-badge">{{ item.accountType }}</span></td>
+          <td>{{ item.balanceType }}</td>
+          <td>{{ item.amount | number:'1.2-2' }}</td>
+          <td>{{ item.date | date:'yyyy-MM-dd' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="item.isActive ? 'active' : 'inactive'">
+              {{ item.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="text-center actions-cell">
+            <button class="action-btn edit-btn" (click)="edit(item)">
+              <i class="fa fa-pencil"></i> Edit
+            </button>
+            <button class="action-btn delete-btn" (click)="deleteItem(item.id)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()"></div>
+<div class="modal-container" *ngIf="showModal">
+  <div class="modal-header">
+    <h3>{{ isEditMode ? 'Modify Entry' : 'Create Entry' }}</h3>
+    <button class="close-x" (click)="closeModal()">&times;</button>
+  </div>
+  
+  <form [formGroup]="balanceForm" (ngSubmit)="save()" class="modal-form">
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Account Name <span class="required">*</span></label>
+        <input type="text" formControlName="accountName" placeholder="e.g. Corporate Cash Account" class="form-control" />
+      </div>
+      <div class="form-group col">
+        <label>Account Type <span class="required">*</span></label>
+        <select formControlName="accountType" class="form-control">
+          <option value="Bank">Bank Account</option>
+          <option value="Cash">Cash Ledger</option>
+          <option value="Asset">Fixed Asset</option>
+          <option value="Liability">Liability</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Balance Type</label>
+        <select formControlName="balanceType" class="form-control">
+          <option value="Debit">Debit</option>
+          <option value="Credit">Credit</option>
+        </select>
+      </div>
+      <div class="form-group col">
+        <label>Amount <span class="required">*</span></label>
+        <input type="number" formControlName="amount" class="form-control" placeholder="0.00"/>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Transaction Date <span class="required">*</span></label>
+        <input type="date" formControlName="date" class="form-control" />
+      </div>
+      <div class="form-group col">
+        <label>Remarks / Description</label>
+        <input type="text" formControlName="remarks" class="form-control" placeholder="Optional notes..."/>
+      </div>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="isActive" />
+        <span>Active & clear for accounting entries</span>
+      </label>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="balanceForm.invalid">Save Changes</button>
+    </div>
+  </form>
+</div>

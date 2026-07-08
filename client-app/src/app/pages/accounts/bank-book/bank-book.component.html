@@ -1,0 +1,64 @@
+<div class="account-page-container" style="padding: 20px; background: #f8fafc; font-family: sans-serif;">
+  <div style="background: #fff; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="font-size: 18px; font-weight: 600; color: #1e293b; margin: 0;">Bank Book</h2>
+      <button (click)="onAdd()" style="background: #2563eb; color: white; padding: 8px 16px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">+ Add New Entry</button>
+    </div>
+
+    <!-- Search Panel from Image -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 15px; max-width: 500px; margin-bottom: 25px; padding: 20px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="width: 120px; font-size: 13px; font-weight: 600; color: #475569;">GL Head</label>
+        <select [(ngModel)]="glHead" style="flex: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff;">
+          <option value="">Select Option</option>
+          <option value="bank">DBBL Account</option>
+        </select>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="width: 120px; font-size: 13px; font-weight: 600; color: #475569;">Account Code</label>
+        <input type="text" [(ngModel)]="accountCode" readonly style="flex: 1; padding: 6px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="width: 120px; font-size: 13px; font-weight: 600; color: #475569;">From Date</label>
+        <input type="date" [(ngModel)]="fromDate" style="flex: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="width: 120px; font-size: 13px; font-weight: 600; color: #475569;">To Date</label>
+        <input type="date" [(ngModel)]="toDate" style="flex: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div style="display: flex; justify-content: flex-end;">
+        <button (click)="onFind()" style="background: #22c55e; color: white; padding: 6px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Find</button>
+      </div>
+    </div>
+
+    <!-- Data Table Container -->
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+      <thead>
+        <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+          <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: left; font-size: 13px; font-weight:600; color:#475569;">Date</th>
+          <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: left; font-size: 13px; font-weight:600; color:#475569;">Particulars</th>
+          <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: left; font-size: 13px; font-weight:600; color:#475569;">Voucher No</th>
+          <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: right; font-size: 13px; font-weight:600; color:#475569;">Debit</th>
+          <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: right; font-size: 13px; font-weight:600; color:#475569;">Credit</th>
+          <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: right; font-size: 13px; font-weight:600; color:#475569;">Balance</th>
+          <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: center; font-size: 13px; font-weight:600; color:#475569; width: 120px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of records" style="border-bottom: 1px solid #e2e8f0;">
+          <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 13px;">{{row.date}}</td>
+          <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 13px;">{{row.particulars}}</td>
+          <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 13px;">{{row.voucherNo}}</td>
+          <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 13px; text-align: right;">{{row.debit | number:'1.2-2'}}</td>
+          <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 13px; text-align: right;">{{row.credit | number:'1.2-2'}}</td>
+          <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 13px; text-align: right; font-weight: 600;">{{row.balance | number:'1.2-2'}}</td>
+          <td style="padding: 10px; border: 1px solid #e2e8f0; text-align: center;">
+            <button (click)="onEdit(row)" style="background: #f59e0b; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-right: 5px; font-size: 12px;">Edit</button>
+            <button (click)="onDelete(row.id)" style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

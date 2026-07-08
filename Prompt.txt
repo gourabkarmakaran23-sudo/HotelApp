@@ -465,6 +465,28 @@ Next reports. Understood.
 
 ==================================================================================================
     
-
-
 ===========================end 7th July 2026==========================
+
+==============================Start 8th July 2026======================
+Need this page please see each image and design based on the Image.
+1st we do frontend page  then we implement backend. Each Page should
+have list page by default with Edit and Delete button and Add New 
+button in the top and other table filed are same as in the image
+before do anything check image 1st
+Financial Year Ending, Chart of Account, Opening Balance
+Debit Voucher,Credit Voucher,Contra Voucher,Journal Voucher
+Voucher Approval,Voucher Report,Cash Book
+After All add we need to add route and then add those menu in 
+sidebar under Account Menu
+========================================================
+Need this page please see each image and design based on the Image.
+1st we do frontend page  then we implement backend. Each Page should
+have list page by default with Edit and Delete button and Add New 
+button in the top and other table filed are same as in the image
+before do anything check image 1st
+Bank Book,General Ledger,Trial Balance,Profit Loss,Coa Print
+Balance Sheet After All add we need to add route and then add those menu in 
+sidebar under Account Menu
+
+
+==============================End 8th July 2026 ======================

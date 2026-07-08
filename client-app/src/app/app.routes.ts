@@ -141,9 +141,93 @@ export const routes: Routes = [
   //#endregion
 
   //#region Account & Tax / Promocode Management
-  { path: 'account/opening-balance', loadComponent: () => import('./pages/accounts/opening-balance/opening-balance.component').then(m => m.OpeningBalanceComponent), canActivate: [AuthGuard] },
+  //{ path: 'account/opening-balance', loadComponent: () => import('./pages/accounts/opening-balance/opening-balance.component').then(m => m.OpeningBalanceComponent), canActivate: [AuthGuard] },
   { path: 'tax/list', loadComponent: () => import('./pages/masters/tax/tax.component').then(m => m.TaxComponent), canActivate: [AuthGuard] },
   { path: 'promos/list', loadComponent: () => import('./pages/masters/promocode/promocode.component').then(m => m.PromocodeComponent), canActivate: [AuthGuard] },
+  //Acount Management Routes
+  { 
+    path: 'account/financial-year-end', 
+    loadComponent: () => import('./pages/accounts/financial-year-end/financial-year-end.component').then(m => m.FinancialYearEndComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/chart-of-accounts', 
+    loadComponent: () => import('./pages/accounts/chart-of-accounts/chart-of-accounts.component').then(m => m.ChartOfAccountsComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/opening-balance', 
+    loadComponent: () => import('./pages/accounts/opening-balance/opening-balance.component').then(m => m.OpeningBalanceComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/debit-voucher', 
+    loadComponent: () => import('./pages/accounts/debit-voucher/debit-voucher.component').then(m => m.DebitVoucherComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/credit-voucher', 
+    loadComponent: () => import('./pages/accounts/credit-voucher/credit-voucher.component').then(m => m.CreditVoucherComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/contra-voucher', 
+    loadComponent: () => import('./pages/accounts/contra-voucher/contra-voucher.component').then(m => m.ContraVoucherComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/journal-voucher', 
+    loadComponent: () => import('./pages/accounts/journal-voucher/journal-voucher.component').then(m => m.JournalVoucherComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/voucher-approval', 
+    loadComponent: () => import('./pages/accounts/voucher-approval/voucher-approval.component').then(m => m.VoucherApprovalComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/voucher-report', 
+    loadComponent: () => import('./pages/accounts/voucher-report/voucher-report.component').then(m => m.VoucherReportComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/cash-book', 
+    loadComponent: () => import('./pages/accounts/cash-book/cash-book.component').then(m => m.CashBookComponent), 
+    canActivate: [AuthGuard] ,
+  },
+  {
+        path: 'account/bank-book',
+        loadComponent: () => import('./pages/accounts/bank-book/bank-book.component').then(m => m.BankBookComponent),
+        canActivate: [AuthGuard] ,
+  },
+      {
+        path: 'account/general-ledger',
+        loadComponent: () => import('./pages/accounts/general-ledger/general-ledger.component').then(m => m.GeneralLedgerComponent),
+        canActivate: [AuthGuard] 
+      },
+      {
+        path: 'account/trial-balance',
+        loadComponent: () => import('./pages/accounts/trial-balance/trial-balance.component').then(m => m.TrialBalanceComponent),
+        canActivate: [AuthGuard] ,
+      },
+      {
+        path: 'account/profit-loss',
+        loadComponent: () => import('./pages/accounts/profit-loss/profit-loss.component').then(m => m.ProfitLossComponent),
+        canActivate: [AuthGuard] 
+      },
+      {
+        path: 'account/coa-print',
+        loadComponent: () => import('./pages/accounts/coa-print/coa-print.component').then(m => m.CoaPrintComponent),
+        canActivate: [AuthGuard] 
+      },
+      {
+        path: 'account/balance-sheet',
+        loadComponent: () => import('./pages/accounts/balance-sheet/balance-sheet.component').then(m => m.BalanceSheetComponent),
+        canActivate: [AuthGuard] 
+      },
+  //End of Account Management Routes
+
+  
   //#endregion
 
 //#region Other Payment Management

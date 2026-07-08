@@ -1,3 +1,30 @@
+Account:
+Manage Commission
+Manage Agent
+Financial Year
+Financial Year Ending
+Chart of Account
+Opening Balance
+Debit Voucher
+Credit Voucher
+Contra Voucher
+Journal Voucher
+Voucher Approval
+Voucher Report
+Cash Book
+
+Bank Book
+General Ledger
+Trial Balance
+Profit Loss
+Coa Print
+Balance Sheet
+
+
+
+Account Report
+
+
 feature/reservationstandard
 
 1. Payment Method: Done

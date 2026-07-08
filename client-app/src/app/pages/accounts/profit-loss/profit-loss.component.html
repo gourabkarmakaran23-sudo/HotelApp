@@ -1,0 +1,82 @@
+<div class="account-page-container" style="padding: 20px; background: #f8fafc; font-family: sans-serif;">
+  <div style="background: #fff; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="font-size: 18px; font-weight: 600; color: #1e293b; margin: 0;">Profit Loss Statement</h2>
+      <div style="display: flex; gap:10px;">
+        <button (click)="onAdd()" style="background: #2563eb; color: white; padding: 8px 16px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">+ Add Entry</button>
+        <button (click)="onPrint()" style="background: #06b6d4; color: white; padding: 8px 16px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">Print</button>
+      </div>
+    </div>
+
+    <!-- Title Headings Structure mapping Image 4 -->
+    <div style="text-align: center; margin-bottom: 25px;">
+      <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1e293b;">Statement of Comprehensive Income</h3>
+      <p style="margin: 4px 0; font-size: 13px; color: #475569; font-weight: 600;">From 2026-04-27 00:00:00 To 2026-04-30</p>
+    </div>
+
+    <!-- Layout Architecture Grid Structure exactly like image 4 -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+      <thead>
+        <tr style="background: #e2e8f0;">
+          <th style="padding: 10px; border: 1px solid #cbd5e1; text-align: left; font-size: 14px; color: #334155; font-weight: 600;">Particulars</th>
+          <th style="padding: 10px; border: 1px solid #cbd5e1; text-align: right; font-size: 14px; color: #334155; font-weight: 600; width: 200px;">Total Amount</th>
+          <th style="padding: 10px; border: 1px solid #cbd5e1; text-align: center; font-size: 14px; color: #334155; font-weight: 600; width: 120px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Income Block Heading -->
+        <tr style="background: #f1f5f9;">
+          <td colspan="3" style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 700; font-size: 14px; color: #1e293b;">Income</td>
+        </tr>
+        <tr *ngFor="let inc of incomeItems">
+          <td style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; padding-left: 20px;">{{inc.name}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right; font-size: 13px;">{{inc.amount | number:'1.2-2'}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center;">
+            <button (click)="onEdit(inc)" style="color: #d97706; background:none; border:none; cursor:pointer; font-size:12px;">Edit</button> | 
+            <button (click)="onDelete(inc)" style="color: #dc2626; background:none; border:none; cursor:pointer; font-size:12px;">Delete</button>
+          </td>
+        </tr>
+        <tr style="font-weight: 600;">
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right;">Total Income</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right; border-bottom: 2px double #1e293b;">{{totalIncome | number:'1.2-2'}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1;"></td>
+        </tr>
+
+        <!-- Expense Block Heading -->
+        <tr style="background: #f1f5f9;">
+          <td colspan="3" style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 700; font-size: 14px; color: #1e293b;">Expense</td>
+        </tr>
+        <tr *ngFor="let exp of expenseItems">
+          <td style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; padding-left: 20px;">{{exp.name}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right; font-size: 13px;">{{exp.amount | number:'1.2-2'}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center;">
+            <button (click)="onEdit(exp)" style="color: #d97706; background:none; border:none; cursor:pointer; font-size:12px;">Edit</button> | 
+            <button (click)="onDelete(exp)" style="color: #dc2626; background:none; border:none; cursor:pointer; font-size:12px;">Delete</button>
+          </td>
+        </tr>
+        <tr style="font-weight: 600;">
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right;">Total Expense</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right; border-bottom: 2px double #1e293b;">{{totalExpense | number:'1.2-2'}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1;"></td>
+        </tr>
+
+        <!-- Profit Loss Calculation Row matching Image 4 -->
+        <tr style="font-weight: bold; background: #fff; font-size: 15px;">
+          <td style="padding: 12px; border: 1px solid #cbd5e1; text-align: right; letter-spacing: 0.5px;">Profit-Loss (Profit)</td>
+          <td style="padding: 12px; border: 1px solid #cbd5e1; text-align: right; color: #16a34a;">{{netProfit | number:'1.2-2'}}</td>
+          <td style="padding: 12px; border: 1px solid #cbd5e1;"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Signature Footer Panels Layout matching Image 4 -->
+    <div style="display: flex; justify-content: space-between; margin-top: 70px; padding: 0 10px;">
+      <span style="border-top: 1px solid #475569; width: 160px; text-align: center; font-size: 12px; color: #475569; padding-top: 5px;">Prepared By</span>
+      <span style="border-top: 1px solid #475569; width: 160px; text-align: center; font-size: 12px; color: #475569; padding-top: 5px;">Account</span>
+      <span style="border-top: 1px solid #475569; width: 160px; text-align: center; font-size: 12px; color: #475569; padding-top: 5px;">Authorized Signature</span>
+      <span style="border-top: 1px solid #475569; width: 160px; text-align: center; font-size: 12px; color: #475569; padding-top: 5px;">Chairman</span>
+    </div>
+
+  </div>
+</div>
