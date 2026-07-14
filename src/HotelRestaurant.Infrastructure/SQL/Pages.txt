@@ -185,6 +185,24 @@ GIve some data to entry Tax,Promocode,Cancellation Policy , Aminities, Other Pay
 Tax, Promocode, CancellationPolicy, Amenity add these in DB Set AppDbContext.cs
 
 
+===================================================================
+1. Excced Like Dashboard
+2. Timewise CheckIn/Booking(2 hours same days should allow)
+3. SameDay CHeckOut SHould Allow based on Timewise
+4. Dormantary (4 Bed- 1 bed allowd to each) Bed Booking
+5. 1 Company can have multiple hotels. So hotelwise Revenue,
+   COmpanywise Revenue(Profit/Loss), All Masters and 
+   Transaction should be Hotelwise, Hotelwise Login,
+   SuperAdmin LOgin who can see ALl Hotels,
+6. REservation Page is not work need to check.
+7. Payment Gateway Integration
+8. OTA Integration (Channel Manager)
+9. Booking Website ()
+10. OTA Website(Like MakeMyTrip/GoIbibo,etc)
+
+
+
+
 
 
 
