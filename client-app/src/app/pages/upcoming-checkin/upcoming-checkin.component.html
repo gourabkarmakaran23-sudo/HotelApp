@@ -64,17 +64,17 @@
           <td class="vertical-top"><span class="date-in">{{ row.checkInDate | date:'dd-MM-yyyy' }}</span></td>
           <td class="vertical-top"><span class="date-out">{{ row.checkOutDate | date:'dd-MM-yyyy' }}</span></td>
           <td class="vertical-top">
-            <span class="status-pill" [ngClass]="row.bookingStatus?.toLowerCase() || 'pending'">
+            <span class="status-pill" [ngClass]="row.bookingStatus.toLowerCase() || 'pending'">
               {{ row.bookingStatus || 'Confirmed' }}
             </span>
           </td>
           <td class="text-center vertical-top">
             <div class="action-dropdown-container">
-              <button class="btn-action-trigger" (click)="toggleActionMenu($event, i)">
+              <button class="btn-action-trigger" (click)="toggleActionMenu($event, row)">
                 Actions ▾
               </button>
               
-              <div class="action-menu-panel" [class.show]="activeMenuIndex === i">
+              <div class="action-menu-panel" (click)="$event.stopPropagation()" [class.show]="row.showActions" [ngClass]="row.menuAlign" [ngStyle]="row.menuFixed ? { position: 'fixed', top: row.menuTop, left: row.menuLeft, right: 'auto', width: '220px' } : {}">
                 <button (click)="onAction('update', row)"><i class="fa fa-edit"></i> Update Reservation</button>
                 <button (click)="addGuestRow(row)"><i class="fa fa-user-plus"></i> Add Guest</button>
                 <button (click)="onCheckIn(row)" class="highlight-action"><i class="fa fa-check-circle"></i> Check In</button>

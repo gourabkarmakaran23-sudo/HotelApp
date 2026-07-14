@@ -56,45 +56,41 @@ export class CustomAlertService {
 
   /** Called by the alert component when the user clicks OK */
   close(): void {
-    //const cb = this.state().onClose;
-    const cb = this.state().onConfirm; // For confirm dialogs, we want to call onConfirm when user clicks OK
+    const state = this.state();
+    const cb = state.showCancel ? state.onConfirm : state.onClose;
     this.state.set({ visible: false, type: 'info', title: '', message: '' });
     this._closed$.next();
     if (cb) cb();
   }
+
   cancel(): void {
-
-  const cb = this.state().onCancel;
-
-  this.state.set({
-    visible: false,
-    type: 'info',
-    title: '',
-    message: '',
-    showCancel: false
-  });
-
-  if (cb) cb();
-}
-
-
+    const cb = this.state().onCancel;
+    this.state.set({
+      visible: false,
+      type: 'info',
+      title: '',
+      message: '',
+      showCancel: false
+    });
+    if (cb) cb();
+  }
 
   confirm(
-  message: string,
-  onConfirm: () => void,
-  onCancel?: () => void
-): void {
-
-  this.state.set({
-    visible: true,
-    type: 'warning',
-    title: 'Confirm Delete',
-    message,
-    onConfirm,
-    onCancel,
-    showCancel: true
-  });
-}
+    message: string,
+    onConfirm: () => void,
+    onCancel?: () => void,
+    title: string = 'Confirm'
+  ): void {
+    this.state.set({
+      visible: true,
+      type: 'warning',
+      title,
+      message,
+      onConfirm,
+      onCancel,
+      showCancel: true
+    });
+  }
   // ── Private ─────────────────────────────────────────────────────────────────
 
   private _show(type: AlertType, title: string, message: string, onClose?: () => void): void {

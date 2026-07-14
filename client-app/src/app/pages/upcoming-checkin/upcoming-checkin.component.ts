@@ -5,19 +5,18 @@ import { Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { CustomAlertService } from '../../services/custom-alert.service';
 
-interface GuestRow {
-  id: number;
+interface BookingRow {
+  bookingId: number;
   bookingNumber: string;
-  roomType: string;
+  bookingDate: string | Date;
+  guestName: string;
+  mobile: string;
+  roomTypes: string;
   roomNo: string;
   mealPlan: string;
   pax: string;
-  name: string;
-  mobile: string;
-  checkIn: string;
-  checkOut: string;
-  paidAmt: number;
-  dueAmt: number;
+  checkInDate: string | Date;
+  checkOutDate: string | Date;
   bookingStatus: string;
   showActions?: boolean;
   menuAlign?: 'left' | 'right';
@@ -36,16 +35,13 @@ interface GuestRow {
   styleUrls: ['./upcoming-checkin.component.scss']
 })
 export class UpcomingCheckinComponent implements OnInit {
-    guestRows: GuestRow[] = [];
-  bookings: any[] = [];
-  filteredBookings: any[] = [];
+  bookings: BookingRow[] = [];
+  filteredBookings: BookingRow[] = [];
   searchText = '';
-  
-  // Track which row action menu dropdown is currently open
-  activeMenuIndex: number | null = null;
   
   showViewModal = false;
   selectedBooking: any = null;
+  activeMenuIndex: number | null = null;
 
   constructor(
     private bookingService: BookingService,
@@ -60,40 +56,63 @@ export class UpcomingCheckinComponent implements OnInit {
   // Closes dropdown menus cleanly when clicking anywhere outside on the window layout layout
   @HostListener('document:click', ['$event'])
   closeDropdownsOutside(event: Event): void {
-    this.activeMenuIndex = null;
+    this.closeAllMenus();
   }
 
-  toggleActionMenu(event: Event, index: number): void {
-    event.stopPropagation(); // Stop click bubbling so host listener doesn't trigger
-    this.activeMenuIndex = this.activeMenuIndex === index ? null : index;
+  toggleActionMenu(event: Event, row: BookingRow): void {
+    event.stopPropagation();
+
+    this.bookings.forEach(r => {
+      if (r !== row) {
+        r.showActions = false;
+        r.menuFixed = false;
+      }
+    });
+
+    const nextState = !row.showActions;
+    row.showActions = nextState;
+
+    if (nextState) {
+      const trigger = (event.target as HTMLElement).closest('.btn-action-trigger') as HTMLElement || (event.target as HTMLElement);
+      const rect = trigger.getBoundingClientRect();
+      const menuWidth = 220;
+      const spacing = 12;
+      const rightSpace = window.innerWidth - rect.right;
+
+      if (rightSpace < menuWidth + spacing) {
+        row.menuAlign = 'left';
+        row.menuLeft = `${Math.max(spacing, rect.left - menuWidth + rect.width)}px`;
+      } else {
+        row.menuAlign = 'right';
+        row.menuLeft = `${Math.min(window.innerWidth - menuWidth - spacing, rect.right - menuWidth)}px`;
+      }
+
+      row.menuTop = `${Math.round(rect.bottom + 6)}px`;
+      row.menuFixed = true;
+    } else {
+      row.menuFixed = false;
+    }
   }
 
  addGuestRow(row: any): void {
-  this.activeMenuIndex = null;
-  // Pass bookingId explicitly in the query parameters
+  this.closeAllMenus();
   this.router.navigate(['/add-guest'], { 
     queryParams: { bookingId: row.bookingId } 
   });
 }
-
+  
   
   closeAllMenus(): void {
-
-    this.guestRows.forEach(r => {
-
+    this.bookings.forEach(r => {
       r.showActions = false;
-
       r.menuFixed = false;
-
     });
-
   }
 
-
   loadBookings(): void {
-  this.bookingService.getUpcomingCheckIn().subscribe({
-    next: (res: any[]) => {
-      console.log("Upcoming CheckIn Data Received: ", res);
+    this.bookingService.getUpcomingCheckIn().subscribe({
+      next: (res: any[]) => {
+        console.log("Upcoming CheckIn Data Received: ", res);
       
       // Map properties safely to avoid frontend undefined structural field bugs
       this.bookings = res.map(b => ({
@@ -137,7 +156,7 @@ export class UpcomingCheckinComponent implements OnInit {
 
   // Central Router Actions Controller for the Menu choices
   onAction(actionType: string, row: any): void {
-    this.activeMenuIndex = null; // Hide dropdown immediately
+    this.closeAllMenus();
     
     switch(actionType) {
       case 'update':
@@ -159,27 +178,38 @@ export class UpcomingCheckinComponent implements OnInit {
         this.alertService.success(`Printing Draft Form...`);
         break;
       case 'cancel':
-        this.alertService.confirm(`Are you absolutely sure you want to CANCEL reservation ${row.bookingNumber}?`, () => {
-          this.alertService.success('Reservation Cancelled Successfully.');
-        });
+        this.closeAllMenus();
+        this.alertService.confirm(
+          `Are you absolutely sure you want to CANCEL reservation ${row.bookingNumber}?`,
+          () => {
+            this.alertService.success('Reservation Cancelled Successfully.');
+          },
+          undefined,
+          'Confirm Cancel'
+        );
         break;
     }
   }
 
   onCheckIn(row: any): void {
-    this.activeMenuIndex = null;
-    this.alertService.confirm(`Check in booking ${row.bookingNumber}?`, () => {
-      this.bookingService.checkInBooking(row.bookingId).subscribe({
-        next: () => {
-          this.alertService.success('Guest checked in successfully.');
-          this.loadBookings();
-        },
-        error: (err) => {
-          console.error(err);
-          this.alertService.error('Failed to check in booking.');
-        }
-      });
-    });
+    this.closeAllMenus();
+    this.alertService.confirm(
+      `Check in booking ${row.bookingNumber}?`,
+      () => {
+        this.bookingService.checkInBooking(row.bookingId).subscribe({
+          next: () => {
+            this.alertService.success('Guest checked in successfully.');
+            this.loadBookings();
+          },
+          error: (err) => {
+            console.error(err);
+            this.alertService.error('Failed to check in booking.');
+          }
+        });
+      },
+      undefined,
+      'Confirm Check In'
+    );
   }
 // FIXED: Consolidated Edit Routing Context Method
   editBooking(id: number): void {

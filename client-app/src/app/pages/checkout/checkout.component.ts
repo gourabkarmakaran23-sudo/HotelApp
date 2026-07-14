@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { MasterService } from '../../services/master.service';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
 })
@@ -14,6 +16,8 @@ export class CheckoutComponent implements OnInit {
   bookingNumber = '';
   guestName = '';
   roomNos = '';
+  paymentMethods: any[] = [];
+  selectedPaymentMode = '';
 
   // sample billing data
   billing = {
@@ -37,9 +41,15 @@ export class CheckoutComponent implements OnInit {
   adjustmentAmount = 0;
   subtotalNumber = 0;
 
-  constructor(private readonly router: Router, private readonly http: HttpClient) {}
+  constructor(
+    private readonly router: Router,
+    private readonly http: HttpClient,
+    private readonly masterService: MasterService
+  ) {}
 
   ngOnInit(): void {
+    this.loadPaymentMethods();
+
     // prefer router state, fallback to history.state for direct navigation
     const nav = this.router.getCurrentNavigation()?.extras.state as any;
     const st = nav ?? (history.state ?? {});
@@ -51,6 +61,20 @@ export class CheckoutComponent implements OnInit {
 
     // compute numeric subtotal from roomBills
     this.computeTotals();
+  }
+
+  loadPaymentMethods(): void {
+    this.masterService.getPaymentMethods().subscribe({
+      next: (res) => {
+        this.paymentMethods = res || [];
+        if (!this.selectedPaymentMode && this.paymentMethods.length > 0) {
+          this.selectedPaymentMode = this.paymentMethods[0].methodName || this.paymentMethods[0].name || this.paymentMethods[0].paymentMode || '';
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load payment methods:', err);
+      }
+    });
   }
 
   
@@ -73,6 +97,7 @@ export class CheckoutComponent implements OnInit {
       bookingNumber: this.bookingNumber,
       guestName: this.guestName,
       roomNos: this.roomNos,
+      paymentMode: this.selectedPaymentMode,
       additionalCharges: this.additionalCharges,
       adjustmentAmount: this.adjustmentAmount,
       subtotal: this.subtotalNumber

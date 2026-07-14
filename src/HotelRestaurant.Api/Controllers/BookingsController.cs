@@ -169,6 +169,27 @@ namespace HotelRestaurant.Api.Controllers
         }
 
         #endregion
+
+        #region Check In Booking
+        [HttpPost("{id}/checkin")]
+        public async Task<IActionResult> CheckInBooking(int id)
+        {
+            try
+            {
+                var success = await _reservationService.CheckInBookingAsync(id);
+
+                if (!success)
+                    return NotFound($"Booking with ID {id} was not found or cannot be checked in.");
+
+                return Ok(new { success = true, message = "Booking checked in successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error while checking in booking: {ex.Message}");
+            }
+        }
+        #endregion
+
         #region GetBookingById
 
         [HttpGet("{id}")]
