@@ -1,0 +1,20 @@
+
+
+   
+
+Cool! Now we can go for another Report I mean Daily Booking Report
+Report (    { label: 'Daily Booking Report', route: '/reports/daily_booking' })
+with Booking Status, From, To Date filrers and Search and Reset button
+and with whatever filed need for Booking Report like Booking Date, Guest Name, CHeck In, Check Out,Meal Plan, etc AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+==================================================================================================
+
+
+==================================================================================================
+
+
+   ,
+

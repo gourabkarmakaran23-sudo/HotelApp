@@ -1,0 +1,12 @@
+<div class="hk-container">
+  <div class="hk-header"><h2>All Room QR Codes (Real-Time Database Based)</h2></div>
+  <div class="room-grid">
+    <div *ngFor="let room of rooms" class="room-box" style="width: 180px; padding: 20px;">
+      <div style="height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+        <img *ngIf="qrImages[room]" [src]="qrImages[room]" alt="QR Code" style="max-height: 100%; max-width: 100%;">
+        <span *ngIf="!qrImages[room]">Generating...</span>
+      </div>
+      <div class="fw-bold">Room No: {{ room }}</div>
+    </div>
+  </div>
+</div>

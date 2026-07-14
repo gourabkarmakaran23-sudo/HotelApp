@@ -1,0 +1,246 @@
+<div class="refund-container">
+  <div class="page-main-header">
+    <div class="title-section">
+      <h2><i class="fa fa-money"></i> Guest Refund Lifecycle Desk</h2>
+      <p>Manage non-website bookings refund pipeline, approvals, and transaction auditing.</p>
+    </div>
+    <button class="btn btn-add-new" (click)="openAddModal()">
+      <i class="fa fa-plus"></i> Add New Record
+    </button>
+  </div>
+
+  <div class="tabs-navigation-wrapper">
+    <button [class.active-tab]="currentTab === 'due'" (click)="switchTab('due')">
+      <i class="fa fa-clock-o"></i> Refund Due (Non-Website)
+    </button>
+    <button [class.active-tab]="currentTab === 'process'" (click)="switchTab('process')">
+      <i class="fa fa-refresh fa-spin-slow"></i> Refund Under Process
+    </button>
+    <button [class.active-tab]="currentTab === 'refunded'" (click)="switchTab('refunded')">
+      <i class="fa fa-check-circle"></i> Refunded Archives
+    </button>
+  </div>
+
+  <div class="table-card-wrapper" *ngIf="currentTab === 'due'">
+    <table class="custom-refund-table">
+      <thead>
+        <tr>
+          <th>Sl.</th>
+          <th>Booking ID</th>
+          <th>Guest Name</th>
+          <th>Booking Source</th>
+          <th class="text-right">Refund Amt</th>
+          <th>Request Date</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of dueList; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><span class="id-badge">{{ item.bookingId }}</span></td>
+          <td><strong>{{ item.guestName }}</strong></td>
+          <td><span class="source-badge">{{ item.source }}</span></td>
+          <td class="text-right text-orange bold-text">₹ {{ item.refAmount | number:'1.2-2' }}</td>
+          <td>{{ item.requestDate | date:'dd-MMM-yyyy' }}</td>
+          <td class="text-center">
+            <button class="row-del-btn" (click)="deleteRecord(item.id, 'due')"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-card-wrapper" *ngIf="currentTab === 'process'">
+    <table class="custom-refund-table">
+      <thead>
+        <tr>
+          <th>Sl.</th>
+          <th>Booking ID</th>
+          <th>Guest Name</th>
+          <th class="text-right">Refund Amt</th>
+          <th>Target Bank</th>
+          <th>Current Status</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of processList; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><span class="id-badge">{{ item.bookingId }}</span></td>
+          <td><strong>{{ item.guestName }}</strong></td>
+          <td class="text-right text-blue bold-text">₹ {{ item.refAmount | number:'1.2-2' }}</td>
+          <td><i class="fa fa-university"></i> {{ item.bankName }}</td>
+          <td><span class="status-working-badge">{{ item.status }}</span></td>
+          <td class="text-center">
+            <button class="row-del-btn" (click)="deleteRecord(item.id, 'process')"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-card-wrapper" *ngIf="currentTab === 'refunded'">
+    <table class="custom-refund-table">
+      <thead>
+        <tr>
+          <th>Sl.</th>
+          <th>Booking ID</th>
+          <th>Guest Name</th>
+          <th class="text-right">Paid Refund Amt</th>
+          <th>Payment Channel</th>
+          <th>Transaction / Ref ID</th>
+          <th>Settle Date</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of refundedList; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><span class="id-badge">{{ item.bookingId }}</span></td>
+          <td><strong>{{ item.guestName }}</strong></td>
+          <td class="text-right text-success bold-text">₹ {{ item.refAmount | number:'1.2-2' }}</td>
+          <td><span class="channel-badge">{{ item.channel }}</span></td>
+          <td><code class="txn-code">{{ item.txnId }}</code></td>
+          <td>{{ item.date | date:'dd-MMM-yyyy' }}</td>
+          <td class="text-center">
+            <button class="row-del-btn" (click)="deleteRecord(item.id, 'refunded')"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="popup-modal-overlay" *ngIf="isModalOpen">
+  <div class="popup-modal-container">
+    <div class="popup-modal-header">
+      <h3>
+        <i class="fa fa-file-text"></i> 
+        Create New [{{ currentTab === 'due' ? 'Refund Due' : currentTab === 'process' ? 'Process Track' : 'Settled Arch' }}]
+      </h3>
+      <button class="close-modal-x" (click)="closeModal()">&times;</button>
+    </div>
+
+    <div class="popup-modal-body">
+      <form [formGroup]="dueForm" *ngIf="currentTab === 'due'">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Booking ID / Ref No <span class="req">*</span></label>
+            <input type="text" formControlName="bookingId" placeholder="e.g. BK-9981" class="modal-control" />
+          </div>
+          <div class="form-group">
+            <label>Guest Full Name <span class="req">*</span></label>
+            <input type="text" formControlName="guestName" placeholder="Enter name" class="modal-control" />
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Booking Source <span class="req">*</span></label>
+            <select formControlName="bookingSource" class="modal-control">
+              <option value="Walk-In">Walk-In</option>
+              <option value="MakeMyTrip">MakeMyTrip</option>
+              <option value="Agoda">Agoda</option>
+              <option value="Booking.com">Booking.com</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Refund Capital Amount (₹) <span class="req">*</span></label>
+            <input type="number" formControlName="refundAmount" class="modal-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Request Date <span class="req">*</span></label>
+          <input type="date" formControlName="requestDate" class="modal-control" />
+        </div>
+        <div class="form-group">
+          <label>Remarks / Cause of Cancel</label>
+          <textarea formControlName="remarks" rows="2" class="modal-control" placeholder="Optional notes..."></textarea>
+        </div>
+      </form>
+
+      <form [formGroup]="processForm" *ngIf="currentTab === 'process'">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Booking ID <span class="req">*</span></label>
+            <input type="text" formControlName="bookingId" class="modal-control" />
+          </div>
+          <div class="form-group">
+            <label>Guest Name <span class="req">*</span></label>
+            <input type="text" formControlName="guestName" class="modal-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Locked Refund Amount (₹) <span class="req">*</span></label>
+          <input type="number" formControlName="refundAmount" class="modal-control" />
+        </div>
+        <div class="form-group">
+          <label>Beneficiary Bank Name <span class="req">*</span></label>
+          <input type="text" formControlName="bankName" placeholder="e.g. HDFC Bank" class="modal-control" />
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Account Number <span class="req">*</span></label>
+            <input type="text" formControlName="accountNo" class="modal-control" />
+          </div>
+          <div class="form-group">
+            <label>Bank IFSC Code <span class="req">*</span></label>
+            <input type="text" formControlName="ifscCode" placeholder="e.g. HDFC0001234" class="modal-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Processing Lifecycle Status <span class="req">*</span></label>
+          <select formControlName="processStatus" class="modal-control">
+            <option value="Sent to Accounts">Sent to Accounts</option>
+            <option value="Awaiting GM Approval">Awaiting GM Approval</option>
+            <option value="Bank File Generated">Bank File Generated</option>
+          </select>
+        </div>
+      </form>
+
+      <form [formGroup]="refundedForm" *ngIf="currentTab === 'refunded'">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Booking ID <span class="req">*</span></label>
+            <input type="text" formControlName="bookingId" class="modal-control" />
+          </div>
+          <div class="form-group">
+            <label>Guest Name <span class="req">*</span></label>
+            <input type="text" formControlName="guestName" class="modal-control" />
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Settled Amount (₹) <span class="req">*</span></label>
+            <input type="number" formControlName="refundAmount" class="modal-control" />
+          </div>
+          <div class="form-group">
+            <label>Payment Mode/Channel <span class="req">*</span></label>
+            <select formControlName="refundChannel" class="modal-control">
+              <option value="UPI / GPay">UPI / GPay</option>
+              <option value="Net Banking">Net Banking</option>
+              <option value="Cash Counter">Cash Counter</option>
+              <option value="Credit Card Rollback">Credit Card Rollback</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Bank Transaction ID (TxnId) <span class="req">*</span></label>
+          <input type="text" formControlName="transactionId" placeholder="UTR or Transfer Reference No" class="modal-control" />
+        </div>
+        <div class="form-group">
+          <label>Settlement Date <span class="req">*</span></label>
+          <input type="date" formControlName="refundedDate" class="modal-control" />
+        </div>
+        <div class="form-group">
+          <label>Upload Receipt/Bank Statement Snapshot</label>
+          <input type="file" class="modal-control" style="padding: 4px;" />
+        </div>
+      </form>
+    </div>
+
+    <div class="popup-modal-footer">
+      <button type="button" class="btn-m-cancel" (click)="closeModal()">Dismiss</button>
+      <button type="button" class="btn-m-save" (click)="submitForm()">Commit Data</button>
+    </div>
+  </div>
+</div>

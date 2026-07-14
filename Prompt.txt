@@ -42,3 +42,451 @@ git remote add origin https://github.com/gourabkarmakaran23-sudo/HotelApp.git
 ent-app
 └── ag-grid-angular@31.3.4
 
+==================================================================
+
+Refund Due (Non-Website Booking): যেখানে গেস্ট নেম, বুকিং সোর্স, রিফান্ড অ্যামাউন্ট ইত্যাদি থাকবে।
+
+Refund Under Process: প্রসেসিং ট্র্যাকিং ইনফরমেশন।
+
+Refunded: ট্রানজেকশন আইডি, ডেট এবং রিফান্ড মেথড সহ ফাইনাল হিস্ট্রি।
+
+Routing a ki kore Add korbo ai 3ti form
+Ekta Notun Manu Hbe Cancelllation Management, Tax
+Management er moddhe tar moddhe ai 3 ta form thekbe
+apni kintu ekta form add korechen dekhlam
+
+=========================================================
+Promlem in Assign Room Cleaning Screen
+1. In Assign Room Cleaning Page Rooms are comes form Rooms tales
+I mean Rooms and Floor API or how  http://localhost:5287/api/room 
+2.  Assign Room Cleaning Page Room Type should comes from RoomType 
+API http://localhost:5287/api/RoomType 
+3. House Keeper should comes from API as well but I think 
+   that House Keeping Or Staff API is not created yet so here Now
+   we can hused JSON data or some array data with atleast 5-6 employee
+   here I see only one employee
+4. And Status Dropdown I see blank there shuould be CheckIn, Ready,
+   In Progress status 
+5. And Therir will be an save button to save and assign for Cleaning
+    and an Cancel button. And After Saved then only Room showing
+    with status by default we can se status as In Progress or something
+    like this
+Please fixed Assign Room Cleaning then We go for Room CLeaning Screen
+
+Status
+
+==============================5th Julyy============================
+
+Each employee has different purpose don't change the existing 
+report filters just add new features/filters , Datatable,
+YOu can do create an shared files where each reports html are Therir
+and then we add theses page in out main report-engine.html or 
+if you better approach that also we can do 
+but don't change the existing filters or data. We go one by one
+report and fixed the filter and Datable values understood? 
+
+Each employee has different purpose don't change the existing 
+
+report filters just add new features/filters , Datatable,
+
+YOu can do create an shared files where each reports html are Therir
+
+and then we add theses page in out main report-engine.html or 
+
+if you better approach that also we can do 
+
+but don't change the existing filters or data. We go one by one
+
+report and fixed the filter and Datable values understood? 
+
+Each employee has different purpose don't change the existing 
+
+report filters just add new features/filters , Datatable,
+
+YOu can do create an shared files where each reports html are Therir
+
+and then we add theses page in out main report-engine.html or 
+
+if you better approach that also we can do 
+
+but don't change the existing filters or data. We go one by one
+
+report and fixed the filter and Datable values understood?  Both report correct screenshot given and other reports we do one by one means after these 2 completes we go for next
+
+========================================
+Why you remove Meal Details Report Filter  I mean From Date,
+
+To Date, Meal Plan Classification in the new version why and why?
+
+
+Now you break/change Booking Report Filter  why and why bro We need both filter in both page when we in Booking Report 
+filter should be Booking Status,Payment Status,Check In Date,
+Check Out Date, Customer Name, Customer Phone No.,
+Guest Name, Guest Phone No., Ref. Booking No., Booking Amount (Gross)
+and Meal Details Report filters should be From Date, To Date,
+Meal Plan Classification understood?
+==================================================================
+
+Cool! Now we can go for another Report I mean Monthly Summary reports
+with Choose Month, Choose Year Dropown and Search and Reset button
+and with Sl. No, Year, Month, Total Bookings, Total Revenue,
+Total Adjustment, Avg Revenue/Day AGGrid Tables Along with 
+CSV, Print, Columns that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+============================================================
+Cool! Now we can go for another Report I mean Monthly Payment Details
+Report ( { label: 'Payment Details Report', route: '/reports/payment_det' })
+with Service For, Booking Status, Payment Mode dropdone
+and From Date and TO Date Textbox Dropown and Search and Reset button
+and with Sl. No, Booking Number, Receipt Number, Merchant Transaction No.,
+Payment Date, Amount Paid, Room Bill, Food Paid, Payment Mode, Service For,
+Customer Name, Transation Details, Booking Status, Room Numbers AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+====================================================================
+Cool! Now we can go for another Report I mean Daily Room Occupancy 
+Report (  { label: 'Daily Room Occupancy', route: '/reports/daily_occupancy' })
+with From Date and TO Date Textbox Dropown and Search and Reset button
+and with Sl. No, Date, Total Rooms, Occupied Rooms, BLocked Rooms,
+Available Rooms, Occupancy Rate AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+=========================================================================
+Cool! Now we can go for another Report I mean Available Room  
+Report ( { label: 'Available Room Report', route: '/reports/available_rooms' })
+with From Date and To Date Textbox Dropown and Search and Reset button
+and with Sl. No, Roo TYpe, Date that select as from to to date AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+====================================================================
+For Available Room  Report
+Date are not coming based on Date Field. By Default Set Today's Date
+as From Date and End Date should be like a weak. For example if 
+todayh is 30/04/2026 then the From Date should be 07/05/26
+and When we  change the Date Range column changes dynamically
+based on the Start (From) Date and End(To) Date. Understood?
+======================================================================
+Cool! Now we can go for another Report I mean GST Invoice Report
+Report (     { label: 'GST Invoice Report', route: '/reports/gst_invoice' })
+with Choose Month, Choose Year, Choose TYpe, Dropown and Search and Reset button
+and with Sl. No, Booking Number, Type, Invoice No., Invoice Date, HSN Code,
+Customer Name, GSTIN, 5% Sub Total, 18% Sub Total, Sub TOtal, SGST(2.5%) 
+,CGST(2.5%),SGST(9%), CGST(9%), Adjustment AMount AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+============================================================
+
+Cool! Now we can go for another Report I mean Room Checkout
+Report ( { label: 'Room Checkout Report', route: '/reports/checkout_rep' })
+with Date Range and Search and Reset button
+and with Action, Sl. No, Booking Number, Customer Name, Room No,
+Room Type, No. of Pax, Check In, CHeck Out, Booking Statusm
+Remarks, Search Textbox AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+===========================================================
+Cool! Now we can go for another Report I mean Police
+Report ( { label: 'Police Report', route: '/reports/police_rep' },)
+with From Date, To Date Textbox  and Search and Reset button
+and with Action, Sl. No, Name of the Guest, Age, Nationality,
+No. of Guest, Address, Contact, Arrived From, Portable Destination, 
+Room No., Checked-In, Checked-Out AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+=============================================================
+
+===============================End 5th July 2026=========================
+
+================================Start 6th July 2026======================
+
+Cool! Now we can go for another Report I mean Transaction
+Report ( { label: 'Transaction Report', route: '/reports/transaction_rep' })
+with Customer Dropdown, From Date, To Date Textbox  and Search and Reset button
+and with Sl. No, Booking Number, Booking Date, Total Amount, Paid Amounts,
+Primary Guest, Mobile, Booking Source, Billing/Customer Name AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+===============================================================
+Ekta jinis bolar chilo bar bar Food Code na diye je notun report hocche
+tar code dile valo hoi kothia debo bole dio mane ts ar html a amar 
+mone hoi ata valo hbe bar bar ekai jinis copy korte hbe na taina
+
+
+Cool! Now we can go for another Report I mean Complementary Monthly
+Report ( { label: 'Complementary Monthly', route: '/reports/complementary' },
+   )
+with Choose Month, Choose Year, Booking Status  Dropdown, 
+and Search and Reset button
+and with Sl. No, CheckOut Date, Complementary Charge AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+=============================================================
+
+Cool! Now we can go for another Report I mean RMS Settlement 
+Report ( { label: 'RMS Settlement Report', route: '/reports/rms_settle' },)
+with Choose Month, Choose Year, Booking Status  Dropdown, 
+and Search and Reset button
+and with Sl. No, RMS Order No., Booking Number, Room Number, Order Date
+Due Amount, Is Paid, Payment DateTime, GST Invoice No., Check In,
+Customer Name, Customer Phone AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+===================================================================================
+
+Cool! Now we can go for another Report I mean Today's Occupancy 
+Report ( { label: 'Today\'s Occupancy', route: '/reports/today_occupancy' },)
+with 
+TOday's  Occupancy Report
+
+SL. No., Booking No., Guest Name, Guest Ph. Number, Room No., Meal Plan, Pax, Check-In, Check-Out, Booking Source, 
+Company/Customer Name,Contact Number, Remarks
+
+Check Out Table
+Sl. No., Booking No., Guest Name, Guest Ph. Number, Room No., Meal Plan, Pax, Check-In, Check-Out,Booking Source, 
+Company/Customer Name,Contact Number, Remarks
+
+IN-House Guest Table
+Sl. No., Booking No., Guest Name, Guest Ph. Number, Room No., Meal Plan, Pax, Check-In, Check-Out,Booking Source, 
+Company/Customer Name,Contact Number, Remarks
+
+
+AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+====================================================================================================================
+
+
+Cool! Now we can go for another Report I mean OTA Summarty
+Report ( { label: 'OTA Summary Report', route: '/reports/ota_summary' },)
+with  Check-In From, Check-Out From textbox, Search and Reset button
+OTA Summary Report table
+
+Sl. No., Confirmed, Checked In, Checked Out, Cancelled
+
+Booked gtable
+Sl. No., Booking Number, Booking Date, Booking Ref No., Primary Guest, Customer Name, Total Booking Price,
+Remarks
+
+Checken In table
+Sl. No., Booking Number, Booking Date, Booking Ref No., Primary Guest, Customer Name, Total Booking Price,
+Remarks
+
+
+AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+====================================================================================================================
+
+
+
+Cool! Now we can go for another Report I mean Revenue
+Report (  { label: 'Revenue Report', route: '/reports/revenue' },)
+with YTM Start from  Dropdown, 
+and Search and Reset button and Current Month and Set button
+with Revenue Report
+=========    ======================================================
+Room Type    Apr-2026 (Current Month)					YTM						 Apr-2025(YoY)
+========     ====================================================== 	==============================================   ============================================== 
+	     Room Nights	Occup%	Booked Revenue excl. GST   ARR	Room Nights Occup% Booked Revenue excl. GST ARR  Room Nights Occup% Booked Revenue excl. GST ARR
+A
+B
+Total
+
+Occupancy % Chart Report (Bar Chart)					MOnth-wise Revenue Chart Report
+=======================================================================================================================================================================
+
+
+
+================================End 6th July 2026===========================
+
+
+===========================start 7th July 2026==========================
+
+Cool! Now we can go for another Report I mean Month-Wise Revenue 
+Report (    { label: 'Month-Wise Revenue', route: '/reports/month_revenue' },)
+with 
+			Sep-2025                                                OCT-2025               NOV-2025
+Room Type     Room Nights    Occu %    Booked Revenue excl. GST  ARR  
+=========     ===========    ======    =======================   ===
+EVCR		
+ER 
+Total
+
+			Dec-2025  						JAN-2026		FEB-2026
+AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+==========================================================================================================================
+
+Cool! Now we can go for another Report I mean Individual Transaction
+Report (  { label: 'Individual Transaction', route: '/reports/indiv_trans' },)
+with Customer, From Date, To Date filrers 
+and Search and Reset button
+and with Sl. No,Booking Number, Paid Amount, Payment Amount, Primary Guest,
+Mobile, Booking Source, Billing/Customer Name, Merchant Transaction, Transantion Details
+ AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+=======================================================================================================
+Cool! Now we can go for another Report I mean Total Payment Pending
+Report (      { label: 'Total Payment Pending', route: '/reports/pending_total' },)
+with CheckIn Upto filrers 
+and Search and Reset button
+and with Sl. No, Total Booking, Total Paid, Pending AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+====================================================================================================
+Cool! Now we can go for another Report I mean Total Payment Pending
+Report (      { label: 'Total Payment Pending', route: '/reports/pending_total' },)
+with CheckIn Upto filrers 
+and Search and Reset button
+and with Sl. No, Total Booking, Total Paid, Pending AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+====================================================================================================
+Cool! Now we can go for another Report I mean Total Advance Payment
+Report (     { label: 'Total Part Payment', route: '/reports/part_payment' },)
+with Date filrers and Search and Reset button
+and with Sl. No, Booking Number, CheckIn Date, CheckOut Date, Customer Name, Paid AMount AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+====================================================================================================
+
+
+
+Cool! Now we can go for another Report I mean Total Advance Payment
+Report (     { label: 'Total Part Payment', route: '/reports/part_payment' },)
+with Date filrers and Search and Reset button
+and with Sl. No, Booking Number, CheckIn Date, CheckOut Date, Customer Name, Paid AMount AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+====================================================================================================
+
+Cool! Now we can go for another Report I mean Outstanding Room Revenue
+Report ( { label: 'Outstanding Room Revenue', route: '/reports/outstanding_rev' },)
+with Upto filrers and Search and Reset button
+and with Sl. No,  CheckOut Date, Booking Number,Advance Amount, Due Amount AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+===================================================================================================
+
+
+Cool! Now we can go for another Report I mean In-Store Wallet List Report
+Report ( { label: 'In-Store Wallet List', route: '/reports/wallet_list' },)
+with Upto filrers and Search and Reset button
+and with Sl. No, columns I did not know please guess,  AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+===================================================================================================
+
+Cool! Now we can go for another Report I mean Meal Details
+Report ( { label: 'Meal Details Report (Alt)', route: '/reports/meal_alt' },)
+with From Date, Meal Type filrers and Search and Reset button
+and with Sl. No, Room No., Booking Number, Expected Meal, Actual Meal, No. Pax,
+Adults, Children, Child Age, Paid :: Non Paid AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+=========================================================================================================
+
+
+Cool! Now we can go for another Report I mean Payment Pending Report
+Report (  { label: 'Payment Pending Report', route: '/reports/payment_pending' },)
+with Booking Status, From, To, Customer Name, Customer Phoine No., Guest Name, Guest Phone No.,
+Ref. Booking No, Booking Amount, Due AMount, Include OTA filrers and Search and Reset button
+and with Action, Sl. No,  Booking Number, Booking Date, Room Type, Room Number, Check In,
+Check Out, Pax, Meal Plan, ROom Rate, Meal Plan AMount, TOtal ROom Amount AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+   
+=====================================================================================================
+
+Cool! Now we can go for another Report I mean Cancelled Report
+Report (      { label: 'Cancelled Report', route: '/reports/cancelled' },)
+with Payment Status, From, To, Customer Name, Customer Phoine No., Guest Name, Guest Phone No.,
+Ref. Booking No, Booking Amount, Due AMount, Include OTA filrers and Search and Reset button
+and with Action, Sl. No,  Booking Number, Booking Date, Room Type, Room Number, Check In,
+Check Out, Pax, Meal Plan, ROom Rate, Meal Plan AMount, TOtal ROom Amount AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+==================================================================================================
+
+Cool! Now we can go for another Report I mean Purchase Report
+Report (      { label: 'Purchase Report', route: '/reports/purchase_rep' },)
+with  From, To filrers and Search and Reset button
+and with Action, Sl. No,  Date, Invoice No., Supplier Name, Total Amount, Action  AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+==================================================================================================
+
+Cool! Now we can go for another Report I mean Stock Report
+Report (    { label: 'Stock Report', route: '/reports/stock_rep' },)
+with  From, To filrers and Search and Reset button
+and with Product Name, Quality, Price, Total  AGGrid Tables Along with 
+CSV, Print, Columns(Column Visibility) that we already haves. Please don't touch existing
+working reports just add these Reports features after that we go for 
+Next reports. Understood.
+
+==================================================================================================
+    
+===========================end 7th July 2026==========================
+
+==============================Start 8th July 2026======================
+Need this page please see each image and design based on the Image.
+1st we do frontend page  then we implement backend. Each Page should
+have list page by default with Edit and Delete button and Add New 
+button in the top and other table filed are same as in the image
+before do anything check image 1st
+Financial Year Ending, Chart of Account, Opening Balance
+Debit Voucher,Credit Voucher,Contra Voucher,Journal Voucher
+Voucher Approval,Voucher Report,Cash Book
+After All add we need to add route and then add those menu in 
+sidebar under Account Menu
+========================================================
+Need this page please see each image and design based on the Image.
+1st we do frontend page  then we implement backend. Each Page should
+have list page by default with Edit and Delete button and Add New 
+button in the top and other table filed are same as in the image
+before do anything check image 1st
+Bank Book,General Ledger,Trial Balance,Profit Loss,Coa Print
+Balance Sheet After All add we need to add route and then add those menu in 
+sidebar under Account Menu
+
+
+==============================End 8th July 2026 ======================

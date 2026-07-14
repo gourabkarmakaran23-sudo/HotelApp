@@ -1,0 +1,153 @@
+ng g c house-keeping/assign-room-cleaning
+ng g c house-keeping/room-cleaning
+ng g c house-keeping/checklist
+ng g c house-keeping/room-qr-list
+ng g c house-keeping/laundry-products
+ng g c house-keeping/laundry
+ng g c house-keeping/laundry-payment
+
+২. রাউটিং সেটআপ (app.routes.ts বা house-keeping-routing.module.ts)
+আপনার অ্যাপের রাউটিং ফাইলে house_keeping পাথের আন্ডারে চাইল্ড রাউট (Child Routes) হিসেবে এগুলোকে এভাবে ডিফাইন করতে হবে:
+
+TypeScript
+import { Routes } from '@angular/router';
+import { AssignRoomCleaningComponent } from './house-keeping/assign-room-cleaning/assign-room-cleaning.component';
+import { RoomCleaningComponent } from './house-keeping/room-cleaning/room-cleaning.component';
+import { ChecklistComponent } from './house-keeping/checklist/checklist.component';
+import { RoomQrListComponent } from './house-keeping/room-qr-list/room-qr-list.component';
+import { LaundryProductsComponent } from './house-keeping/laundry-products/laundry-products.component';
+import { LaundryComponent } from './house-keeping/laundry/laundry.component';
+import { LaundryPaymentComponent } from './house-keeping/laundry-payment/laundry-payment.component';
+
+export const routes: Routes = [
+  {
+    path: 'house_keeping',
+    children: [
+      { path: 'assign-room-cleaning', component: AssignRoomCleaningComponent },
+      { path: 'room-cleaning', component: RoomCleaningComponent },
+      { path: 'checklist', component: ChecklistComponent },
+      { path: 'room-qrcode', component: RoomQrListComponent },
+      { path: 'product-laundry', component: LaundryProductsComponent },
+      { path: 'laundry', component: LaundryComponent },
+      { path: 'payment_record', component: LaundryPaymentComponent }
+    ]
+  }
+];
+৩. সাইডবার কম্পোনেন্টে যোগ করা (sidebar.component.html)
+আপনার স্ক্রিনশটে যে বামপাশের কালো সাইডবার মেনুটি দেখা যাচ্ছে, সেখানে House Keeping ড্রপডাউনের ভেতরে লিংকগুলো এভাবে routerLink দিয়ে সেট করতে হবে:
+
+HTML
+<li class="nav-item">
+  <a class="nav-link toggler" data-bs-toggle="collapse" href="#houseKeepingSubmenu">
+    <i class="fa fa-broom"></i> <span>House Keeping</span>
+    <i class="fa fa-angle-down pull-right"></i>
+  </a>
+  
+  <ul class="collapse list-unstyled submenu-list" id="houseKeepingSubmenu">
+    <li>
+      <a routerLink="/house_keeping/assign-room-cleaning" routerLinkActive="active">Assign Room Cleaning</a>
+    </li>
+    <li>
+      <a routerLink="/house_keeping/room-cleaning" routerLinkActive="active">Room Cleaning</a>
+    </li>
+    <li>
+      <a routerLink="/house_keeping/checklist" routerLinkActive="active">Checklist</a>
+    </li>
+    <li>
+      <a routerLink="/house_keeping/room-qrcode" routerLinkActive="active">Room Qr List</a>
+    </li>
+    <li>
+      <a routerLink="/house_keeping/product-laundry" routerLinkActive="active">Laundry Product List</a>
+    </li>
+    <li>
+      <a routerLink="/house_keeping/laundry" routerLinkActive="active">Laundry</a>
+    </li>
+    <li>
+      <a routerLink="/house_keeping/payment_record" routerLinkActive="active">Laundry Payment</a>
+    </li>
+  </ul>
+</li>
+৪. আলাদা কম্পোনেন্টের ফর্ম এবং পপআপ ডিজাইন (উদাহরণ)
+এখন প্রতিটা পেজ স্বাধীন। যেমন ধরুন Laundry Payment পেজের জন্য আপনি শুধুমাত্র তার নির্দিষ্ট কম্পোনেন্টে পপআপ ডিজাইন এবং ফর্ম রাখবেন।
+
+লন্ড্রি পেমেন্ট কম্পোনেন্ট (laundry-payment.component.ts)
+
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-laundry-payment',
+  templateUrl: './laundry-payment.component.html'
+})
+export class LaundryPaymentComponent implements OnInit {
+  paymentForm!: FormGroup;
+  paymentList: any[] = []; // টেবিল লিস্টের ডাটা রাখার জন্য
+  isModalOpen = false;
+
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.paymentForm = this.fb.group({
+      id: [0],
+      name: ['', Validators.required],
+      invoiceNo: ['', Validators.required],
+      laundryName: ['', Validators.required],
+      totalAmount: [0, Validators.required],
+      dueAmount: [0],
+      paidAmount: [0, Validators.required]
+    });
+  }
+
+  openModal(data?: any) {
+    this.isModalOpen = true;
+    if (data) this.paymentForm.patchValue(data); // এডিটের জন্য
+    else this.paymentForm.reset({ id: 0 }); // নতুনের জন্য
+  }
+}
+লন্ড্রি পেমেন্ট এইচটিএমএল (laundry-payment.component.html)
+HTML
+<div class="card p-3">
+  <div class="d-flex justify-content-between mb-3">
+    <h3>Laundry Payment Record</h3>
+    <button class="btn btn-success" (click)="openModal()">+ Add New Payment</button>
+  </div>
+
+  <!-- ডাটা টেবিল -->
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>SL</th>
+        <th>Name</th>
+        <th>Invoice No.</th>
+        <th>Laundry Name</th>
+        <th>Total Amount</th>
+        <th>Due Amount</th>
+        <th>Paid Amount</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of paymentList; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.invoiceNo }}</td>
+        <td>{{ item.laundryName }}</td>
+        <td>₹{{ item.totalAmount }}</td>
+        <td>₹{{ item.dueAmount }}</td>
+        <td>₹{{ item.paidAmount }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" (click)="openModal(item)"><i class="fa fa-edit"></i></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- আপনার রিকোয়ার্ড পপআপ মোডাল উইন্ডো -->
+<div class="custom-modal" *ngIf="isModalOpen">
+  <!-- এখানে আগের মেসেজে দেওয়া ফর্মের কোডটুকু শুধু বসবে -->
+</div>
+মূল কথা: আমরা প্রতিটা আইটেমের জন্য আলাদা ফোল্ডারে একদম আলাদা সিঙ্গেল-পারপাস ফর্ম এবং ভিউ বানাব। এতে কোড একদম পরিষ্কার থাকবে এবং ব্যাকএন্ড এপিআই কানেক্ট করা একদম সহজ হয়ে যাবে।
+
+আপনার রাউটিং আর সাইডবার লিংকগুলো আগে এইভাবে সেট করে নিন, তারপর বলুন কোন পেজের ডিজাইন আগে নিখুঁত করতে হবে?
+

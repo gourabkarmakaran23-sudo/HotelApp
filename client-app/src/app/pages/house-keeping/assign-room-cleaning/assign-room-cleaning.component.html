@@ -1,0 +1,80 @@
+<div class="hk-container" style="padding: 20px; background: #fff; border-radius: 8px;">
+  <div class="hk-header" style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+    <h2>Assign Room Cleaning</h2>
+  </div>
+  
+  <form [formGroup]="filterForm" class="row mb-4" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+    <div class="form-group-custom" style="flex: 1; min-width: 200px;">
+      <label style="font-weight: bold; display: block; margin-bottom: 5px;">House Keeper *</label>
+      <select formControlName="houseKeeper" class="form-control-custom" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        <option value="">Nothing selected</option>
+        <option *ngFor="let hk of houseKeepers" [value]="hk.name">{{ hk.name }}</option>
+      </select>
+    </div>
+
+    <div class="form-group-custom" style="flex: 1; min-width: 200px;">
+      <label style="font-weight: bold; display: block; margin-bottom: 5px;">Room Type</label>
+      <select formControlName="roomType" class="form-control-custom" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        <option value="All">All</option>
+        <option *ngFor="let type of roomTypes" [value]="type.id">{{ type.name || type.typeName }}</option>
+      </select>
+    </div>
+
+    <div class="form-group-custom" style="flex: 1; min-width: 200px;">
+      <label style="font-weight: bold; display: block; margin-bottom: 5px;">Status *</label>
+      <select formControlName="status" class="form-control-custom" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        <option *ngFor="let st of statuses" [value]="st">{{ st }}</option>
+      </select>
+    </div>
+  </form>
+
+  <div class="buttons-section" style="margin-bottom: 25px; display: flex; gap: 10px;">
+    <button type="button" (click)="assignRooms()" style="background: #28a745; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+      <i class="fa fa-save"></i> Save Assignment
+    </button>
+    <button type="button" (click)="cancelAssignment()" style="background: #dc3545; color: #fff; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+      <i class="fa fa-times"></i> Cancel
+    </button>
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 20px;">
+
+  <div *ngFor="let floor of floors" class="mb-4" style="margin-bottom: 25px;">
+    <h3 style="background: #f1f1f1; padding: 10px; border-radius: 4px; font-size: 16px; font-weight: bold; color: #333; margin-bottom: 12px;">
+      {{ floor.name }}
+    </h3>
+    
+    <div class="room-grid" style="display: flex; flex-wrap: wrap; gap: 15px;">
+      <div *ngFor="let room of floor.rooms" class="room-box" style="width: 150px; padding: 15px; border: 1px solid #ddd; border-radius: 6px; text-align: center; position: relative; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; min-height: 140px;">
+        
+        <input type="checkbox" [(ngModel)]="room.isSelected" style="position: absolute; top: 8px; right: 8px; cursor: pointer; transform: scale(1.1);">
+        
+        <div>
+          <div style="font-size: 11px; color: #888; margin-top: 5px;">Room No.</div>
+          <div style="font-size: 18px; font-weight: bold; margin: 2px 0; color: #222;">{{ room.no }}</div>
+          
+          <span [style.color]="room.operationalStatus === 'Ready' || room.operationalStatus === 'Available' ? '#28a745' : room.operationalStatus === 'Checked In' || room.operationalStatus === 'Occupied' ? '#dc3545' : '#ffc107'" 
+                style="font-size: 11px; font-weight: bold; background: #fafafa; padding: 1px 6px; border-radius: 4px; border: 1px solid #f0f0f0; display: inline-block; margin-bottom: 8px;">
+            {{ room.operationalStatus }}
+          </span>
+        </div>
+
+        <div *ngIf="room.houseKeeperName" style="margin-top: 5px; padding-top: 5px; border-top: 1px dashed #eee; text-align: center;">
+          <div style="font-size: 11px; color: #555; font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" [title]="room.houseKeeperName">
+            🧹 {{ room.houseKeeperName }}
+          </div>
+          <span [style.background-color]="room.hkStatus === 'Ready' ? '#d4edda' : room.hkStatus === 'In Progress' ? '#fff3cd' : '#e2e3e5'"
+                [style.color]="room.hkStatus === 'Ready' ? '#155724' : room.hkStatus === 'In Progress' ? '#856404' : '#383d41'"
+                style="font-size: 10px; font-weight: bold; padding: 1px 5px; border-radius: 3px; display: inline-block; margin-top: 3px;">
+            {{ room.hkStatus }}
+          </span>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="floors.length === 0" style="text-align: center; padding: 30px; color: #999; font-weight: 500;">
+    No rooms available for the selected type.
+  </div>
+</div>

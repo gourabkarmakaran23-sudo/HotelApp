@@ -1,0 +1,48 @@
+<div class="account-page-container" style="padding: 20px; background: #f8fafc; font-family: sans-serif;">
+  <div style="background: #fff; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="font-size: 18px; font-weight: 600; color: #1e293b; margin: 0;">Coa Print Matrix</h2>
+      <div style="display: flex; gap:10px;">
+        <button (click)="onAdd()" style="background: #2563eb; color: white; padding: 8px 16px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">+ Add New Node</button>
+        <button (click)="onPrint()" style="background: #06b6d4; color: white; padding: 8px 16px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">Print</button>
+      </div>
+    </div>
+
+    <!-- Tree-table matrix layout matching Image 5 grid style sheet parameters -->
+    <div style="border: 1px solid #cbd5e1; overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; background: #fff;">
+        <tbody>
+          <tr *ngFor="let node of coaTree" style="border-bottom: 1px solid #cbd5e1; font-size: 13px;">
+            <!-- Level 1 Column -->
+            <td style="width: 60px; padding: 6px; border-right: 1px solid #cbd5e1; text-align: center; font-weight: 600;">
+              <span *ngIf="node.level === 1">{{node.code}}</span>
+            </td>
+            <!-- Level 2 Column -->
+            <td style="width: 80px; padding: 6px; border-right: 1px solid #cbd5e1; font-weight: 600; color: #475569;">
+              <span *ngIf="node.level === 2">{{node.code}}</span>
+            </td>
+            <!-- Level 3 Column -->
+            <td style="width: 100px; padding: 6px; border-right: 1px solid #cbd5e1; font-weight: 600; color: #0284c7;">
+              <span *ngIf="node.level === 3">{{node.code}}</span>
+            </td>
+            <!-- Level 4 Column -->
+            <td style="width: 120px; padding: 6px; border-right: 1px solid #cbd5e1; color: #0f172a;">
+              <span *ngIf="node.level === 4">{{node.code}}</span>
+            </td>
+            <!-- Description Matrix Cell Header text alignment -->
+            <td style="padding: 6px; border-right: 1px solid #cbd5e1; color: #1e293b;" [style.font-weight]="node.isGroup ? '600' : '400'">
+              {{node.name}}
+            </td>
+            <!-- Actions -->
+            <td style="width: 120px; padding: 6px; text-align: center;">
+              <button (click)="onEdit(node)" style="color: #d97706; background:none; border:none; cursor:pointer; font-size:11px;">Edit</button> | 
+              <button (click)="onDelete(node)" style="color: #dc2626; background:none; border:none; cursor:pointer; font-size:11px;">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

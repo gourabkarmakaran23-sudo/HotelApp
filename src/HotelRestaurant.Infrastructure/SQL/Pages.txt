@@ -1,3 +1,30 @@
+Account:
+Manage Commission
+Manage Agent
+Financial Year
+Financial Year Ending
+Chart of Account
+Opening Balance
+Debit Voucher
+Credit Voucher
+Contra Voucher
+Journal Voucher
+Voucher Approval
+Voucher Report
+Cash Book
+
+Bank Book
+General Ledger
+Trial Balance
+Profit Loss
+Coa Print
+Balance Sheet
+
+
+
+Account Report
+
+
 feature/reservationstandard
 
 1. Payment Method: Done
@@ -8,6 +35,7 @@ feature/reservationstandard
 6. Financial Year:   Done
 7. Financial Year Ending: Not Done
 8. Opening Balance :Not Done
+
 9. Debit Voucher:Not Done
 10. Credit Voucher : Not Done
 11. Contra Voucher: Not Done
@@ -31,9 +59,152 @@ feature/reservationstandard
 15 F. Stock Details Need to Check
 
 16. Room Settings
-16 A. Bed List
-16 B. BookingType List
-16 C. Booking Source 
-16 D. Complementary
-16 E. Floor Plan List
+16 A. Bed List          :Done
+16 B. BookingType List  :Done
+16 C. Booking Source    :Done
+16 D. Complementary     :Done
+16 E. Floor Plan List   :Done
+16 F. Room List         :Done
+16.G. Room Images       :Not Done
+16.H. Room Rate Update  :Not Done
+16.I  Maintenance List  :Not Done
+
+17. Tax Management
+17.A. Tax List          :Done
+17.B. Promocode List    :Done
+17.C. Cancellation Policy List :Done
+17.D. Aminities List    :Done
+17.E. Other Payment Entry      :Done
+
+18. Cancellation Management             :Done
+18.A. Refund Due Non-website Booking    :Done
+18.B. Refund Under Process              :Done
+18.C. Refunded                          :Done
+18.D. COA(Chart-Of-Account)             :Not Done
+
+19. Room Reservation
+19.A. Booking List: Done
+19.B. Upcoming CheckIn: DOne
+19.C. Check In: Done
+19.D. Direct CheckOut: Not DOne
+19.E. Room Status: Not Done
+19.F. Booking Extend: Not Done
+
+20. House Keeping(Not Done ALL)
+20. A. Assign Room Cleaning :Done
+20. B. Room Cleaning :Done
+20. C. CheckList :Done
+20. D. Room QR List :Done
+20. E. Laundry Products List :Done
+20. F. Laundry :Done
+20. G. Laundry Payment :Done
+
+21. Reports(Not Done ALL)
+21. A. Booking Report      :Done(Without Backend)
+21. B. Meal Details Report    ::Done(Without Backend)
+21. C. Monthly Summary Report  :Done(Without Backend)
+21. D. Payment Details Report  :Done(Without Backend)
+21. E. Payment Summary Report  :Done(Without Backend)
+21. F. Daily Room Occupancy Report
+21. G. Available ROom Report
+21. H. GST Invoice Report
+21. I. Room Checkout Report
+21. J. Police Report
+21. K. Transaction Report
+21. L. Complementary Monthly Report
+21. M. RMS Settlement Report
+21. N. Today's Occupancy Report
+21. O. OTA Summary Report
+21. P. Revenue Report
+21. Q. Month-Wise Revenue Report
+21. S. Individual Transaction Report
+21. T. Total Payment Pending Report
+21. U. Total Part Payment(excluding Part Payment) Before CheckOut
+21. V. Outstanding Room Revenue
+21. W. In-Store Wallet List Report
+21. X. Meal Details Report
+21. Y. Paymenr Pending Report
+21. Z. Cancelled Report
+21. A1. Purchase Report
+21. A2. Stock Report
+21. A3. Daily Booking Report
+
+
+dotnet ef migrations add AddOpeningBalanceTable --project HotelRestaurant.Infrastructure --startup-project HotelRestaurant.Api
+
+F:\1_Holel_Projects_Techno\Hotel_App_2026_Lattest\src>cd  HotelRestaurant.Api
+dotnet run Or dotnet watch run
+F:\1_Holel_Projects_Techno\Hotel_App_2026_Lattest\client-app>
+npm start Or ng serve
+
+
+========================================================================================================
+Tax List,Promocode List,Cancellation Policy List , Aminities List,Other Payment List, Other Payment Entry   
+ai page legbe abar age Frontend a page gulo ready kore mane List Page and Add New a click korle Popup
+Page open hbe jemon age page gulo kor ache. Pore amra Backend Implementation korbo mane Entity, DTOs,
+Service, Controller, Migratation kore abar frontend a service integrate kore component thekhe call korbo.
+
+======================================================================================================
+App.routes a ar sidebar componment a page er menu gulo add kore de dekhbi already Tax Management ar
+Promocode Management main menu already ache sudhu submenu add korte hbe ar Amenties Management
+ar Other Payment Management main menu  ar submenu dutai nei dekh ai duto kotha add kora jai
+ai route management hoye gele amra backend implementation a jbo ai page gulor 
+
+=========================================================================
+Done! Now We can go for Backend Implementation 1st Create Entities() HotelRestaurant.Core project Entities Folder then
+Create DTO's in HotelRestaurant.Application\DTOs Folder and And Create Services in 
+HotelRestaurant.Application\Services Foleder(Interfaces and Implementations in Interfaces and Implementations folder inside Services )
+and Controllers HotelRestaurant.Api projects ControllerFolder, In AppDbContext.cs add the new Enitities and we used UnitOfWork
+so we need to add entities in UnitOfWork amd IUintOfWork and then We Add the Migration. And After All set we integrate backend services
+in our Frontend
+
+==============================================================
+Age Migration Na age Tax List,Promocode List,Cancellation Policy List , Aminities List aigulor Entity, DTOs, Services(Interfaces,Implementations), UnitOfWOrk,
+,Controller,AppDbContext, Program.cs a aigulo add kore dao age tarpor Migration Add korbo eksaathe understood?
+#region  Tax, Promocode, CancellationPolicies,Amenities
+
+        #endregion
+
+
+dotnet ef migrations add AddInvoiceAndExtendedMasterModules --project HotelRestaurant.Infrastructure --startup-project HotelRestaurant.Api
+dotnet ef database update --project HotelRestaurant.Infrastructure --startup-project HotelRestaurant.Api
+
+# ১. মেগা কম্বাইন্ড মাইগ্রেশন স্ক্রিপ্ট তৈরি করার কমান্ড
+dotnet ef migrations add AddInvoiceAndExtendedMasterModules
+
+# ২. ডেটাবেসে এক সাথে সব টেবিল রিফ্লেক্ট বা জেনারেট করার কমান্ড
+dotnet ef database update
+
+=====================================================================================================
+Migration Added Now we can Integrate this with ourFrontend App with New Service and Integrate in Component 
+For Tax List,Promocode List,Cancellation Policy List , Aminities List, Other Payment Entry and List 
+
+=====================================================================================
+GIve some data to entry Tax,Promocode,Cancellation Policy , Aminities, Other Payment Entry 
+
+Tax, Promocode, CancellationPolicy, Amenity add these in DB Set AppDbContext.cs
+
+
+===================================================================
+1. Excced Like Dashboard
+2. Timewise CheckIn/Booking(2 hours same days should allow)
+3. SameDay CHeckOut SHould Allow based on Timewise
+4. Dormantary (4 Bed- 1 bed allowd to each) Bed Booking
+5. 1 Company can have multiple hotels. So hotelwise Revenue,
+   COmpanywise Revenue(Profit/Loss), All Masters and 
+   Transaction should be Hotelwise, Hotelwise Login,
+   SuperAdmin LOgin who can see ALl Hotels,
+6. REservation Page is not work need to check.
+7. Payment Gateway Integration
+8. OTA Integration (Channel Manager)
+9. Booking Website ()
+10. OTA Website(Like MakeMyTrip/GoIbibo,etc)
+
+
+
+
+
+
+
+
 

@@ -66,6 +66,13 @@ builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IRoomTypeService, RoomTypeService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IMasterService, MasterService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+// Dependency Injection mapping entries inside Program.cs
+builder.Services.AddScoped<IOtherPaymentService, OtherPaymentService>();
+builder.Services.AddScoped<IMasterServiceExtension, MasterServiceExtension>();
+builder.Services.AddScoped<IRefundService, RefundService>();
+builder.Services.AddScoped<IHouseKeepingService, HouseKeepingService>();
+
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

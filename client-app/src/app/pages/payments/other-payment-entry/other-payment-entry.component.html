@@ -1,0 +1,175 @@
+<div class="full-page-invoice-container">
+  <div class="invoice-header-panel">
+    <h2><i class="fa fa-file-text-o"></i> Other Payment Tax Invoice Entry</h2>
+    <button type="button" class="btn btn-secondary" routerLink="/payment/other-list">
+      <i class="fa fa-arrow-left"></i> Back To List
+    </button>
+  </div>
+
+  <form [formGroup]="invoiceForm" (ngSubmit)="saveInvoice()">
+    <div class="invoice-card-section">
+      <div class="form-grid-4">
+        <div class="form-group">
+          <label>Invoice No <span class="required">*</span></label>
+          <input type="text" formControlName="invoiceNo" placeholder="e.g. INV-2026-001" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Invoice Date <span class="required">*</span></label>
+          <input type="date" formControlName="invoiceDate" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Customer Name <span class="required">*</span></label>
+          <input type="text" formControlName="customerName" placeholder="Enter Full Name" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Mobile No <span class="required">*</span></label>
+          <input type="text" formControlName="mobile" placeholder="10-digit number" class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-grid-2 margin-top-sm">
+        <div class="form-group">
+          <label>Customer Address</label>
+          <textarea formControlName="customerAddress" rows="1" placeholder="Street Address, City, ZIP State" class="form-control textarea-field"></textarea>
+        </div>
+        <div class="form-group">
+          <label>GSTIN Identifier</label>
+          <input type="text" formControlName="gstin" placeholder="15-digit GSTIN code" class="form-control uppercase" />
+        </div>
+      </div>
+    </div>
+
+    <div class="invoice-card-section margin-top-md">
+      <h3 class="section-title">Invoice Matrix Ledger Rows</h3>
+      <div class="table-scroll-container">
+        <table class="billing-grid-table">
+          <thead>
+            <tr>
+              <th style="width: 45px; text-align: center;">SL</th>
+              <th style="width: 100px;">Type</th>
+              <th style="width: 100px;">HSN/SAC</th>
+              <th style="width: 220px;">Description</th>
+              <th style="width: 80px;">Unit</th>
+              <th style="width: 110px;">Rate</th>
+              <th style="width: 70px;">Qty</th>
+              <th style="width: 120px;">Sub Total</th>
+              <th style="width: 80px;">GST%</th>
+              <th style="width: 120px;">GST Type</th>
+              <th style="width: 110px;">GST Amt</th>
+              <th style="width: 130px;">Total Gross</th>
+              <th style="width: 85px; text-align: center;">Action</th>
+            </tr>
+          </thead>
+          <tbody formArrayName="items">
+            <tr *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
+              <td class="text-center bold-sl">{{ i + 1 }}</td>
+              <td>
+                <select formControlName="type" class="form-control grid-input">
+                  <option value="Product">Product</option>
+                  <option value="Service">Service</option>
+                </select>
+              </td>
+              <td>
+                <input type="text" formControlName="hsn" class="form-control grid-input text-center" placeholder="Code" />
+              </td>
+              <td>
+                <input type="text" formControlName="description" class="form-control grid-input" placeholder="Item name/details" />
+              </td>
+              <td>
+                <select formControlName="unit" class="form-control grid-input">
+                  <option value="Pcs">Pcs</option>
+                  <option value="Nos">Nos</option>
+                  <option value="Hours">Hours</option>
+                  <option value="Days">Days</option>
+                </select>
+              </td>
+              <td>
+                <input type="number" formControlName="rate" (input)="onItemValueChange(i)" class="form-control grid-input text-right" />
+              </td>
+              <td>
+                <input type="number" formControlName="qty" (input)="onItemValueChange(i)" class="form-control grid-input text-center" />
+              </td>
+              <td>
+                <input type="number" formControlName="subTotal" class="form-control grid-input text-right bg-disabled" />
+              </td>
+              <td>
+                <select formControlName="gstRate" (change)="onItemValueChange(i)" class="form-control grid-input text-center">
+                  <option [value]="0">0%</option>
+                  <option [value]="5">5%</option>
+                  <option [value]="12">12%</option>
+                  <option [value]="18">18%</option>
+                  <option [value]="28">28%</option>
+                </select>
+              </td>
+              <td>
+                <select formControlName="gstType" class="form-control grid-input">
+                  <option value="CGST+SGST">CGST+SGST</option>
+                  <option value="IGST">IGST</option>
+                </select>
+              </td>
+              <td>
+                <input type="number" formControlName="gstAmount" class="form-control grid-input text-right bg-disabled" />
+              </td>
+              <td>
+                <input type="number" formControlName="total" class="form-control grid-input text-right bold-total bg-disabled" />
+              </td>
+              <td class="text-center grid-actions">
+                <button type="button" class="btn-grid-action btn-add-row" title="Add Row Below" (click)="addItemRow()">
+                  <i class="fa fa-plus"></i>
+                </button>
+                <button type="button" class="btn-grid-action btn-delete-row" title="Remove Row" (click)="removeItemRow(i)" [disabled]="items.length === 1">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="invoice-bottom-layout margin-top-md">
+      <div class="left-summary-block">
+        <div class="form-group">
+          <label>General Internal Remarks / Conditions</label>
+          <textarea formControlName="remarks" rows="2" placeholder="Enter special instruction or notes..." class="form-control"></textarea>
+        </div>
+        <div class="form-group margin-top-sm">
+          <label><i class="fa fa-paperclip"></i> Support Document Attachment File</label>
+          <input type="file" (change)="onFileChange($event)" class="form-control-file" />
+        </div>
+      </div>
+
+      <div class="right-summary-block">
+        <table class="summary-calculation-table">
+          <tr>
+            <td>Sub Total:</td>
+            <td class="text-right bold-text">₹ {{ invoiceForm.get('subTotalSummary')?.value | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>Total GST Component:</td>
+            <td class="text-right bold-text text-orange">₹ {{ invoiceForm.get('totalGstSummary')?.value | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>Manual Adjustment (+/-):</td>
+            <td class="text-right">
+              <input type="number" formControlName="adjustment" (input)="calculateTotals()" class="form-control text-right adjustment-input" />
+            </td>
+          </tr>
+          <tr>
+            <td>Round Off:</td>
+            <td class="text-right text-muted">₹ {{ invoiceForm.get('roundOff')?.value | number:'1.2-2' }}</td>
+          </tr>
+          <tr class="grand-total-highlight-row">
+            <td>Final Invoice Amount:</td>
+            <td class="text-right">₹ {{ invoiceForm.get('invoiceAmount')?.value | number:'1.2-2' }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="invoice-action-controls margin-top-md">
+      <button type="submit" class="btn btn-save-invoice"><i class="fa fa-check"></i> Save Invoice Document</button>
+      <button type="button" class="btn btn-cancel-invoice" routerLink="/payment/other-list"><i class="fa fa-times"></i> Cancel</button>
+    </div>
+  </form>
+</div>

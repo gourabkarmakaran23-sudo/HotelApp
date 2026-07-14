@@ -1,0 +1,15 @@
+.report-table-row {
+  transition: background-color 0.15s ease;
+}
+
+.report-table-row:hover {
+  background-color: #f8fafc !important;
+  cursor: pointer;
+}
+
+/* Add this class rule to style the column cell values */
+.monospace-font {
+  font-family: 'Courier New', Courier, monospace !important;
+  font-weight: 600;
+  color: #1e293b;
+}

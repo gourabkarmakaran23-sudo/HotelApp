@@ -8,7 +8,7 @@ import { apiBaseUrl } from '../app.config';
 })
 export class MasterService {
   private readonly baseUrl = `${apiBaseUrl}/Master`;
-
+private readonly extendedBaseUrl = `${apiBaseUrl}/ExtendedMaster`; // নতুন কন্ট্রোলার এন্ডপয়েন্ট
   constructor(private readonly http: HttpClient) { }
 
   // Helper method to dynamically pull authorization tokens 
@@ -210,4 +210,39 @@ export class MasterService {
   updateFloorPlan(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.baseUrl}/floor-plans/${id}`, payload, this.getAuthHeaders()); }
   deleteFloorPlan(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.baseUrl}/floor-plans/${id}`, this.getAuthHeaders()); }
   //#endregion
+
+
+  // ==========================================
+  // TAX MANAGEMENT API
+  // ==========================================
+  getTaxes(): Observable<any[]> { return this.http.get<any[]>(`${this.extendedBaseUrl}/taxes`, this.getAuthHeaders()); }
+  createTax(payload: any): Observable<number> { return this.http.post<number>(`${this.extendedBaseUrl}/taxes`, payload, this.getAuthHeaders()); }
+  updateTax(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.extendedBaseUrl}/taxes/${id}`, payload, this.getAuthHeaders()); }
+  deleteTax(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.extendedBaseUrl}/taxes/${id}`, this.getAuthHeaders()); }
+
+  // ==========================================
+  // PROMOCODE MANAGEMENT API
+  // ==========================================
+  getPromocodes(): Observable<any[]> { return this.http.get<any[]>(`${this.extendedBaseUrl}/promocodes`, this.getAuthHeaders()); }
+  createPromocode(payload: any): Observable<number> { return this.http.post<number>(`${this.extendedBaseUrl}/promocodes`, payload, this.getAuthHeaders()); }
+  updatePromocode(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.extendedBaseUrl}/promocodes/${id}`, payload, this.getAuthHeaders()); }
+  deletePromocode(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.extendedBaseUrl}/promocodes/${id}`, this.getAuthHeaders()); }
+
+  // ==========================================
+  // CANCELLATION POLICY API
+  // ==========================================
+  getCancellationPolicies(): Observable<any[]> { return this.http.get<any[]>(`${this.extendedBaseUrl}/cancellation-policies`, this.getAuthHeaders()); }
+  createCancellationPolicy(payload: any): Observable<number> { return this.http.post<number>(`${this.extendedBaseUrl}/cancellation-policies`, payload, this.getAuthHeaders()); }
+  updateCancellationPolicy(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.extendedBaseUrl}/cancellation-policies/${id}`, payload, this.getAuthHeaders()); }
+  deleteCancellationPolicy(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.extendedBaseUrl}/cancellation-policies/${id}`, this.getAuthHeaders()); }
+
+  // ==========================================
+  // AMENITIES MANAGEMENT API
+  // ==========================================
+  getAmenities(): Observable<any[]> { return this.http.get<any[]>(`${this.extendedBaseUrl}/amenities`, this.getAuthHeaders()); }
+  createAmenity(payload: any): Observable<number> { return this.http.post<number>(`${this.extendedBaseUrl}/amenities`, payload, this.getAuthHeaders()); }
+  updateAmenity(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.extendedBaseUrl}/amenities/${id}`, payload, this.getAuthHeaders()); }
+  deleteAmenity(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.extendedBaseUrl}/amenities/${id}`, this.getAuthHeaders()); }
+
+  
 }

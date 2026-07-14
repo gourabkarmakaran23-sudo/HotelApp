@@ -1,0 +1,87 @@
+<div class="management-container">
+  <div class="header-panel">
+    <h2>Tax Management</h2>
+    <!-- TS ফাইলের মেথড addNew() কল করা হয়েছে -->
+    <button class="btn btn-primary" (click)="addNew()">+ Add New Tax</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="management-table">
+      <thead>
+        <tr>
+          <th>SL</th>
+          <th>Tax Name</th>
+          <th>Tax Code</th>
+          <th>Tax Rate (%)</th>
+          <th>Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- TS ফাইলের taxes অ্যারে লুপ করা হয়েছে -->
+        <tr *ngFor="let item of taxes; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><strong>{{ item.taxName }}</strong></td>
+          <td>{{ item.taxCode }}</td>
+          <td>{{ item.taxRate }}%</td>
+          <td>
+            <span class="status-badge" [ngClass]="item.isActive ? 'active' : 'inactive'">
+              {{ item.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="text-center actions-cell">
+            <!-- activateEdit পরিবর্তন করে TS ফাইলের edit(item) মেത്തড দেওয়া হয়েছে -->
+            <button class="action-btn edit-btn" (click)="edit(item)">
+              <i class="fa fa-pencil"></i> Edit
+            </button>
+            <!-- triggerDelete পরিবর্তন করে TS ফাইলের deleteItem(item.id) দেওয়া হয়েছে -->
+            <button class="action-btn delete-btn" (click)="deleteItem(item.id)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- closeModal() এর পরিবর্তে সরাসরি এখানে showModal = false করে দেওয়া হয়েছে -->
+<div class="modal-backdrop" *ngIf="showModal" (click)="showModal = false"></div>
+<!-- CSS ক্লাসের সামঞ্জস্যতার জন্য custom-modal কে modal-container এ পরিবর্তন করতে পারেন যদি স্টাইল ভেঙে যায় -->
+<div class="modal-container" *ngIf="showModal">
+  <div class="modal-header">
+    <h3>{{ isEditMode ? 'Edit Tax Configuration' : 'Add New Tax Rule' }}</h3>
+    <button class="close-x" (click)="showModal = false">&times;</button>
+  </div>
+
+  <form [formGroup]="taxForm" class="modal-form">
+    <div class="form-group">
+      <label>Tax Name <span class="required">*</span></label>
+      <input type="text" formControlName="taxName" placeholder="e.g. CGST or Luxury Tax" class="form-control" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col">
+        <label>Tax Code <span class="required">*</span></label>
+        <input type="text" formControlName="taxCode" placeholder="e.g. VAT-15" class="form-control" />
+      </div>
+      <div class="form-group col">
+        <label>Tax Rate (%) <span class="required">*</span></label>
+        <input type="number" formControlName="taxRate" placeholder="0" class="form-control" />
+      </div>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="isActive" />
+        <span>Active & Enable Calculation</span>
+      </label>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="showModal = false">Cancel</button>
+      <!-- saveModel() এর বদলে TS ফাইলের আসল save() মেথড ম্যাপ করা হয়েছে -->
+      <button type="button" class="btn btn-primary" (click)="save()" [disabled]="taxForm.invalid">Save Config</button>
+    </div>
+  </form>
+</div>

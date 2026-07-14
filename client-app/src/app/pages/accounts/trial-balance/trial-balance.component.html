@@ -1,0 +1,58 @@
+<div class="account-page-container" style="padding: 20px; background: #f8fafc; font-family: sans-serif;">
+  <div style="background: #fff; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    
+    <!-- Top Bar Controls -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="font-size: 18px; font-weight: 600; color: #1e293b; margin: 0;">Trial Balance Overview</h2>
+      <div style="display: flex; gap: 10px;">
+        <button (click)="onAdd()" style="background: #2563eb; color: white; padding: 8px 16px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">+ Add New</button>
+        <button (click)="onPrint()" style="background: #06b6d4; color: white; padding: 8px 16px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">Print</button>
+      </div>
+    </div>
+
+    <!-- Rendered Statement Area Looking Like Image 3 -->
+    <div style="text-align: center; margin-bottom: 20px;">
+      <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #334155;">Trial Balance</h3>
+      <p style="margin: 4px 0; font-size: 13px; color: #64748b; font-weight: 500;">As On 2026-04-27 00:00:00 To 2026-04-30</p>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #f8fafc;">
+          <th style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; color: #334155; text-align: center; width: 150px;">Code</th>
+          <th style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; color: #334155; text-align: left;">Account Name</th>
+          <th style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; color: #334155; text-align: right; width: 150px;">Debit</th>
+          <th style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; color: #334155; text-align: right; width: 150px;">Credit</th>
+          <th style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; color: #334155; text-align: center; width: 130px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of trialBalanceData">
+          <td style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; text-align: center; color: #b45309;">{{item.code}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; color: #334155; background: #f1f5f9;">{{item.name}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; text-align: right; color: #334155;">{{item.debit | number:'1.2-2'}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; font-size: 13px; text-align: right; color: #334155;">{{item.credit | number:'1.2-2'}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center;">
+            <button (click)="onEdit(item)" style="color: #d97706; background: none; border: none; cursor: pointer; font-size: 12px; font-weight: 600; margin-right: 5px;">Edit</button>
+            <button (click)="onDelete(item)" style="color: #dc2626; background: none; border: none; cursor: pointer; font-size: 12px; font-weight: 600;">Delete</button>
+          </td>
+        </tr>
+        <!-- Total Row matching image 3 structure -->
+        <tr style="font-weight: 600; background: #fff;">
+          <td colspan="2" style="padding: 8px; border: 1px solid #cbd5e1; text-align: right; font-size: 13px;">Total</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right; font-size: 13px;">{{totalDebit | number:'1.2-2'}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: right; font-size: 13px;">{{totalCredit | number:'1.2-2'}}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1;"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Signature Footer Panels Layout -->
+    <div style="display: flex; justify-content: space-between; margin-top: 60px; padding: 0 10px;">
+      <span style="border-top: 1px solid #475569; width: 180px; text-align: center; font-size: 12px; color: #475569; padding-top: 5px;">Prepared By</span>
+      <span style="border-top: 1px solid #475569; width: 180px; text-align: center; font-size: 12px; color: #475569; padding-top: 5px;">Account Official</span>
+      <span style="border-top: 1px solid #475569; width: 180px; text-align: center; font-size: 12px; color: #475569; padding-top: 5px;">Chairman</span>
+    </div>
+
+  </div>
+</div>

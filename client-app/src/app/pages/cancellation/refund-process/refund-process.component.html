@@ -1,0 +1,91 @@
+<div class="refund-container">
+  <div class="page-main-header">
+    <div class="title-section">
+      <h2><i class="fa fa-refresh"></i> Refund Under Process Desk</h2>
+      <p>Audit bank disbursement files, approvals, and ongoing accounts transaction states.</p>
+    </div>
+    <button class="btn btn-add-new" (click)="openModal()"><i class="fa fa-plus"></i> Add Process Track</button>
+  </div>
+
+  <div class="table-card-wrapper">
+    <table class="custom-refund-table">
+      <thead>
+        <tr>
+          <th>Sl.</th>
+          <th>Booking ID</th>
+          <th>Guest Name</th>
+          <th class="text-right">Amount</th>
+          <th>Target Bank</th>
+          <th>Status</th>
+          <!-- টেবিল হেডার (thead) এর ভেতর একদম শেষে যোগ করুন -->
+          <th class="text-center" style="width: 120px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of processList; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><span class="id-badge">{{ item.bookingId }}</span></td>
+          <td><strong>{{ item.guestName }}</strong></td>
+          <td class="text-right text-blue bold-text">₹ {{ item.refundAmount | number:'1.2-2' }}</td>
+          <td>{{ item.bankName }}</td>
+          <td><span class="status-working-badge">{{ item.processStatus }}</span></td>
+          <!-- টেবিল বডি (tbody) এর লুপের ভেতর একদম শেষে যোগ করুন -->
+          <td class="text-center">
+            <div class="action-buttons">
+              <button class="btn-edit" (click)="editRecord(item)" title="Edit">
+                <i class="fa fa-edit text-primary"></i>
+              </button>
+              <button class="btn-delete" (click)="deleteRecord(item.id)" title="Delete">
+                <i class="fa fa-trash text-danger"></i>
+              </button>
+            </div>
+          </td>
+         </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="popup-modal-overlay" *ngIf="isModalOpen">
+  <div class="popup-modal-container">
+    <div class="popup-modal-header">
+      <h3><i class="fa fa-refresh"></i> Track Processing Lifecycle</h3>
+      <button class="close-modal-x" (click)="closeModal()">&times;</button>
+    </div>
+    <div class="popup-modal-body">
+      <form [formGroup]="processForm">
+        <div class="form-row-2">
+          <div class="form-group"><label>Booking ID *</label><input type="text" formControlName="bookingId"
+              class="modal-control" /></div>
+          <div class="form-group"><label>Guest Name *</label><input type="text" formControlName="guestName"
+              class="modal-control" /></div>
+        </div>
+        <div class="form-group"><label>Locked Amount *</label><input type="number" formControlName="refundAmount"
+            class="modal-control" /></div>
+        <div class="form-group"><label>Bank Name *</label><input type="text" formControlName="bankName"
+            class="modal-control" /></div>
+        <div class="form-row-2">
+          <div class="form-group"><label>Account No *</label><input type="text" formControlName="accountNo"
+              class="modal-control" /></div>
+          <div class="form-group"><label>IFSC Code *</label><input type="text" formControlName="ifscCode"
+              class="modal-control" /></div>
+        </div>
+        <div class="form-group">
+          <label>Lifecycle Status *</label>
+          <select formControlName="processStatus" class="modal-control">
+            <option value="Sent to Accounts">Sent to Accounts</option>
+            <option value="Bank File Generated">Bank File Generated</option>
+            <option value="Awaiting GM Approval">Awaiting GM Approval</option>
+            <option value="Processing with Bank Gateway">Processing with Bank Gateway</option>
+
+
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="popup-modal-footer">
+      <button class="btn-m-cancel" (click)="closeModal()">Cancel</button>
+      <button class="btn-m-save" (click)="submit()">Commit Track</button>
+    </div>
+  </div>
+</div>

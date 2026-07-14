@@ -8,9 +8,19 @@ import { CheckinComponent } from './pages/checkin/checkin.component';
 import { AddGuestComponent } from './pages/add-guest/add-guest.component';
 import { GuestDetailsComponent } from './pages/guest-details/guest-details.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
+import { RoomStatusComponent } from './pages/room-status/room-status.component';
 import { UpcomingCheckinComponent } from './pages/upcoming-checkin/upcoming-checkin.component';
 import { PaymentListComponent } from './pages/payment-list/payment-list.component';
 import { AuthGuard } from './guards/auth.guard';
+import { AssignRoomCleaningComponent } from './pages/house-keeping/assign-room-cleaning/assign-room-cleaning.component';
+import { RoomCleaningComponent } from './pages/house-keeping/room-cleaning/room-cleaning.component';
+import { ChecklistComponent } from './pages/house-keeping/checklist/checklist.component';
+import { RoomQrListComponent } from './pages/house-keeping/room-qr-list/room-qr-list.component';
+import { LaundryProductsComponent } from './pages/house-keeping/laundry-products/laundry-products.component';
+import { LaundryComponent } from './pages/house-keeping/laundry/laundry.component';
+import { LaundryPaymentComponent } from './pages/house-keeping/laundry-payment/laundry-payment.component';
+
+
 
 export const routes: Routes = [
   { path: '',           redirectTo: 'dashboard', pathMatch: 'full' },
@@ -36,17 +46,38 @@ export const routes: Routes = [
     component: CheckinComponent,
     canActivate: [AuthGuard]
   },
-  {
-    path: 'add-guest',
-    component: AddGuestComponent,
-    canActivate: [AuthGuard]
-  },
+  
   {
     path: 'checkout',
     component: CheckoutComponent,
     canActivate: [AuthGuard]
   },
   {
+    path: 'direct-checkout',
+    component: CheckoutComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'room-status',
+    component: RoomStatusComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'add-guest',
+    component: AddGuestComponent,
+    canActivate: [AuthGuard]
+  },
+  // {
+  //   path: 'guest-details',
+  //   component: GuestDetailsComponent,
+  //   canActivate: [AuthGuard]
+  // },
+  // {
+  //   path: 'payment-list',
+  //   component: PaymentListComponent,
+  //   canActivate: [AuthGuard]
+  // },
+    {
     path: 'payment',
     component: PaymentListComponent,
     canActivate: [AuthGuard]
@@ -61,8 +92,18 @@ export const routes: Routes = [
     component: GuestDetailsComponent,
     canActivate: [AuthGuard]
   },
-  {path: 'room-types', loadComponent: () => import('./pages/room-type/room-type.component').then(m => m.RoomTypeComponent), canActivate: [AuthGuard] }, 
-  { path: 'rooms',      loadComponent: () => import('./pages/rooms/room.component').then(m => m.RoomComponent), canActivate: [AuthGuard] },
+  {
+    path: 'upcoming-checkin',
+    component: UpcomingCheckinComponent,
+    canActivate: [AuthGuard]
+  },
+//#region Dynamic Auditing Reports Engine Engine Configuration Route
+  {
+    path: 'reports/:reportType',
+    loadComponent: () => import('./pages/reports/report-engine/report-engine.component').then(m => m.ReportEngineComponent),
+    canActivate: [AuthGuard]
+  },
+  //#endregion
   //Add all Master pages here
   { path: 'currencies', loadComponent: () => import('./pages/masters/currency/currency.component').then(m => m.CurrencyComponent), canActivate: [AuthGuard] },
   { path: 'payment-methods', loadComponent: () => import('./pages/masters/payment-method/payment-method.component').then(m => m.PaymentMethodComponent), canActivate: [AuthGuard] },
@@ -74,20 +115,167 @@ export const routes: Routes = [
   {path: 'purchase-returns', loadComponent: () => import('./pages/masters/purchase-return/purchase-return.component').then(m => m.PurchaseReturnComponent), canActivate: [AuthGuard] },
   {path: 'stock-report', loadComponent: () => import('./pages/masters/stock-report/stock-report.component').then(m => m.StockReportComponent), canActivate: [AuthGuard] },
   {path: 'stock-details', loadComponent: () => import('./pages/masters/stock-details/stock-details.component').then(m => m.StockDetailsComponent), canActivate: [AuthGuard] },
-  //#region Room Settings Sub Pages
-  {path: 'booking-type', loadComponent: () => import('./pages/room-settings/booking-type/booking-type.component').then(m => m.BookingTypeComponent), canActivate: [AuthGuard] },
-  {path: 'booking-source', loadComponent: () => import('./pages/room-settings/booking-source/booking-source.component').then(m => m.BookingSourceComponent), canActivate: [AuthGuard] },
-  {path: 'bed-type', loadComponent: () => import('./pages/room-settings/bed-type/bed-type.component').then(m => m.BedTypeComponent), canActivate: [AuthGuard] },
-  {path: 'floor-plan', loadComponent: () => import('./pages/room-settings/floor-plan/floor-plan.component').then(m => m.FloorPlanComponent), canActivate: [AuthGuard] },
-  {path: 'complementary', loadComponent: () => import('./pages/room-settings/complementary/complementary.component').then(m => m.ComplementaryComponent), canActivate: [AuthGuard] },
+  
+  // { path: 'tariff', loadComponent: () => import('./pages/masters/tariff/tariff.component').then(m => m.TariffComponent), canActivate: [AuthGuard] },
+  // { path: 'room-types', loadComponent: () => import('./pages/masters/room-types/room-types.component').then(m => m.RoomTypesComponent), canActivate: [AuthGuard] },
+  // { path: 'rooms', loadComponent: () => import('./pages/masters/rooms/rooms.component').then(m => m.RoomsComponent), canActivate: [AuthGuard] },
+  // { path: 'payment', loadComponent: () => import('./pages/masters/payment-settings/payment-settings.component').then(m => m.PaymentSettingsComponent), canActivate: [AuthGuard] },
+  // { path: 'purchase', loadComponent: () => import('./pages/masters/purchase-manage/purchase-manage.component').then(m => m.PurchaseManageComponent), canActivate: [AuthGuard] },
+  // { path: 'reports', loadComponent: () => import('./pages/masters/reports/reports.component').then(m => m.ReportsComponent), canActivate: [AuthGuard] },
+  // { path: 'masters', loadComponent: () => import('./pages/masters/masters/masters.component').then(m => m.MastersComponent), canActivate: [AuthGuard] },
+  // { path: 'housekeeping', loadComponent: () => import('./pages/masters/house-keeping/house-keeping.component').then(m => m.HouseKeepingComponent), canActivate: [AuthGuard] },
+  
+  {path: 'room-types', loadComponent: () => import('./pages/room-type/room-type.component').then(m => m.RoomTypeComponent), canActivate: [AuthGuard] }, 
+  { path: 'rooms',      loadComponent: () => import('./pages/rooms/room.component').then(m => m.RoomComponent), canActivate: [AuthGuard] },
 
+  { path: 'stock-details', loadComponent: () => import('./pages/masters/stock-details/stock-details.component').then(m => m.StockDetailsComponent), canActivate: [AuthGuard] },
+  
+  //#region Room Settings Sub Pages
+  { path: 'booking-type', loadComponent: () => import('./pages/room-settings/booking-type/booking-type.component').then(m => m.BookingTypeComponent), canActivate: [AuthGuard] },
+  { path: 'booking-source', loadComponent: () => import('./pages/room-settings/booking-source/booking-source.component').then(m => m.BookingSourceComponent), canActivate: [AuthGuard] },
+  { path: 'bed-type', loadComponent: () => import('./pages/room-settings/bed-type/bed-type.component').then(m => m.BedTypeComponent), canActivate: [AuthGuard] },
+  { path: 'floor-plan', loadComponent: () => import('./pages/room-settings/floor-plan/floor-plan.component').then(m => m.FloorPlanComponent), canActivate: [AuthGuard] },
+  { path: 'complementary', loadComponent: () => import('./pages/room-settings/complementary/complementary.component').then(m => m.ComplementaryComponent), canActivate: [AuthGuard] },
+  { path: 'amenities', loadComponent: () => import('./pages/room-settings/amenities/amenity.component').then(m => m.AmenitiesComponent), canActivate: [AuthGuard] },
+  { path: 'cancellation-policy', loadComponent: () => import('./pages/room-settings/cancellation-policy/cancellation-policy.component').then(m => m.CancellationPolicyComponent), canActivate: [AuthGuard] },
   //#endregion
 
+  //#region Account & Tax / Promocode Management
+  //{ path: 'account/opening-balance', loadComponent: () => import('./pages/accounts/opening-balance/opening-balance.component').then(m => m.OpeningBalanceComponent), canActivate: [AuthGuard] },
+  { path: 'tax/list', loadComponent: () => import('./pages/masters/tax/tax.component').then(m => m.TaxComponent), canActivate: [AuthGuard] },
+  { path: 'promos/list', loadComponent: () => import('./pages/masters/promocode/promocode.component').then(m => m.PromocodeComponent), canActivate: [AuthGuard] },
+  //Acount Management Routes
+  { 
+    path: 'account/financial-year-end', 
+    loadComponent: () => import('./pages/accounts/financial-year-end/financial-year-end.component').then(m => m.FinancialYearEndComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/chart-of-accounts', 
+    loadComponent: () => import('./pages/accounts/chart-of-accounts/chart-of-accounts.component').then(m => m.ChartOfAccountsComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/opening-balance', 
+    loadComponent: () => import('./pages/accounts/opening-balance/opening-balance.component').then(m => m.OpeningBalanceComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/debit-voucher', 
+    loadComponent: () => import('./pages/accounts/debit-voucher/debit-voucher.component').then(m => m.DebitVoucherComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/credit-voucher', 
+    loadComponent: () => import('./pages/accounts/credit-voucher/credit-voucher.component').then(m => m.CreditVoucherComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/contra-voucher', 
+    loadComponent: () => import('./pages/accounts/contra-voucher/contra-voucher.component').then(m => m.ContraVoucherComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/journal-voucher', 
+    loadComponent: () => import('./pages/accounts/journal-voucher/journal-voucher.component').then(m => m.JournalVoucherComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/voucher-approval', 
+    loadComponent: () => import('./pages/accounts/voucher-approval/voucher-approval.component').then(m => m.VoucherApprovalComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/voucher-report', 
+    loadComponent: () => import('./pages/accounts/voucher-report/voucher-report.component').then(m => m.VoucherReportComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'account/cash-book', 
+    loadComponent: () => import('./pages/accounts/cash-book/cash-book.component').then(m => m.CashBookComponent), 
+    canActivate: [AuthGuard] ,
+  },
+  {
+        path: 'account/bank-book',
+        loadComponent: () => import('./pages/accounts/bank-book/bank-book.component').then(m => m.BankBookComponent),
+        canActivate: [AuthGuard] ,
+  },
+      {
+        path: 'account/general-ledger',
+        loadComponent: () => import('./pages/accounts/general-ledger/general-ledger.component').then(m => m.GeneralLedgerComponent),
+        canActivate: [AuthGuard] 
+      },
+      {
+        path: 'account/trial-balance',
+        loadComponent: () => import('./pages/accounts/trial-balance/trial-balance.component').then(m => m.TrialBalanceComponent),
+        canActivate: [AuthGuard] ,
+      },
+      {
+        path: 'account/profit-loss',
+        loadComponent: () => import('./pages/accounts/profit-loss/profit-loss.component').then(m => m.ProfitLossComponent),
+        canActivate: [AuthGuard] 
+      },
+      {
+        path: 'account/coa-print',
+        loadComponent: () => import('./pages/accounts/coa-print/coa-print.component').then(m => m.CoaPrintComponent),
+        canActivate: [AuthGuard] 
+      },
+      {
+        path: 'account/balance-sheet',
+        loadComponent: () => import('./pages/accounts/balance-sheet/balance-sheet.component').then(m => m.BalanceSheetComponent),
+        canActivate: [AuthGuard] 
+      },
+  //End of Account Management Routes
+
+  
+  //#endregion
+
+//#region Other Payment Management
+  { 
+    path: 'payment/other-list', 
+    loadComponent: () => import('./pages/payments/other-payment-list/other-payment-list.component').then(m => m.OtherPaymentListComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'payment/other-entry', 
+    loadComponent: () => import('./pages/payments/other-payment-entry/other-payment-entry.component').then(m => m.OtherPaymentEntryComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { path: 'payment/other-entry/:id', loadComponent: () => import('./pages/payments/other-payment-entry/other-payment-entry.component').then(m => m.OtherPaymentEntryComponent), canActivate: [AuthGuard] },
+  //#endregion
+
+  //#region Cancellation Management
+   //#region Cancellation & Refund Management
+  { 
+    path: 'cancellation/refund-due', 
+    loadComponent: () => import('./pages/cancellation/refund-due/refund-due.component').then(m => m.RefundDueComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'cancellation/refund-process', 
+    loadComponent: () => import('./pages/cancellation/refund-process/refund-process.component').then(m => m.RefundProcessComponent), 
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'cancellation/refunded-archive', 
+    loadComponent: () => import('./pages/cancellation/refunded-archive/refunded-archive.component').then(m => m.RefundedArchiveComponent), 
+    canActivate: [AuthGuard] 
+  },
+  //#endregion
+  //#endregion
+
+  //#region House Keeping
 {
-  path: 'upcoming-checkin',
-  loadComponent: () =>
-    import('./pages/upcoming-checkin/upcoming-checkin.component')
-      .then(m => m.UpcomingCheckinComponent)
-},
-  { path: '**',         redirectTo: 'login' }
+    path: 'housekeeping',
+    children: [
+      { path: 'assign-room-cleaning', component: AssignRoomCleaningComponent },
+      { path: 'room-cleaning', component: RoomCleaningComponent },
+      { path: 'checklist', component: ChecklistComponent },
+      { path: 'room-qrcode', component: RoomQrListComponent },
+      { path: 'product-laundry', component: LaundryProductsComponent },
+      { path: 'laundry', component: LaundryComponent },
+      { path: 'payment-record', component: LaundryPaymentComponent }
+    ]
+  }
+  //#endregion
 ];

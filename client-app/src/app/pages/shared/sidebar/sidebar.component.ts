@@ -28,35 +28,137 @@ export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [
     { icon: '📊', label: 'Dashboard', active: true, route: '/dashboard' },
     { icon: '📋', label: 'Tariff Interface', route: '/tariff' },
-    { icon: '👤', label: 'Account', route: '/account' },
+    {
+    icon: '👤',
+    label: 'Account',
+    children: [
+      { label: 'Agent Commissions', route: '/agent-commissions' },
+      { label: 'Commission Agents', route: '/commission-agents' },
+      { label: 'Financial Years', route: '/financial-years' },
+      { label: 'Financial Year Ending', route: '/account/financial-year-end' },
+      { label: 'Chart of Account', route: '/account/chart-of-accounts' },
+      { label: 'Opening Balance', route: '/account/opening-balance' },
+      { label: 'Debit Voucher', route: '/account/debit-voucher' },
+      { label: 'Credit Voucher', route: '/account/credit-voucher' },
+      { label: 'Contra Voucher', route: '/account/contra-voucher' },
+      { label: 'Journal Voucher', route: '/account/journal-voucher' },
+      { label: 'Voucher Approval', route: '/account/voucher-approval' },
+      { label: 'Voucher Report', route: '/account/voucher-report' },
+      { label: 'Cash Book', route: '/account/cash-book' },
+      { label: 'Bank Book', route: '/account/bank-book' },
+      { label: 'General Ledger', route: '/account/general-ledger' },
+      { label: 'Trial Balance', route: '/account/trial-balance' },
+      { label: 'Profit & Loss', route: '/account/profit-loss' },
+      { label: 'Balance Sheet', route: '/account/balance-sheet' },
+      { label: 'COA Print', route: '/account/coa-print' },
+
+
+    ]
+  },
+    {
+      icon: '⚙️', label: 'Masters', open: false, children: [
+        { label: 'Currency', route: '/currencies' },
+        { label: 'Payment Methods', route: '/payment-methods' },
+
+        { label: 'Wake Up Calls', route: '/wake-up-calls' },
+        { label: 'Purchase Items', route: '/purchase' },
+        { label: 'Purchase Returns', route: '/purchase-returns' },
+        { label: 'Stock Report', route: '/stock-report' },
+        { label: 'Stock Details', route: '/stock-details' }
+        //Add more master pages here
+      ]
+    },
+    //Single Menu
     { icon: '🛏️', label: 'Room Types', route: '/room-types' },
     { icon: '🛏️', label: 'Rooms', route: '/rooms' },
     { icon: '💳', label: 'Payment Setting', route: '/payment' },
     { icon: '🛒', label: 'Purchase Manage', route: '/purchase' },
-    { icon: '📈', label: 'Reports', route: '/reports' },
+    // { icon: '📈', label: 'Reports', route: '/reports' },
+    {
+      icon: '📈',
+      label: 'Reports Panel',
+      open: false,
+      children: [
+        { label: 'Booking Report', route: '/reports/booking' },
+        // { label: 'Meal Details Report', route: '/reports/meal' },
+        { label: 'Meal Details Report (Alt)', route: '/reports/meal_alt' },
+        { label: 'Monthly Summary Report', route: '/reports/monthly_summary' },
+        { label: 'Payment Details Report', route: '/reports/payment_det' },
+        { label: 'Payment Summary Report', route: '/reports/payment_sum' },
+        { label: 'Daily Room Occupancy', route: '/reports/daily_occupancy' },
+        { label: 'Available Room Report', route: '/reports/available_rooms' },
+        { label: 'GST Invoice Report', route: '/reports/gst_invoice' },
+        { label: 'Room Checkout Report', route: '/reports/checkout_rep' },
+        { label: 'Police Report', route: '/reports/police_rep' },
+        { label: 'Transaction Report', route: '/reports/transaction_rep' },
+        { label: 'Complementary Monthly', route: '/reports/complementary' },
+        { label: 'RMS Settlement Report', route: '/reports/rms_settle' },
+        { label: 'Today\'s Occupancy', route: '/reports/today_occupancy' },
+        { label: 'OTA Summary Report', route: '/reports/ota_summary' },
+        { label: 'Revenue Report', route: '/reports/revenue' },
+        { label: 'Month-Wise Revenue', route: '/reports/month_revenue' },
+        { label: 'Individual Transaction', route: '/reports/indiv_trans' },
+        { label: 'Total Payment Pending', route: '/reports/pending_total' },
+        { label: 'Total Part Payment', route: '/reports/part_payment' },
+        { label: 'Outstanding Room Revenue', route: '/reports/outstanding_rev' },
+        { label: 'In-Store Wallet List', route: '/reports/wallet_list' },
+
+        { label: 'Payment Pending Report', route: '/reports/payment_pending' },
+        { label: 'Cancelled Report', route: '/reports/cancelled' },
+        { label: 'Purchase Report', route: '/reports/purchase_rep' },
+        { label: 'Stock Report', route: '/reports/stock_rep' },
+        { label: 'Daily Booking Report', route: '/reports/daily_booking' }
+      ]
+    },
     { icon: '🏨', label: 'Room Facilities', route: '/facilities' },
+    { icon: '📦', label: 'Unit and Products', route: '/products' },
+    {
+      icon: '🔖',
+      label: 'House Keeping',
+      children: [
+        { label: 'Assign Room Cleaning', route: '/housekeeping/assign-room-cleaning' },
+        { label: 'Room Cleaning', route: '/housekeeping/room-cleaning' },
+        { label: 'Checklist', route: '/housekeeping/checklist' },
+        { label: 'Room Qr List', route: '/housekeeping/room-qrcode' },
+        { label: 'Laundry Product List', route: '/housekeeping/product-laundry' },
+        { label: 'Laundry', route: '/housekeeping/laundry' },
+        { label: 'Laundry Payment', route: '/housekeeping/payment-record' }
+      ]
+    },
+
+    //Single Menu
     //Add master pages here like Room Rerrvation and submenu
-    {icon: '⚙️', label: 'Masters', open: false, children: [
-      { label: 'Currency', route: '/currencies' },
-      { label: 'Payment Methods', route: '/payment-methods' },
-      { label: 'Commission Agents', route: '/commission-agents' },
-      { label: 'Agent Commissions', route: '/agent-commissions' },
-      { label: 'Financial Years', route: '/financial-years' },
-      { label: 'Wake Up Calls', route: '/wake-up-calls' },
-      { label: 'Purchase Items', route: '/purchase' },
-      { label: 'Purchase Returns', route: '/purchase-returns' },
-      { label: 'Stock Report', route: '/stock-report' },
-      { label: 'Stock Details', route: '/stock-details' }
-      //Add more master pages here
-    ]},
-    //#region Room Settings Sub Pages
-    {icon: '🛏️', label: 'Room Settings', open: false, children: [
-      { label: 'Booking Type', route: '/booking-type' },
-      { label: 'Booking Source', route: '/booking-source' },
-      { label: 'Bed Type', route: '/bed-type' },
-      { label: 'Floor Plan', route: '/floor-plan' },
-      { label: 'Complementary', route: '/complementary' }
-    ]},
+    {
+      icon: '⚙️', label: 'Masters', open: false, children: [
+        { label: 'Currency', route: '/currencies' },
+        { label: 'Payment Methods', route: '/payment-methods' },
+        { label: 'Commission Agents', route: '/commission-agents' },
+        { label: 'Agent Commissions', route: '/agent-commissions' },
+        { label: 'Financial Years', route: '/financial-years' },
+        { label: 'Wake Up Calls', route: '/wake-up-calls' },
+        { label: 'Purchase Items', route: '/purchase' },
+        { label: 'Purchase Returns', route: '/purchase-returns' },
+        { label: 'Stock Report', route: '/stock-report' },
+        { label: 'Stock Details', route: '/stock-details' }
+        //Add more master pages here
+      ]
+    },
+
+
+
+    {
+      icon: '🛏️',
+      label: 'Room Setting',
+      children: [
+        { label: 'Booking Type', route: '/booking-type' },
+        { label: 'Booking Source', route: '/booking-source' },
+        { label: 'Bed Type', route: '/bed-type' },
+        { label: 'Floor Plan', route: '/floor-plan' },
+        { label: 'Complementary', route: '/complementary' },
+        { label: 'Amenities Management', route: '/amenities' },
+        { label: 'Cancellation Policy', route: '/cancellation-policy' }
+      ]
+    },
     {
       icon: '📅',
       label: 'Room Reservation',
@@ -70,17 +172,43 @@ export class SidebarComponent implements OnInit {
         { label: 'Booking Engine', route: '/booking-engine' }
       ]
     },
-    { icon: '📦', label: 'Unit and Products', route: '/products' },
-    { icon: '🔖', label: 'House Keeping', route: '/housekeeping' },
-    { icon: '🛏️', label: 'Room Setting', route: '/room-settings' },
-    { icon: '🎫', label: 'Tax Management', route: '/tax' },
-    { icon: '💰', label: 'Promo/code Management', route: '/promos' }
+    {
+      icon: '🎫',
+      label: 'Tax Management',
+      children: [
+        { label: 'Tax List Config', route: '/tax/list' }
+      ]
+    },
+    {
+      icon: '💰',
+      label: 'Promo/code Management',
+      children: [
+        { label: 'Promocode Matrix', route: '/promos/list' }
+      ]
+    },
+    {
+      icon: '💸',
+      label: 'Other Payments',
+      children: [
+        { label: 'Other Payment List', route: '/payment/other-list' },
+        { label: 'Other Payment Entry', route: '/payment/other-entry' }
+      ]
+    },
+    {
+      icon: '❌',
+      label: 'Cancellation Management',
+      open: false,
+      children: [
+        { label: 'Refund Due (Non-Website)', route: '/cancellation/refund-due' },
+        { label: 'Refund Under Process', route: '/cancellation/refund-process' },
+        { label: 'Refunded Archives', route: '/cancellation/refunded-archive' }
+      ]
+    }
   ];
 
-  constructor(private readonly router: Router) {}
+  constructor(private readonly router: Router) { }
 
   ngOnInit(): void {
-    // Auto-expand the parent group whose child matches the current route
     const currentUrl = this.router.url;
     this.menuItems.forEach(item => {
       if (item.children) {
@@ -107,16 +235,15 @@ export class SidebarComponent implements OnInit {
     }
   }
 
-  onSubMenuClick(parent: MenuItem, sub: SubMenuItem): void {
-    this.menuItems.forEach(m => (m.active = false));
-    parent.active = true;
-    parent.open = true;
-    if (sub.route) {
-      this.router.navigate([sub.route]);
-    }
-  }
-
+  // HTML টেমপ্লেটের [class.sub-active]="isSubActive(sub.route)" এরর ফিক্স করার জন্য মেথড
   isSubActive(route: string): boolean {
     return this.router.url.startsWith(route);
+  }
+
+  // HTML টেমপ্লেটের (click)="onSubMenuClick(item, sub)" এরর ফিক্স করার জন্য মেথড
+  onSubMenuClick(parentItem: MenuItem, subItem: SubMenuItem): void {
+    this.menuItems.forEach(m => (m.active = false));
+    parentItem.active = true; // প্যারেন্ট মেনুকেও অ্যাক্টিভ স্টেট দেবে
+    this.router.navigate([subItem.route]);
   }
 }
