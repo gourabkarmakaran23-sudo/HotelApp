@@ -7,6 +7,7 @@ import { CustomAlertService } from '../../services/custom-alert.service';
 
 interface GuestRow {
   id: number;
+  bookingId?: number;
   bookingNumber: string;
   roomType: string;
   roomNo: string;
@@ -72,6 +73,7 @@ export class CheckinComponent implements OnInit {
         this.guestRows = response.map((x: any) => ({
 
           id: x.reservationId,
+          bookingId: x.bookingId,
 
           bookingNumber: x.bookingNumber,
 
@@ -273,7 +275,10 @@ export class CheckinComponent implements OnInit {
     }
 
     this.router.navigate(['/checkout'], {
-      state: { row }
+      state: {
+        row,
+        bookingId: row.bookingId
+      }
     });
 
   }

@@ -473,7 +473,17 @@ namespace HotelRestaurant.Application.Services.Implementations
                 .FirstOrDefaultAsync(x => x.Id == bookingId);
 
             if (booking == null)
-                return false;
+            {
+                var reservationRoom = await _unitOfWork.ReservationRooms.GetAllQueryable()
+                    .Include(x => x.Booking)
+                    .Include(x => x.Booking!.ReservationRooms)
+                    .FirstOrDefaultAsync(x => x.Id == bookingId);
+
+                if (reservationRoom == null || reservationRoom.Booking == null)
+                    return false;
+
+                booking = reservationRoom.Booking;
+            }
 
             booking.Status = BookingStatus.CheckedOut;
 
@@ -500,6 +510,7 @@ namespace HotelRestaurant.Application.Services.Implementations
                 Remarks = "Checkout payment"
             };
 
+            booking.Payments ??= new List<HotelRestaurant.Core.Entities.Payment>();
             booking.Payments.Add(payment);
 
             await _unitOfWork.SaveChangesAsync();

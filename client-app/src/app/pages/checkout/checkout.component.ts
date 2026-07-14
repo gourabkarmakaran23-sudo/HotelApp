@@ -21,6 +21,8 @@ export class CheckoutComponent implements OnInit {
   roomNos = '';
   paymentMethods: any[] = [];
   selectedPaymentMode = '';
+  paymentAmount = 0;
+  remainingDue = 33827;
 
   // sample billing data
   billing = {
@@ -33,12 +35,16 @@ export class CheckoutComponent implements OnInit {
     dueTransferFrom: '00002706'
   };
 
+  balance = {
+    remaining: this.remainingDue,
+    collected: 0,
+    change: 0
+  };
+
   roomBills = [
     { no: 1, roomNo: '201', roomType: 'Executive View', from: '07-05-2026 12:18', to: '08-05-2026 10:00', nights: 1, rent: '₹6120.00' },
     { no: 2, roomNo: '304', roomType: 'Executive View', from: '07-05-2026 12:18', to: '08-05-2026 10:00', nights: 1, rent: '₹6120.00' }
   ];
-
-  balance = { remaining: '₹33,827.00', collected: '₹0.00', change: '₹0.00' };
 
   additionalCharges = 0;
   adjustmentAmount = 0;
@@ -66,6 +72,7 @@ export class CheckoutComponent implements OnInit {
 
     // compute numeric subtotal from roomBills
     this.computeTotals();
+    this.updateBalance();
   }
 
   loadPaymentMethods(): void {
@@ -91,6 +98,73 @@ export class CheckoutComponent implements OnInit {
       return acc + n;
     }, 0);
     this.subtotalNumber = sum;
+  }
+
+  updateBalance(): void {
+    const payment = Number(this.paymentAmount);
+    const safePayment = Number.isFinite(payment) ? payment : 0;
+    const remaining = Math.max(this.remainingDue - safePayment, 0);
+    const change = Math.max(safePayment - this.remainingDue, 0);
+
+    this.balance.collected = safePayment;
+    this.balance.change = change;
+    this.balance.remaining = remaining;
+    this.paymentAmount = safePayment;
+  }
+
+  onPaymentInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.valueAsNumber;
+    this.paymentAmount = Number.isFinite(value) ? value : 0;
+    this.updateBalance();
+  }
+
+  get amountShortfall(): number {
+    const payment = Number(this.paymentAmount);
+    return Number.isFinite(payment) ? Math.max(this.remainingDue - payment, 0) : this.remainingDue;
+  }
+
+  get amountMessage(): string {
+    if (!this.selectedPaymentMode) {
+      return 'Please select a payment mode first.';
+    }
+
+    const payment = Number(this.paymentAmount);
+    if (!Number.isFinite(payment) || payment <= 0) {
+      return 'Please enter the full settlement amount.';
+    }
+
+    if (payment < this.remainingDue) {
+      return `Collect ${this.formatCurrency(this.amountShortfall)} more to complete settlement.`;
+    }
+
+    return 'Full settlement entered. You may complete checkout.';
+  }
+
+  get validationClass(): string {
+    const payment = Number(this.paymentAmount);
+    if (!this.selectedPaymentMode || !Number.isFinite(payment) || payment <= 0 || payment < this.remainingDue) {
+      return 'validation-message error';
+    }
+    return 'validation-message success';
+  }
+
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(value).replace('₹', '₹');
+  }
+
+  get canCheckout(): boolean {
+    const payment = Number(this.paymentAmount);
+    return (
+      this.selectedPaymentMode !== '' &&
+      Number.isFinite(payment) &&
+      payment >= this.remainingDue &&
+      this.remainingDue > 0
+    );
   }
 
   back(): void {
@@ -196,20 +270,43 @@ export class CheckoutComponent implements OnInit {
   }
 
   doCheckout(): void {
-    const payload = {
-      bookingNumber: this.bookingNumber,
-      guestName: this.guestName,
-      roomNos: this.roomNos,
-      paymentMode: this.selectedPaymentMode,
-      additionalCharges: this.additionalCharges,
-      adjustmentAmount: this.adjustmentAmount,
-      subtotal: this.subtotalNumber
-    };
+    if (!this.canCheckout) {
+      const payment = Number(this.paymentAmount);
+      if (!Number.isFinite(payment) || payment <= 0) {
+        this.alertService.error('Please enter a valid payment amount before checkout.');
+      } else if (payment < this.remainingDue) {
+        this.alertService.error('Checkout requires full payment settlement. Please collect the remaining amount first.');
+      } else if (!this.selectedPaymentMode) {
+        this.alertService.error('Please select a payment mode before completing checkout.');
+      } else {
+        this.alertService.error('Checkout cannot proceed. Please verify the payment details.');
+      }
+      return;
+    }
 
     if (!this.bookingId) {
       this.alertService.error('Unable to complete checkout: booking information is missing.');
       return;
     }
+
+    if (!this.selectedPaymentMode) {
+      this.alertService.error('Please select a payment mode before completing checkout.');
+      return;
+    }
+
+    const payment = Number(this.paymentAmount);
+
+    const payload = {
+      bookingNumber: this.bookingNumber,
+      guestName: this.guestName,
+      roomNos: this.roomNos,
+      paymentMode: this.selectedPaymentMode,
+      amountPaid: payment,
+      additionalCharges: this.additionalCharges,
+      adjustmentAmount: this.adjustmentAmount,
+      subtotal: this.subtotalNumber,
+      changeAmount: this.balance.change
+    };
 
     this.http.post(`${apiBaseUrl}/bookings/${this.bookingId}/checkout`, payload).subscribe({
       next: () => {

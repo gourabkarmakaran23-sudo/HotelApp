@@ -9,6 +9,8 @@ namespace Hotel.Application.DTOs.Reservation
     {
         public int ReservationId { get; set; }
 
+        public int BookingId { get; set; }
+
         public string BookingNumber { get; set; } = string.Empty;
 
         public string CustomerName { get; set; } = string.Empty;
