@@ -186,6 +186,7 @@ Tax, Promocode, CancellationPolicy, Amenity add these in DB Set AppDbContext.cs
 
 
 ===================================================================
+https://www.exceedhms.com/Pricing.php
 1. Excced Like Dashboard
 2. Timewise CheckIn/Booking(2 hours same days should allow)
 3. SameDay CHeckOut SHould Allow based on Timewise

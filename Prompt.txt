@@ -490,3 +490,17 @@ sidebar under Account Menu
 
 
 ==============================End 8th July 2026 ======================
+
+=============Start 15th July 2026==========================
+In Upcoming CheckIn page Action Dropdoen is not coming [properly]
+I need to scroll which is not good. ANd when I click any
+Action dropdown button its not work properly. Like when click
+CheckIn its showing Confirm Delete
+Check in booking RES-20260714222955? which is wrong also also When
+click Yes its showing Error Failed to check in booking.
+And Other Action also not working. Please fix all those
+Also when go CHeck In List page and Click CheckOut Button from ...
+or Action No Payment Mode is Binding here. But there is Payment Mode
+in DB I mean from Masters menu we have Payment Methods Menu that shojul be 
+populate in the dropdown
+=============ENd 15th July 2026==========================
