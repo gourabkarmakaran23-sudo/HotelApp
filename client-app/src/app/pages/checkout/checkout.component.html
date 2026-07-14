@@ -139,8 +139,8 @@
   </div>
 
   <div class="actions">
-    <button class="btn btn-cancel">CANCEL</button>
-    <button class="btn btn-proforma">Room Rent Proforma</button>
+    <button class="btn btn-cancel" (click)="back()">CANCEL</button>
+    <button class="btn btn-proforma" (click)="generateProforma()">Room Rent Proforma</button>
     <button class="btn btn-checkout" (click)="doCheckout()" [disabled]="paymentMethods.length === 0">
       COMPLETE CHECKOUT
     </button>

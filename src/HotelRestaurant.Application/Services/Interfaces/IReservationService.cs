@@ -15,6 +15,7 @@ namespace HotelRestaurant.Application.Services.Interfaces
         Task<List<CheckInListDto>> GetCheckInListAsync();
         Task<List<UpcomingCheckInDto>> GetUpcomingCheckInsAsync();
         Task<bool> CheckInBookingAsync(int bookingId);
+        Task<bool> CheckOutBookingAsync(int bookingId, string paymentMode, decimal subtotal, decimal additionalCharges, decimal adjustmentAmount);
 
         Task<BookingEditDto?> GetBookingForEditAsync(int bookingId);
         //Task<BookingEditDto?> GetBookingForEditAsync(int bookingId);

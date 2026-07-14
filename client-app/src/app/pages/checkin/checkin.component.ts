@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { CustomAlertService } from '../../services/custom-alert.service';
 
 interface GuestRow {
   id: number;
@@ -50,7 +51,8 @@ export class CheckinComponent implements OnInit {
 
   constructor(
     private readonly router: Router,
-    private readonly http: HttpClient
+    private readonly http: HttpClient,
+    private readonly alertService: CustomAlertService
   ) {}
 
   ngOnInit(): void {
@@ -260,6 +262,15 @@ export class CheckinComponent implements OnInit {
   checkOutRow(row: GuestRow): void {
 
     this.closeAllMenus();
+
+    const status = row.bookingStatus?.toLowerCase() ?? '';
+    if (status.includes('checkedout') || status.includes('checked out') || status.includes('completed')) {
+      const checkedOutOn = row.checkOut ? ` on ${row.checkOut}` : '';
+      this.alertService.error(
+        `Booking ${row.bookingNumber} has already been checked out${checkedOutOn}.`
+      );
+      return;
+    }
 
     this.router.navigate(['/checkout'], {
       state: { row }

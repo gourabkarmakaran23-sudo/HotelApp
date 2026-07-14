@@ -464,6 +464,50 @@ namespace HotelRestaurant.Application.Services.Implementations
         }
         #endregion
 
+        #region CheckOutBookingAsync
+        public async Task<bool> CheckOutBookingAsync(int bookingId, string paymentMode, decimal subtotal, decimal additionalCharges, decimal adjustmentAmount)
+        {
+            var booking = await _unitOfWork.Bookings
+                .GetAllQueryable()
+                .Include(x => x.ReservationRooms)
+                .FirstOrDefaultAsync(x => x.Id == bookingId);
+
+            if (booking == null)
+                return false;
+
+            booking.Status = BookingStatus.CheckedOut;
+
+            foreach (var room in booking.ReservationRooms)
+            {
+                room.Status = BookingStatus.CheckedOut;
+
+                var roomEntity = await _unitOfWork.Rooms
+                    .GetByIdAsync(room.RoomId);
+
+                if (roomEntity != null)
+                {
+                    roomEntity.Status = RoomStatus.Available;
+                }
+            }
+
+            var payment = new HotelRestaurant.Core.Entities.Payment
+            {
+                BookingId = booking.Id,
+                Amount = subtotal + additionalCharges + adjustmentAmount,
+                Method = Enum.TryParse<PaymentMethod>(paymentMode, true, out var pm) ? pm : PaymentMethod.Cash,
+                PaymentDate = DateTime.UtcNow,
+                ReceiptNo = $"REC-CHKOUT-{booking.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}",
+                Remarks = "Checkout payment"
+            };
+
+            booking.Payments.Add(payment);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return true;
+        }
+        #endregion
+
         #region 
         public async Task<object?> GetBookingByIdAsync(int bookingId)
         {

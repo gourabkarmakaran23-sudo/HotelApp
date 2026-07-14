@@ -7,6 +7,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using HotelRestaurant.Application.Services.Interfaces;
 using HotelRestaurant.Application.DTOs.Reservation;
+using HotelRestaurant.Application.DTOs.CheckOut;
 
 namespace HotelRestaurant.Api.Controllers
 {
@@ -186,6 +187,31 @@ namespace HotelRestaurant.Api.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal Server Error while checking in booking: {ex.Message}");
+            }
+        }
+        #endregion
+
+        #region Check Out Booking
+        [HttpPost("{id}/checkout")]
+        public async Task<IActionResult> CheckOutBooking(int id, [FromBody] CheckOutBookingDto dto)
+        {
+            try
+            {
+                var success = await _reservationService.CheckOutBookingAsync(
+                    id,
+                    dto.PaymentMode,
+                    dto.Subtotal,
+                    dto.AdditionalCharges,
+                    dto.AdjustmentAmount);
+
+                if (!success)
+                    return NotFound($"Booking with ID {id} was not found or cannot be checked out.");
+
+                return Ok(new { success = true, message = "Booking checked out successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error while checking out booking: {ex.Message}");
             }
         }
         #endregion
