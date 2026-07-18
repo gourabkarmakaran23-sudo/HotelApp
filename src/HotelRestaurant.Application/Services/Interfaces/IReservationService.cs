@@ -12,7 +12,7 @@ namespace HotelRestaurant.Application.Services.Interfaces
     {
         Task<BookingResultDto> CreateBookingAsync(CreateBookingDto dto);
         Task<bool> UpdateBookingOccupantsAsync(int bookingId, List<BookingGuestUpdateDto> guestDtos);
-        Task<List<CheckInListDto>> GetCheckInListAsync();
+        Task<List<CheckInListDto>> GetCheckInListAsync(string? searchTerm = null);
         Task<List<UpcomingCheckInDto>> GetUpcomingCheckInsAsync();
         Task<bool> CheckInBookingAsync(int bookingId);
         Task<bool> CheckOutBookingAsync(int bookingId, string paymentMode, decimal subtotal, decimal additionalCharges, decimal adjustmentAmount);

@@ -30,9 +30,9 @@ namespace HotelRestaurant.Api.Controllers
 
         #region GetCheckInList 
         [HttpGet("checkin-list")]
-        public async Task<IActionResult> GetCheckInList()
+        public async Task<IActionResult> GetCheckInList([FromQuery] string? searchTerm)
         {
-            var data = await _reservationService.GetCheckInListAsync();
+            var data = await _reservationService.GetCheckInListAsync(searchTerm);
 
             return Ok(data);
         }

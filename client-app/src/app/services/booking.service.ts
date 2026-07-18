@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { apiBaseUrl } from '../app.config';
 
@@ -17,6 +17,13 @@ export class BookingService {
   }
    getCheckInList(): Observable<any> {
     return this.http.get(`${this.baseUrl}/checkin-list`);
+  }
+
+  searchCheckInList(searchTerm: string): Observable<any[]> {
+    const params = searchTerm
+      ? new HttpParams().set('searchTerm', searchTerm.trim())
+      : new HttpParams();
+    return this.http.get<any[]>(`${this.baseUrl}/checkin-list`, { params });
   }
   getUpcomingCheckIns() {
   return this.http.get<any[]>(

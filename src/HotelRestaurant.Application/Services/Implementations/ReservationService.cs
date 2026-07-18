@@ -263,7 +263,7 @@ namespace HotelRestaurant.Application.Services.Implementations
         #endregion
         #region   CheckIn List N
         public async Task<List<CheckInListDto>>
-            GetCheckInListAsync()
+            GetCheckInListAsync(string? searchTerm = null)
         {
             var bookings =
                 await _unitOfWork.Bookings
@@ -279,52 +279,59 @@ namespace HotelRestaurant.Application.Services.Implementations
 
                 .ToListAsync();
 
-            return bookings.SelectMany(b =>
-                b.ReservationRooms.Select(r => new CheckInListDto
-                {
-                    ReservationId = r.Id,
+            var normalizedSearch = searchTerm?.Trim().ToLowerInvariant();
 
-                    BookingId = b.Id,
+            return bookings
+                .SelectMany(b =>
+                    b.ReservationRooms.Select(r => new CheckInListDto
+                    {
+                        ReservationId = r.Id,
 
-                    BookingNumber = b.BookingNumber,
+                        BookingId = b.Id,
 
-                    CustomerName =
-                        $"{b.Guest?.FirstName ?? string.Empty} {b.Guest?.LastName ?? string.Empty}".Trim(),
+                        BookingNumber = b.BookingNumber,
 
-                    GuestName =
-                        $"{b.Guest?.FirstName ?? string.Empty} {b.Guest?.LastName ?? string.Empty}".Trim(),
+                        CustomerName =
+                            $"{b.Guest?.FirstName ?? string.Empty} {b.Guest?.LastName ?? string.Empty}".Trim(),
 
-                    RoomNo =
-                        r.Room?.RoomNumber ?? string.Empty,
+                        GuestName =
+                            $"{b.Guest?.FirstName ?? string.Empty} {b.Guest?.LastName ?? string.Empty}".Trim(),
 
-                    RoomType =
-                        r.Room?.RoomTypes?.Name ?? string.Empty,
+                        RoomNo =
+                            r.Room?.RoomNumber ?? string.Empty,
 
-                    MealPlan =
-                        ExtractMealPlan(r.Notes),
+                        RoomType =
+                            r.Room?.RoomTypes?.Name ?? string.Empty,
 
-                    Pax =
-                        r.Pax,
+                        MealPlan =
+                            ExtractMealPlan(r.Notes),
 
-                    Mobile =
-                        b.Guest?.Phone ?? string.Empty,
+                        Pax =
+                            r.Pax,
 
-                    PaidAmount =
-                        b.Invoices.Sum(i => i.PaidAmount),
+                        Mobile =
+                            b.Guest?.Phone ?? string.Empty,
 
-                    DueAmount =
-                        b.Invoices.Sum(i => i.DueAmount),
+                        PaidAmount =
+                            b.Invoices.Sum(i => i.PaidAmount),
 
-                    CheckInDate =
-                        r.CheckInDate,
+                        DueAmount =
+                            b.Invoices.Sum(i => i.DueAmount),
 
-                    CheckOutDate =
-                        r.CheckOutDate,
+                        CheckInDate =
+                            r.CheckInDate,
 
-                    BookingStatus =
-                        r.Status.ToString()
-                })
-            ).ToList();
+                        CheckOutDate =
+                            r.CheckOutDate,
+
+                        BookingStatus =
+                            r.Status.ToString()
+                    }))
+                .Where(item => string.IsNullOrEmpty(normalizedSearch)
+                    || item.BookingNumber.ToLowerInvariant().Contains(normalizedSearch)
+                    || item.GuestName.ToLowerInvariant().Contains(normalizedSearch)
+                    || item.RoomNo.ToLowerInvariant().Contains(normalizedSearch))
+                .ToList();
         }
         #endregion
 

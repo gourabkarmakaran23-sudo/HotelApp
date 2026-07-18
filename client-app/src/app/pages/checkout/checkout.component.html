@@ -8,12 +8,18 @@
     <p class="subtitle">Manual Checkout in System</p>
   </div>
 
-  <div *ngIf="directCheckoutMode && !bookingId" class="alert alert-info">
-    Direct Checkout is a shortcut route that still requires a booking identifier. Open this page with a booking context using either:
-    <ul>
-      <li><code>/direct-checkout?bookingId=123</code></li>
-      <li>Navigate from a booking/checkin list so the selected booking is passed in state.</li>
-    </ul>
+  <div *ngIf="directCheckoutMode && !bookingId" class="direct-checkout-search">
+    <p>Direct Checkout works best when you search for an existing booking before loading checkout details.</p>
+    <div class="search-row">
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Search by Booking No or Guest Name" class="search-input" />
+      <button class="btn btn-search" type="button" (click)="searchBooking()" [disabled]="searching">Search</button>
+    </div>
+    <div *ngIf="searchError" class="alert alert-error">{{ searchError }}</div>
+    <div *ngIf="searchResults.length > 0" class="search-results">
+      <div class="search-result-item" *ngFor="let result of searchResults" (click)="selectSearchResult(result)">
+        <strong>{{ result.bookingNumber }}</strong> — {{ result.guestName }} — {{ result.roomNo }} — {{ result.checkInDate }} to {{ result.checkOutDate }}
+      </div>
+    </div>
   </div>
 
   <div class="info-header">

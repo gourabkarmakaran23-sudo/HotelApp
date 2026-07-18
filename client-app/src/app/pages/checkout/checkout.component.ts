@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { apiBaseUrl } from '../../app.config';
 import { CustomAlertService } from '../../services/custom-alert.service';
 import { MasterService } from '../../services/master.service';
+import { BookingService } from '../../services/booking.service';
 
 @Component({
   selector: 'app-checkout',
@@ -20,6 +21,10 @@ export class CheckoutComponent implements OnInit {
   guestName = '';
   roomNos = '';
   directCheckoutMode = false;
+  searchQuery = '';
+  searchResults: Array<{ bookingId: number; bookingNumber: string; guestName: string; roomNo: string; checkInDate: string; checkOutDate: string; bookingStatus: string }> = [];
+  searchError = '';
+  searching = false;
   paymentMethods: any[] = [];
   selectedPaymentMode = '';
   paymentEntries: Array<{ paymentMode: string; amount: number; note: string }> = [
@@ -57,6 +62,7 @@ export class CheckoutComponent implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly http: HttpClient,
     private readonly masterService: MasterService,
+    private readonly bookingService: BookingService,
     private readonly alertService: CustomAlertService
   ) {}
 
@@ -229,6 +235,61 @@ export class CheckoutComponent implements OnInit {
 
   back(): void {
     this.router.navigateByUrl('/checkin');
+  }
+
+  searchBooking(): void {
+    const query = this.searchQuery.trim();
+    this.searchError = '';
+    this.searchResults = [];
+
+    if (!query) {
+      this.searchError = 'Please enter a booking number or guest name to search.';
+      return;
+    }
+
+    this.searching = true;
+    this.bookingService.searchCheckInList(query).subscribe({
+      next: (rows) => {
+        this.searchResults = (rows || []).map((row) => ({
+          bookingId: row.bookingId ?? row.id ?? 0,
+          bookingNumber: row.bookingNumber ?? '',
+          guestName: row.guestName ?? row.customerName ?? '',
+          roomNo: row.roomNo ?? '',
+          checkInDate: row.checkIn ?? row.checkInDate ?? '',
+          checkOutDate: row.checkOut ?? row.checkOutDate ?? '',
+          bookingStatus: row.bookingStatus ?? ''
+        }));
+
+        if (this.searchResults.length === 0) {
+          this.searchError = 'No matching booking found. Try booking number or guest name.';
+        } else if (this.searchResults.length === 1) {
+          this.selectSearchResult(this.searchResults[0]);
+        }
+
+        this.searching = false;
+      },
+      error: () => {
+        this.searching = false;
+        this.searchError = 'Unable to search bookings right now. Please try again later.';
+      }
+    });
+  }
+
+  selectSearchResult(result: { bookingId: number; bookingNumber: string; guestName: string; roomNo: string; checkInDate: string; checkOutDate: string; bookingStatus: string }): void {
+    if (!result.bookingId) {
+      this.searchError = 'Selected booking has no valid ID.';
+      return;
+    }
+
+    const selectedBookingId = Number(result.bookingId);
+    this.bookingId = selectedBookingId;
+    this.bookingNumber = result.bookingNumber;
+    this.guestName = result.guestName;
+    this.roomNos = result.roomNo;
+    this.searchResults = [];
+    this.searchQuery = '';
+    this.searchError = '';
+    this.loadBookingDetails(selectedBookingId);
   }
 
   generateProforma(): void {
