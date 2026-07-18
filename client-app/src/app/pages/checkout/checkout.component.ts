@@ -27,6 +27,7 @@ export class CheckoutComponent implements OnInit {
   billing = {
     roomRent: '₹0.00',
     advance: '₹0.00',
+    due: '₹0.00',
     amenity: '₹0.00',
     cancellation: '₹0.00',
     refund: '₹0.00',
@@ -394,6 +395,7 @@ export class CheckoutComponent implements OnInit {
         this.billing.totalTax = this.formatCurrency(gstAmount);
         this.billing.subtotal = this.formatCurrency(grandTotal);
         this.billing.advance = this.formatCurrency(advanceAmount);
+        this.billing.due = this.formatCurrency(balanceDue);
 
         this.billing.amenity = this.billing.amenity || '₹0.00';
         this.billing.cancellation = this.billing.cancellation || '₹0.00';
