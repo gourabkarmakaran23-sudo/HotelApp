@@ -284,6 +284,8 @@ namespace HotelRestaurant.Application.Services.Implementations
                 {
                     ReservationId = r.Id,
 
+                    BookingId = b.Id,
+
                     BookingNumber = b.BookingNumber,
 
                     CustomerName =
@@ -531,6 +533,21 @@ namespace HotelRestaurant.Application.Services.Implementations
                 .FirstOrDefaultAsync(x => x.Id == bookingId);
 
             if (booking == null)
+            {
+                var reservationRoom = await _unitOfWork.ReservationRooms
+                    .GetAllQueryable()
+                    .Include(x => x.Booking)
+                        .ThenInclude(b => b.Guest)
+                    .Include(x => x.Booking)
+                        .ThenInclude(b => b.ReservationRooms)
+                            .ThenInclude(rr => rr.Room)
+                                .ThenInclude(r => r.RoomTypes!)
+                    .FirstOrDefaultAsync(x => x.Id == bookingId);
+
+                booking = reservationRoom?.Booking;
+            }
+
+            if (booking == null)
                 return null;
 
             return new
@@ -564,6 +581,20 @@ namespace HotelRestaurant.Application.Services.Implementations
                         .Select(x => x.Room?.RoomTypes?.Name)
                         .Where(name => !string.IsNullOrEmpty(name))
                         .Distinct()),
+
+                rooms = booking.ReservationRooms.Select(x => new
+                {
+                    reservationRoomId = x.Id,
+                    roomId = x.RoomId,
+                    roomNo = x.Room?.RoomNumber ?? string.Empty,
+                    roomTypeName = x.Room?.RoomTypes?.Name ?? string.Empty,
+                    mealPlan = x.MealPlan ?? string.Empty,
+                    checkIn = x.CheckInDate,
+                    checkOut = x.CheckOutDate,
+                    roomAmount = x.RoomAmount,
+                    totalAmount = x.RoomAmount,
+                    rentPerNight = x.RentPerNight
+                }).ToList(),
 
                 totalAmount = booking.TotalAmount,
 

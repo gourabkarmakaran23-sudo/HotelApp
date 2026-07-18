@@ -223,7 +223,7 @@ namespace HotelRestaurant.Api.Controllers
         {
             var result =
                 await _reservationService
-                    .GetBookingForEditAsync(id);
+                    .GetBookingByIdAsync(id);
 
             if (result == null)
                 return NotFound("Booking not found.");

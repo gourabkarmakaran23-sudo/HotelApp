@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { apiBaseUrl } from '../../app.config';
 import { CustomAlertService } from '../../services/custom-alert.service';
@@ -22,17 +22,16 @@ export class CheckoutComponent implements OnInit {
   paymentMethods: any[] = [];
   selectedPaymentMode = '';
   paymentAmount = 0;
-  remainingDue = 33827;
+  remainingDue = 0;
 
-  // sample billing data
   billing = {
-    roomRent: '₹12,240.00',
+    roomRent: '₹0.00',
     amenity: '₹0.00',
     cancellation: '₹0.00',
     refund: '₹0.00',
-    totalTax: '₹612.00',
-    subtotal: '₹12,852.00',
-    dueTransferFrom: '00002706'
+    totalTax: '₹0.00',
+    subtotal: '₹0.00',
+    dueTransferFrom: ''
   };
 
   balance = {
@@ -41,17 +40,16 @@ export class CheckoutComponent implements OnInit {
     change: 0
   };
 
-  roomBills = [
-    { no: 1, roomNo: '201', roomType: 'Executive View', from: '07-05-2026 12:18', to: '08-05-2026 10:00', nights: 1, rent: '₹6120.00' },
-    { no: 2, roomNo: '304', roomType: 'Executive View', from: '07-05-2026 12:18', to: '08-05-2026 10:00', nights: 1, rent: '₹6120.00' }
-  ];
+  roomBills: Array<{ no: number; roomNo: string; roomType: string; from: string; to: string; nights: number; rent: string }> = [];
 
   additionalCharges = 0;
   adjustmentAmount = 0;
   subtotalNumber = 0;
+  loadingBooking = false;
 
   constructor(
     private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute,
     private readonly http: HttpClient,
     private readonly masterService: MasterService,
     private readonly alertService: CustomAlertService
@@ -60,7 +58,7 @@ export class CheckoutComponent implements OnInit {
   ngOnInit(): void {
     this.loadPaymentMethods();
 
-    // prefer router state, fallback to history.state for direct navigation
+    // prefer router state, fallback to history.state and query params
     const nav = this.router.getCurrentNavigation()?.extras.state as any;
     const st = nav ?? (history.state ?? {});
     if (st && st.row) {
@@ -70,9 +68,22 @@ export class CheckoutComponent implements OnInit {
       this.roomNos = st.row.roomNo ?? this.roomNos;
     }
 
-    // compute numeric subtotal from roomBills
-    this.computeTotals();
-    this.updateBalance();
+    if (!this.bookingId) {
+      const queryId = this.activatedRoute.snapshot.queryParamMap.get('bookingId');
+      if (queryId) {
+        this.bookingId = Number(queryId) || this.bookingId;
+      }
+    }
+
+    console.log('CheckoutComponent ngOnInit', { bookingId: this.bookingId, bookingNumber: this.bookingNumber, roomNos: this.roomNos });
+
+    if (this.bookingId) {
+      this.loadBookingDetails(this.bookingId);
+    } else {
+      // compute numeric subtotal from roomBills
+      this.computeTotals();
+      this.updateBalance();
+    }
   }
 
   loadPaymentMethods(): void {
@@ -155,6 +166,27 @@ export class CheckoutComponent implements OnInit {
       currency: 'INR',
       maximumFractionDigits: 0
     }).format(value).replace('₹', '₹');
+  }
+
+  formatLocalDateTime(value: string | Date | undefined | null): string {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const mins = String(date.getMinutes()).padStart(2, '0');
+    return `${day}-${month}-${year} ${hours}:${mins}`;
+  }
+
+  calculateNights(from: string | Date | undefined | null, to: string | Date | undefined | null): number {
+    if (!from || !to) return 1;
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+    if (Number.isNaN(fromDate.getTime()) || Number.isNaN(toDate.getTime())) return 1;
+    const diff = toDate.getTime() - fromDate.getTime();
+    return Math.max(Math.ceil(diff / (1000 * 60 * 60 * 24)), 1);
   }
 
   get canCheckout(): boolean {
@@ -317,6 +349,66 @@ export class CheckoutComponent implements OnInit {
       error: (err) => {
         console.error('Checkout failed:', err);
         this.alertService.error('Checkout failed. Please try again.');
+      }
+    });
+  }
+
+  private loadBookingDetails(bookingId: number): void {
+    this.loadingBooking = true;
+    this.roomBills = [];
+    this.http.get<any>(`${apiBaseUrl}/bookings/${bookingId}`).subscribe({
+      next: (res) => {
+        console.log('CheckoutComponent loadBookingDetails response', res);
+        if (!res) {
+          this.alertService.error('Unable to load booking details for checkout.');
+          return;
+        }
+
+        this.bookingNumber = res.bookingNumber ?? this.bookingNumber;
+        this.guestName = (res.guestName ?? `${res.guestFirstName ?? ''} ${res.guestLastName ?? ''}`.trim()) || this.guestName;
+        this.roomNos = (res.rooms?.map((room: any) => room.roomNo ?? '').filter((r: string) => r).join(', ')) || res.roomNumbers || this.roomNos;
+
+        const bookingCharge = Number(res.bookingCharge ?? 0);
+        const gstAmount = Number(res.gstAmount ?? 0);
+        const grandTotal = Number(res.grandTotal ?? 0);
+        const balanceDue = Number(res.balanceDue ?? 0);
+
+        if (bookingCharge || gstAmount || grandTotal) {
+          this.billing.roomRent = this.formatCurrency(bookingCharge);
+          this.billing.totalTax = this.formatCurrency(gstAmount);
+          this.billing.subtotal = this.formatCurrency(grandTotal);
+        }
+
+        this.billing.amenity = this.billing.amenity || '₹0.00';
+        this.billing.cancellation = this.billing.cancellation || '₹0.00';
+        this.billing.refund = this.billing.refund || '₹0.00';
+
+        this.remainingDue = balanceDue;
+        this.updateBalance();
+
+        const bookingRooms = Array.isArray(res.rooms) ? res.rooms : Array.isArray(res.Rooms) ? res.Rooms : [];
+
+        if (bookingRooms.length > 0) {
+          this.roomBills = bookingRooms.map((room: any, index: number) => ({
+            no: index + 1,
+            roomNo: room.roomNo ?? room.roomNo ?? '',
+            roomType: room.roomTypeName ?? room.roomType ?? room.roomTypeName ?? room.mealPlan ?? '',
+            from: this.formatLocalDateTime(room.checkIn ?? room.checkInDate ?? res.checkInDate ?? res.checkIn),
+            to: this.formatLocalDateTime(room.checkOut ?? room.checkOutDate ?? res.checkOutDate ?? res.checkOut),
+            nights: this.calculateNights(room.checkIn ?? room.checkInDate ?? res.checkInDate ?? res.checkIn, room.checkOut ?? room.checkOutDate ?? res.checkOutDate ?? res.checkOut),
+            rent: this.formatCurrency(Number(room.roomAmount ?? room.totalAmount ?? 0))
+          }));
+        }
+
+        this.computeTotals();
+        this.updateBalance();
+      },
+      error: (err) => {
+        console.error('Failed to load booking details:', err);
+        this.alertService.error('Unable to load booking details for checkout.');
+      },
+      complete: () => {
+        this.loadingBooking = false;
       }
     });
   }

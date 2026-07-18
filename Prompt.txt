@@ -504,3 +504,24 @@ or Action No Payment Mode is Binding here. But there is Payment Mode
 in DB I mean from Masters menu we have Payment Methods Menu that shojul be 
 populate in the dropdown
 =============ENd 15th July 2026==========================
+
+=============Start 18th July 2026==========================
+I see in all Guest CheckOut Same Room 201 and 204 in
+ROom Rent Details table but All guest have different room at A
+time not same romm which is wrong and also when I click 
+CheckOut COmplete after give the Amount with Full Sattlement 
+amount I see Error
+unable to complete checkout: booking information is missing
+Why can I know. Please fix all these errors.
+
+-===========================================
+
+Now nothing is bind here in Room Rent Details.It's blank
+I guess AOI call or something missing to bind this . Also need a suggest if One Guest Booke 2 
+rooms like Vivek Chopra booked 2 rooms 101 and 202 and we see in Check In
+2 records is 2 different rows. So Can this good or if one guest Booked
+more then one room a single record shpuld come where he can checkout
+boot room at a time. Or how we handle this please suggest this which is better
+Single signle room checkout for particular Guest and one checkout
+irrespective how many room booked by a customer/guest.
+=============ENd 18th July 2026==========================

@@ -7,6 +7,7 @@ import { CustomAlertService } from '../../services/custom-alert.service';
 
 interface GuestRow {
   id: number;
+  reservationId?: number;
   bookingId?: number;
   bookingNumber: string;
   roomType: string;
@@ -274,10 +275,14 @@ export class CheckinComponent implements OnInit {
       return;
     }
 
+    const targetId = row.bookingId || row.reservationId || row.id;
     this.router.navigate(['/checkout'], {
+      queryParams: {
+        bookingId: targetId
+      },
       state: {
         row,
-        bookingId: row.bookingId
+        bookingId: targetId
       }
     });
 
