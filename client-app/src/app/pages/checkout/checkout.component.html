@@ -108,24 +108,30 @@
     <div class="section payment-section">
       <h4 class="section-title payment-title">Room Bill Settlement</h4>
       <div class="payment-form">
-        <div class="form-group">
-          <label>Payment Mode:</label>
-          <select class="payment-mode-select" [(ngModel)]="selectedPaymentMode" name="paymentMode" [disabled]="paymentMethods.length === 0">
-            <option value="">Choose Payment Mode</option>
-            <option *ngFor="let method of paymentMethods" [value]="method.methodName || method.name || method.paymentMode">
-              {{ method.methodName || method.name || method.paymentMode }}
-            </option>
-          </select>
-          <div *ngIf="paymentMethods.length === 0" class="empty-message">
-            No payment methods available. Please add them in Master > Payment Methods.
+        <div class="payment-row" *ngFor="let entry of paymentEntries; let i = index">
+          <div class="form-group">
+            <label>Payment Mode:</label>
+            <select class="payment-mode-select" [(ngModel)]="entry.paymentMode" name="paymentMode{{ i }}" [disabled]="paymentMethods.length === 0">
+              <option value="">Choose Payment Mode</option>
+              <option *ngFor="let method of paymentMethods" [value]="method.methodName || method.name || method.paymentMode">
+                {{ method.methodName || method.name || method.paymentMode }}
+              </option>
+            </select>
           </div>
+          <div class="form-group">
+            <label>Amount:</label>
+            <input type="number" min="0" [(ngModel)]="entry.amount" name="paymentAmount{{ i }}" (ngModelChange)="onPaymentEntryChange(i)" placeholder="0" class="amount-input" />
+          </div>
+          <div class="form-group">
+            <label>Note:</label>
+            <input type="text" [(ngModel)]="entry.note" name="paymentNote{{ i }}" placeholder="Optional note" class="amount-input" />
+          </div>
+          <button type="button" class="btn btn-remove" (click)="removePaymentEntry(i)" [disabled]="paymentEntries.length === 1">Remove</button>
         </div>
-        <div class="form-group">
-          <label>Amount:</label>
-          <input type="number" min="0" [value]="paymentAmount" (input)="onPaymentInput($event)" placeholder="0" class="amount-input" />
-          <div class="validation-message" [ngClass]="validationClass" *ngIf="paymentAmount >= 0">
-            {{ amountMessage }}
-          </div>
+        <button type="button" class="btn btn-add" (click)="addPaymentEntry()">Add Payment</button>
+
+        <div class="validation-message" [ngClass]="validationClass">
+          {{ amountMessage }}
         </div>
       </div>
     </div>

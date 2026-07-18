@@ -21,7 +21,9 @@ export class CheckoutComponent implements OnInit {
   roomNos = '';
   paymentMethods: any[] = [];
   selectedPaymentMode = '';
-  paymentAmount = 0;
+  paymentEntries: Array<{ paymentMode: string; amount: number; note: string }> = [
+    { paymentMode: '', amount: 0, note: '' }
+  ];
   remainingDue = 0;
 
   billing = {
@@ -92,9 +94,6 @@ export class CheckoutComponent implements OnInit {
     this.masterService.getPaymentMethods().subscribe({
       next: (res) => {
         this.paymentMethods = res || [];
-        if (!this.selectedPaymentMode && this.paymentMethods.length > 0) {
-          this.selectedPaymentMode = this.paymentMethods[0].methodName || this.paymentMethods[0].name || this.paymentMethods[0].paymentMode || '';
-        }
       },
       error: (err) => {
         console.error('Failed to load payment methods:', err);
@@ -113,28 +112,43 @@ export class CheckoutComponent implements OnInit {
     this.subtotalNumber = sum;
   }
 
+  get paymentTotal(): number {
+    return this.paymentEntries.reduce((sum, entry) => {
+      const amount = Number(entry.amount);
+      return sum + (Number.isFinite(amount) ? amount : 0);
+    }, 0);
+  }
+
   updateBalance(): void {
-    const payment = Number(this.paymentAmount);
-    const safePayment = Number.isFinite(payment) ? payment : 0;
+    const safePayment = this.paymentTotal;
     const remaining = Math.max(this.remainingDue - safePayment, 0);
     const change = Math.max(safePayment - this.remainingDue, 0);
 
     this.balance.collected = safePayment;
     this.balance.change = change;
     this.balance.remaining = remaining;
-    this.paymentAmount = safePayment;
   }
 
-  onPaymentInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const value = input.valueAsNumber;
-    this.paymentAmount = Number.isFinite(value) ? value : 0;
+  onPaymentEntryChange(index: number): void {
+    const entry = this.paymentEntries[index];
+    entry.amount = Number.isFinite(Number(entry.amount)) ? Number(entry.amount) : 0;
+    this.updateBalance();
+  }
+
+  addPaymentEntry(): void {
+    this.paymentEntries.push({ paymentMode: '', amount: 0, note: '' });
+  }
+
+  removePaymentEntry(index: number): void {
+    if (this.paymentEntries.length <= 1) {
+      return;
+    }
+    this.paymentEntries.splice(index, 1);
     this.updateBalance();
   }
 
   get amountShortfall(): number {
-    const payment = Number(this.paymentAmount);
-    return Number.isFinite(payment) ? Math.max(this.remainingDue - payment, 0) : this.remainingDue;
+    return Math.max(this.remainingDue - this.paymentTotal, 0);
   }
 
   get amountMessage(): string {
@@ -142,16 +156,11 @@ export class CheckoutComponent implements OnInit {
       return 'No remaining balance. Checkout is ready.';
     }
 
-    if (!this.selectedPaymentMode) {
-      return 'Please select a payment mode first.';
+    if (this.paymentTotal <= 0) {
+      return 'Please enter at least one payment amount.';
     }
 
-    const payment = Number(this.paymentAmount);
-    if (!Number.isFinite(payment) || payment <= 0) {
-      return 'Please enter the full settlement amount.';
-    }
-
-    if (payment < this.remainingDue) {
+    if (this.paymentTotal < this.remainingDue) {
       return `Collect ${this.formatCurrency(this.amountShortfall)} more to complete settlement.`;
     }
 
@@ -163,8 +172,7 @@ export class CheckoutComponent implements OnInit {
       return 'validation-message success';
     }
 
-    const payment = Number(this.paymentAmount);
-    if (!this.selectedPaymentMode || !Number.isFinite(payment) || payment <= 0 || payment < this.remainingDue) {
+    if (!Number.isFinite(this.paymentTotal) || this.paymentTotal <= 0 || this.paymentTotal < this.remainingDue) {
       return 'validation-message error';
     }
     return 'validation-message success';
@@ -204,12 +212,17 @@ export class CheckoutComponent implements OnInit {
       return true;
     }
 
-    const payment = Number(this.paymentAmount);
-    return (
-      this.selectedPaymentMode !== '' &&
-      Number.isFinite(payment) &&
-      payment >= this.remainingDue
-    );
+    const validPayments = this.paymentEntries.filter((entry) => Number.isFinite(Number(entry.amount)) && Number(entry.amount) > 0);
+    if (validPayments.length === 0) {
+      return false;
+    }
+
+    const paymentTotal = this.paymentTotal;
+    if (!Number.isFinite(paymentTotal) || paymentTotal < this.remainingDue) {
+      return false;
+    }
+
+    return validPayments.every((entry) => Boolean(entry.paymentMode));
   }
 
   back(): void {
@@ -253,7 +266,7 @@ export class CheckoutComponent implements OnInit {
             <div class="detail-row"><span>Booking No:</span><span>${this.bookingNumber || 'N/A'}</span></div>
             <div class="detail-row"><span>Guest Name:</span><span>${this.guestName || 'N/A'}</span></div>
             <div class="detail-row"><span>Room Nos:</span><span>${this.roomNos || 'N/A'}</span></div>
-            <div class="detail-row"><span>Payment Mode:</span><span>${this.selectedPaymentMode || 'N/A'}</span></div>
+            <div class="detail-row"><span>Payment Mode:</span><span>${this.selectedPaymentMode || this.paymentEntries[0]?.paymentMode || 'N/A'}</span></div>
           </div>
 
           <div class="section">
@@ -316,13 +329,13 @@ export class CheckoutComponent implements OnInit {
 
   doCheckout(): void {
     if (!this.canCheckout) {
-      const payment = Number(this.paymentAmount);
-      if (!Number.isFinite(payment) || payment <= 0) {
-        this.alertService.error('Please enter a valid payment amount before checkout.');
-      } else if (payment < this.remainingDue) {
+      const validPayments = this.paymentEntries.filter((entry) => Number.isFinite(Number(entry.amount)) && Number(entry.amount) > 0);
+      if (validPayments.length === 0) {
+        this.alertService.error('Please enter at least one payment amount before checkout.');
+      } else if (!validPayments.every((entry) => Boolean(entry.paymentMode))) {
+        this.alertService.error('Please select a payment mode for each submitted payment entry.');
+      } else if (this.paymentTotal < this.remainingDue) {
         this.alertService.error('Checkout requires full payment settlement. Please collect the remaining amount first.');
-      } else if (!this.selectedPaymentMode) {
-        this.alertService.error('Please select a payment mode before completing checkout.');
       } else {
         this.alertService.error('Checkout cannot proceed. Please verify the payment details.');
       }
@@ -334,14 +347,13 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    if (this.remainingDue > 0 && !this.selectedPaymentMode) {
-      this.alertService.error('Please select a payment mode before completing checkout.');
+    if (this.remainingDue > 0 && (!Number.isFinite(this.paymentTotal) || this.paymentTotal <= 0)) {
+      this.alertService.error('Please enter a valid payment amount before checkout.');
       return;
     }
 
-    const payment = Number(this.paymentAmount);
-    if (this.remainingDue > 0 && (!Number.isFinite(payment) || payment <= 0)) {
-      this.alertService.error('Please enter a valid payment amount before checkout.');
+    if (this.remainingDue > 0 && this.paymentTotal < this.remainingDue) {
+      this.alertService.error(`Please collect ${this.formatCurrency(this.amountShortfall)} more before checkout.`);
       return;
     }
 
@@ -349,8 +361,13 @@ export class CheckoutComponent implements OnInit {
       bookingNumber: this.bookingNumber,
       guestName: this.guestName,
       roomNos: this.roomNos,
-      paymentMode: this.selectedPaymentMode,
-      amountPaid: payment,
+      payments: this.paymentEntries
+        .filter((entry) => Number.isFinite(Number(entry.amount)) && Number(entry.amount) > 0)
+        .map((entry) => ({
+          paymentMode: entry.paymentMode,
+          amount: Number(entry.amount),
+          note: entry.note
+        })),
       additionalCharges: this.additionalCharges,
       adjustmentAmount: this.adjustmentAmount,
       subtotal: this.subtotalNumber,

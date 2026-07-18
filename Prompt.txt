@@ -524,4 +524,11 @@ more then one room a single record shpuld come where he can checkout
 boot room at a time. Or how we handle this please suggest this which is better
 Single signle room checkout for particular Guest and one checkout
 irrespective how many room booked by a customer/guest.
+
+Suppose Customer has due of 18980 and he wants to 
+pay 8980 in Cash, 5000 in Credit Card and
+5000 in UPI then how we can do that because Therir
+is only one options not an options to add the payment In
+table for to adjust it. SO what we can do in this scenario 
+please suggest and do the required changes. 
 =============ENd 18th July 2026==========================
