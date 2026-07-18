@@ -13,18 +13,10 @@ export interface Room {
   capacity: number;
   price: number;
   status: string;
+  roomTypeName?: string;
   description?: string;
   hotelId?: number;
 }
-
-// Wrapper interface to map the backend PageResultDto structure
-export interface PageResult<T> {
-  items: T[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-}
-
 
 // Wrapper interface to map the backend PageResultDto structure
 export interface PageResult<T> {

@@ -8,6 +8,14 @@
     <p class="subtitle">Manual Checkout in System</p>
   </div>
 
+  <div *ngIf="directCheckoutMode && !bookingId" class="alert alert-info">
+    Direct Checkout is a shortcut route that still requires a booking identifier. Open this page with a booking context using either:
+    <ul>
+      <li><code>/direct-checkout?bookingId=123</code></li>
+      <li>Navigate from a booking/checkin list so the selected booking is passed in state.</li>
+    </ul>
+  </div>
+
   <div class="info-header">
     <span><strong>Booking No:</strong> {{ bookingNumber }}</span>
     <span><strong>Guest Name:</strong> {{ guestName }}</span>

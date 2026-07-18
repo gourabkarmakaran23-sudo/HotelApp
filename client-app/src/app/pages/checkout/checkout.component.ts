@@ -19,6 +19,7 @@ export class CheckoutComponent implements OnInit {
   bookingNumber = '';
   guestName = '';
   roomNos = '';
+  directCheckoutMode = false;
   paymentMethods: any[] = [];
   selectedPaymentMode = '';
   paymentEntries: Array<{ paymentMode: string; amount: number; note: string }> = [
@@ -79,12 +80,13 @@ export class CheckoutComponent implements OnInit {
       }
     }
 
-    console.log('CheckoutComponent ngOnInit', { bookingId: this.bookingId, bookingNumber: this.bookingNumber, roomNos: this.roomNos });
+    this.directCheckoutMode = this.router.url.startsWith('/direct-checkout');
+
+    console.log('CheckoutComponent ngOnInit', { bookingId: this.bookingId, bookingNumber: this.bookingNumber, roomNos: this.roomNos, directCheckoutMode: this.directCheckoutMode });
 
     if (this.bookingId) {
       this.loadBookingDetails(this.bookingId);
     } else {
-      // compute numeric subtotal from roomBills
       this.computeTotals();
       this.updateBalance();
     }

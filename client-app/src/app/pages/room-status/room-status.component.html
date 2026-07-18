@@ -15,7 +15,19 @@
     </div>
   </div>
 
-  <div class="room-grid">
+  <div *ngIf="loading" class="loading-state">
+    Loading room status from the server...
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && !errorMessage && filteredRooms.length === 0" class="empty-state">
+    No rooms found. Please check the backend room API or adjust the filters.
+  </div>
+
+  <div class="room-grid" *ngIf="!loading && !errorMessage && filteredRooms.length > 0">
     <div class="room-card" *ngFor="let card of filteredRooms" [class.booked]="card.status === 'Booked'">
       <div class="room-card-content">
         <div class="room-header">
