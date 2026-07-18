@@ -1,0 +1,194 @@
+<div class="dashboard2-container">
+  
+  <!-- 1st Layer: Top Summary KPI Tiles Matrix -->
+  <div class="metrics-row-grid">
+    <div class="metric-tile tile-occupied">
+      <div class="tile-body">
+        <span class="tile-count">{{ metrics.occupiedRooms }}</span>
+        <span class="tile-icon">📅</span>
+      </div>
+      <div class="tile-label">Occupied Rooms</div>
+      <div class="tile-indicator red-bar"></div>
+    </div>
+
+    <div class="metric-tile tile-vacant">
+      <div class="tile-body">
+        <span class="tile-count">{{ metrics.vacantRooms }}</span>
+        <span class="tile-icon">📅</span>
+      </div>
+      <div class="tile-label">Vacant Rooms</div>
+      <div class="tile-indicator green-bar"></div>
+    </div>
+
+    <div class="metric-tile tile-arrival">
+      <div class="tile-body">
+        <span class="tile-count">{{ metrics.expectedArrival }}</span>
+        <span class="tile-icon">👥</span>
+      </div>
+      <div class="tile-label">Expected Arrival</div>
+      <div class="tile-indicator blue-bar"></div>
+    </div>
+
+    <div class="metric-tile tile-departure">
+      <div class="tile-body">
+        <span class="tile-count">{{ metrics.expectedDeparture }}</span>
+        <span class="tile-icon">🚪</span>
+      </div>
+      <div class="tile-label">Expected Departure</div>
+      <div class="tile-indicator yellow-bar"></div>
+    </div>
+
+    <div class="metric-tile tile-checkedin">
+      <div class="tile-body">
+        <span class="tile-count">{{ metrics.todaysCheckedIn }}</span>
+        <span class="tile-icon">📥</span>
+      </div>
+      <div class="tile-label">Today's Checked In</div>
+      <div class="tile-indicator teal-bar"></div>
+    </div>
+
+    <div class="metric-tile tile-inhouse">
+      <div class="tile-body">
+        <span class="tile-count">{{ metrics.inHouseGuests }}</span>
+        <span class="tile-icon">👥</span>
+      </div>
+      <div class="tile-label">In House Guests</div>
+      <div class="tile-indicator purple-bar"></div>
+    </div>
+  </div>
+
+  <!-- 2nd Layer: Rooms Overview Frame Section Block -->
+  <div class="dashboard-section panel-card">
+    <div class="panel-header-toolbar">
+      <h3>Rooms Overview</h3>
+      <div class="toolbar-filter-controls">
+        <!-- Quick Filter Switcher Tags Tabs -->
+        <div class="status-tags-group">
+          <button class="tag-btn btn-danger" [class.active]="activeFilterTab === 'Occupied'" (click)="activeFilterTab = 'Occupied'">Occupied 17</button>
+          <button class="tag-btn btn-success" [class.active]="activeFilterTab === 'Vacant'" (click)="activeFilterTab = 'Vacant'">Vacant 19</button>
+          <button class="tag-btn btn-secondary" [class.active]="activeFilterTab === 'Blocked'" (click)="activeFilterTab = 'Blocked'">Blocked 4</button>
+          <button class="tag-btn btn-info" [class.active]="activeFilterTab === 'Arrived'" (click)="activeFilterTab = 'Arrived'">Arrived 12</button>
+          <button class="tag-btn btn-dark" [class.active]="activeFilterTab === 'Stay Over'" (click)="activeFilterTab = 'Stay Over'">Stay Over 5</button>
+          <button class="tag-btn btn-outline" [class.active]="activeFilterTab === 'All'" (click)="activeFilterTab = 'All'">All 17</button>
+        </div>
+
+        <!-- Dropdown Selector Blocks -->
+        <div class="select-dropdown-wrappers">
+          <select [(ngModel)]="selectedRoomType" class="form-select">
+            <option>All Room Types</option>
+            <option value="DELUXE">Deluxe</option>
+            <option value="EXECUTIVE">Executive</option>
+          </select>
+          <select [(ngModel)]="selectedFloor" class="form-select">
+            <option>All Floors</option>
+            <option value="1st Floor">1st Floor</option>
+            <option value="2nd Floor">2nd Floor</option>
+            <option value="3rd Floor">3rd Floor</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Dynamic Visual Room Grid Blocks Layout Matrix -->
+    <div class="rooms-grid-matrix">
+      <div *ngFor="let room of filteredRooms" 
+           class="room-matrix-cell" 
+           [attr.data-status]="room.status"
+           (contextmenu)="onRoomRightClick($event, room)">
+        
+        <div class="room-top-header">
+          <span class="room-number">{{ room.roomNo }}</span>
+          <span class="room-type-tag">{{ room.type }}</span>
+        </div>
+        
+        <div class="room-center-status-profile">
+          <p class="status-badge-text">{{ room.status }}</p>
+          <p class="occupant-holder-name" *ngIf="room.guestName">{{ room.guestName }}</p>
+          <p class="duration-timeline-range" *ngIf="room.duration">{{ room.duration }}</p>
+        </div>
+
+        <div class="room-bottom-housekeeping" [attr.data-hk]="room.housekeeping">
+          {{ room.housekeeping }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3rd Layer: Analytical Visualization Data Charts Section Block -->
+  <div class="charts-double-column-grid">
+    <div class="dashboard-section panel-card chart-wrapper-box">
+      <h4>Rooms Overview Chart</h4>
+      <div class="chart-container-canvas">
+        <canvas #overviewChartCanvas></canvas>
+      </div>
+    </div>
+
+    <div class="dashboard-section panel-card chart-wrapper-box">
+      <div class="chart-header-inline">
+        <h4>Rooms Available Chart</h4>
+        <span class="chart-timeline-subtext">For Next 15 Days</span>
+      </div>
+      <div class="chart-container-canvas">
+        <canvas #availabilityChartCanvas></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4th Layer: Today's Arrivals Tracking Ledger Sheet Section Table -->
+  <div class="dashboard-section panel-card table-ledger-box">
+    <div class="panel-header-toolbar">
+      <h4>Today's Arrival</h4>
+    </div>
+    <div class="responsive-table-scroll-frame">
+      <table class="ledger-data-table">
+        <thead>
+          <tr>
+            <th>Guest Name</th>
+            <th>Phone #</th>
+            <th>Room #</th>
+            <th>Reservation #</th>
+            <th>Arrival Date</th>
+            <th>Arrival Time</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of arrivalsList">
+            <td>{{ item.guestName }}</td>
+            <td>{{ item.phoneNo }}</td>
+            <td><span class="table-room-pill">{{ item.roomNo }}</span></td>
+            <td><strong>{{ item.reservationNo }}</strong></td>
+            <td>{{ item.arrivalDate }}</td>
+            <td>{{ item.arrivalTime }}</td>
+            <td class="text-center">
+              <button class="btn-action-link" (click)="triggerAction('Edit Reservation')">Edit</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- 🌟 NATIVE DYNAMIC RIGHT-CLICK CONTEXT MENU FLOATING PANEL ENGINE -->
+<div class="custom-context-floating-menu" 
+     *ngIf="isContextMenuVisible" 
+     [ngStyle]="{'top.px': contextMenuPos.y, 'left.px': contextMenuPos.x}">
+  <div class="menu-header-desc">Room {{ selectedContextRoom?.roomNo }} Options</div>
+  <button (click)="triggerAction('View Reservation')">👁️ View Reservation</button>
+  <button (click)="triggerAction('Edit Reservation')">✏️ Edit Reservation</button>
+  <button (click)="triggerAction('View Guests & Photos')">🖼️ View Guests & Photos</button>
+  <button (click)="triggerAction('View Folio')">📄 View Folio</button>
+  <button (click)="triggerAction('Map Guest To Folio')">🔗 Map Guest To Folio</button>
+  <button (click)="triggerAction('View Quick Balance')">💰 View Quick Balance</button>
+  <hr class="menu-divider" />
+  <button (click)="triggerAction('Allot More Rooms')">🏨 Allot More Rooms</button>
+  <button (click)="triggerAction('Edit Rate')">🏷️ Edit Rate</button>
+  <button (click)="triggerAction('Shift Room')">🔄 Shift Room</button>
+  <button (click)="triggerAction('Extend Stay')">⏳ Extend Stay</button>
+  <button (click)="triggerAction('Checkout This Room')">🚪 Checkout This Room</button>
+  <hr class="menu-divider" />
+  <button (click)="triggerAction('Copy Digital Menu Url')">📋 Copy Digital Menu Url</button>
+  <button (click)="triggerAction('Edit HK Remarks')">🧹 Edit HK Remarks</button>
+</div>

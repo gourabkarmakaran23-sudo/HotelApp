@@ -1,0 +1,289 @@
+.dashboard2-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  padding-bottom: 2rem;
+  background-color: #f4f6f9;
+}
+
+/* Layer 1: Tile Matrix CSS Blueprint */
+.metrics-row-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1rem;
+
+  @media (max-width: 1400px) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 768px) { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+}
+
+.metric-tile {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 1.25rem 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #e5e7eb;
+
+  .tile-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .tile-count {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+  }
+  .tile-icon { font-size: 1.5rem; opacity: 0.3; }
+  .tile-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6b7280;
+  }
+  .tile-indicator {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    border-radius: 0 0 8px 8px;
+    
+    &.red-bar { background-color: #ef4444; }
+    &.green-bar { background-color: #10b981; }
+    &.blue-bar { background-color: #3b82f6; }
+    &.yellow-bar { background-color: #eab308; }
+    &.teal-bar { background-color: #14b8a6; }
+    &.purple-bar { background-color: #a855f7; }
+  }
+}
+
+/* Base Panel Shared Structure */
+.panel-card {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.panel-header-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 1rem;
+
+  h3, h4 { margin: 0; font-size: 1.2rem; color: #111827; }
+}
+
+.toolbar-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.status-tags-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tag-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+
+  &.btn-danger { background: #fee2e2; color: #b91c1c; &.active, &:hover { background: #ef4444; color: #fff; } }
+  &.btn-success { background: #d1fae5; color: #065f46; &.active, &:hover { background: #10b981; color: #fff; } }
+  &.btn-secondary { background: #f3f4f6; color: #374151; &.active, &:hover { background: #6b7280; color: #fff; } }
+  &.btn-info { background: #e0f2fe; color: #0369a1; &.active, &:hover { background: #0ea5e9; color: #fff; } }
+  &.btn-dark { background: #ffedd5; color: #9a3412; &.active, &:hover { background: #ea580c; color: #fff; } }
+  &.btn-outline { border-color: #d1d5db; background: transparent; color: #374151; &.active, &:hover { background: #374151; color: #fff; } }
+}
+
+.select-dropdown-wrappers {
+  display: flex;
+  gap: 0.5rem;
+  .form-select {
+    padding: 0.4rem 0.75rem;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.85rem;
+    color: #334155;
+    background-color: #fff;
+  }
+}
+
+/* Layer 2: Rooms Matrix Core Grid CSS Engine Layout */
+.rooms-grid-matrix {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.room-matrix-cell {
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 140px;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  cursor: context-menu;
+  transition: transform 0.15s ease-in-out;
+
+  &:hover { transform: translateY(-2px); }
+
+  /* Room Status Style Themes mapping to colors in images */
+  &[data-status="Arrived"] { background-color: #ef4444; color: #ffffff; }
+  &[data-status="StayOver"] { background-color: #f59e0b; color: #ffffff; }
+  &[data-status="Vacant"] { background-color: #10b981; color: #ffffff; }
+  &[data-status="Blocked"] { background-color: #6b7280; color: #ffffff; }
+
+  .room-top-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0, 0, 0, 0.12);
+    
+    .room-number { font-size: 1.3rem; font-weight: 800; }
+    .room-type-tag { font-size: 0.75rem; font-weight: 700; opacity: 0.85; letter-spacing: 0.5px; }
+  }
+
+  .room-center-status-profile {
+    padding: 0.5rem 0.75rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    .status-badge-text { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin: 0; opacity: 0.9; }
+    .occupant-holder-name { font-size: 0.9rem; font-weight: 600; margin: 2px 0 0 0; }
+    .duration-timeline-range { font-size: 0.7rem; opacity: 0.8; margin: 2px 0 0 0; }
+  }
+
+  .room-bottom-housekeeping {
+    text-align: center;
+    padding: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: #eab308;
+    color: #451a03;
+
+    &[data-hk="Cleaned"] { background: #22c55e; color: #022c22; }
+  }
+}
+
+/* Layer 3: Charts Layout Row Double Column Grid */
+.charts-double-column-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+
+  @media (max-width: 1024px) { grid-template-columns: 1fr; }
+}
+
+.chart-wrapper-box {
+  display: flex;
+  flex-direction: column;
+  h4 { margin: 0 0 1rem 0; font-size: 1.1rem; color: #1f2937; }
+  
+  .chart-header-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    h4 { margin: 0; }
+    .chart-timeline-subtext { font-size: 0.85rem; color: #6b7280; font-weight: 500; }
+  }
+
+  .chart-container-canvas {
+    position: relative;
+    height: 280px;
+    width: 100%;
+  }
+}
+
+/* Layer 4: Arrivals Ledger Sheet Data Table */
+.ledger-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+
+  th, td { padding: 0.85rem 1rem; border-bottom: 1px solid #e5e7eb; font-size: 0.9rem; }
+  th { background-color: #f9fafb; color: #4b5563; font-weight: 700; }
+  td { color: #374151; }
+
+  tr:hover td { background-color: #f8fafc; }
+
+  .table-room-pill {
+    background-color: #eff6ff;
+    color: #1e40af;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+
+  .btn-action-link {
+    background: transparent; border: none; color: #2563eb; font-weight: 600; cursor: pointer;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+/* 🌟 CONTEXT MENU FLOATING LAYOVER PANEL CORE ENGINE STYLE RULES */
+.custom-context-floating-menu {
+  position: fixed;
+  z-index: 99999;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  width: 210px;
+  padding: 0.35rem 0;
+  display: flex;
+  flex-direction: column;
+
+  .menu-header-desc {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #9ca3af;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #f3f4f6;
+    margin-bottom: 0.25rem;
+  }
+
+  button {
+    background: transparent;
+    border: none;
+    text-align: left;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.85rem;
+    color: #374151;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+
+    &:hover { background-color: #f3f4f6; color: #111827; }
+  }
+
+  .menu-divider { border: 0; border-top: 1px solid #e5e7eb; margin: 0.25rem 0; }
+}

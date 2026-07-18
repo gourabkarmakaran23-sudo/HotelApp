@@ -19,6 +19,7 @@ import { RoomQrListComponent } from './pages/house-keeping/room-qr-list/room-qr-
 import { LaundryProductsComponent } from './pages/house-keeping/laundry-products/laundry-products.component';
 import { LaundryComponent } from './pages/house-keeping/laundry/laundry.component';
 import { LaundryPaymentComponent } from './pages/house-keeping/laundry-payment/laundry-payment.component';
+import { Dashboard2Component } from './pages/dashboard2/dashboard2.component';
 
 
 
@@ -29,6 +30,11 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard2',
+    component: Dashboard2Component,
     canActivate: [AuthGuard]
   },
   {

@@ -531,4 +531,15 @@ pay 8980 in Cash, 5000 in Credit Card and
 is only one options not an options to add the payment In
 table for to adjust it. SO what we can do in this scenario 
 please suggest and do the required changes. 
+==================================================
+
+I want a new Dashboard Like this 1st its show tiles like 1st image
+and then Rooms Overview Below these tiles and when User right click
+any of the room I want menu like 2nd image(View Reservation,Edit
+Reservation, View Guesta & Photos, View Folio,....,etc)
+and then below Rooms Overview we show Rooms Overview Chart, And ROoms Available Chart,
+and then below we show Today's Arival. Understood? We already have 
+an Dashboard which is good but we need this Dashboard 2 as well 
+So design like this with an new Component
+
 =============ENd 18th July 2026==========================
