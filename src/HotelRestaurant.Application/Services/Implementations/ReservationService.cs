@@ -527,6 +527,7 @@ namespace HotelRestaurant.Application.Services.Implementations
             var booking = await _unitOfWork.Bookings
                 .GetAllQueryable()
                 .Include(x => x.Guest)
+                .Include(x => x.Invoices)
                 .Include(x => x.ReservationRooms)
                     .ThenInclude(x => x.Room)
                         .ThenInclude(x => x.RoomTypes!)
@@ -539,6 +540,8 @@ namespace HotelRestaurant.Application.Services.Implementations
                     .Include(x => x.Booking)
                         .ThenInclude(b => b.Guest)
                     .Include(x => x.Booking)
+                        .ThenInclude(b => b.Invoices)
+                    .Include(x => x.Booking)
                         .ThenInclude(b => b.ReservationRooms)
                             .ThenInclude(rr => rr.Room)
                                 .ThenInclude(r => r.RoomTypes!)
@@ -546,6 +549,13 @@ namespace HotelRestaurant.Application.Services.Implementations
 
                 booking = reservationRoom?.Booking;
             }
+
+            if (booking == null)
+                return null;
+
+            var invoice = booking.Invoices
+                .OrderByDescending(x => x.Id)
+                .FirstOrDefault();
 
             if (booking == null)
                 return null;
@@ -581,6 +591,12 @@ namespace HotelRestaurant.Application.Services.Implementations
                         .Select(x => x.Room?.RoomTypes?.Name)
                         .Where(name => !string.IsNullOrEmpty(name))
                         .Distinct()),
+
+                bookingCharge = invoice?.Subtotal ?? 0,
+                gstAmount = invoice?.Tax ?? 0,
+                grandTotal = invoice?.Total ?? booking.TotalAmount,
+                advanceAmount = invoice?.PaidAmount ?? 0,
+                balanceDue = invoice?.DueAmount ?? Math.Max(booking.TotalAmount - (invoice?.PaidAmount ?? 0), 0),
 
                 rooms = booking.ReservationRooms.Select(x => new
                 {

@@ -26,6 +26,7 @@ export class CheckoutComponent implements OnInit {
 
   billing = {
     roomRent: '₹0.00',
+    advance: '₹0.00',
     amenity: '₹0.00',
     cancellation: '₹0.00',
     refund: '₹0.00',
@@ -136,6 +137,10 @@ export class CheckoutComponent implements OnInit {
   }
 
   get amountMessage(): string {
+    if (this.remainingDue <= 0) {
+      return 'No remaining balance. Checkout is ready.';
+    }
+
     if (!this.selectedPaymentMode) {
       return 'Please select a payment mode first.';
     }
@@ -153,6 +158,10 @@ export class CheckoutComponent implements OnInit {
   }
 
   get validationClass(): string {
+    if (this.remainingDue <= 0) {
+      return 'validation-message success';
+    }
+
     const payment = Number(this.paymentAmount);
     if (!this.selectedPaymentMode || !Number.isFinite(payment) || payment <= 0 || payment < this.remainingDue) {
       return 'validation-message error';
@@ -190,12 +199,15 @@ export class CheckoutComponent implements OnInit {
   }
 
   get canCheckout(): boolean {
+    if (this.remainingDue <= 0) {
+      return true;
+    }
+
     const payment = Number(this.paymentAmount);
     return (
       this.selectedPaymentMode !== '' &&
       Number.isFinite(payment) &&
-      payment >= this.remainingDue &&
-      this.remainingDue > 0
+      payment >= this.remainingDue
     );
   }
 
@@ -321,12 +333,16 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    if (!this.selectedPaymentMode) {
+    if (this.remainingDue > 0 && !this.selectedPaymentMode) {
       this.alertService.error('Please select a payment mode before completing checkout.');
       return;
     }
 
     const payment = Number(this.paymentAmount);
+    if (this.remainingDue > 0 && (!Number.isFinite(payment) || payment <= 0)) {
+      this.alertService.error('Please enter a valid payment amount before checkout.');
+      return;
+    }
 
     const payload = {
       bookingNumber: this.bookingNumber,
@@ -368,16 +384,16 @@ export class CheckoutComponent implements OnInit {
         this.guestName = (res.guestName ?? `${res.guestFirstName ?? ''} ${res.guestLastName ?? ''}`.trim()) || this.guestName;
         this.roomNos = (res.rooms?.map((room: any) => room.roomNo ?? '').filter((r: string) => r).join(', ')) || res.roomNumbers || this.roomNos;
 
-        const bookingCharge = Number(res.bookingCharge ?? 0);
+        const bookingCharge = Number(res.bookingCharge ?? res.totalAmount ?? 0);
         const gstAmount = Number(res.gstAmount ?? 0);
-        const grandTotal = Number(res.grandTotal ?? 0);
-        const balanceDue = Number(res.balanceDue ?? 0);
+        const grandTotal = Number(res.grandTotal ?? res.totalAmount ?? 0);
+        const advanceAmount = Number(res.advanceAmount ?? 0);
+        const balanceDue = Number(res.balanceDue ?? Math.max(grandTotal - advanceAmount, 0));
 
-        if (bookingCharge || gstAmount || grandTotal) {
-          this.billing.roomRent = this.formatCurrency(bookingCharge);
-          this.billing.totalTax = this.formatCurrency(gstAmount);
-          this.billing.subtotal = this.formatCurrency(grandTotal);
-        }
+        this.billing.roomRent = this.formatCurrency(bookingCharge);
+        this.billing.totalTax = this.formatCurrency(gstAmount);
+        this.billing.subtotal = this.formatCurrency(grandTotal);
+        this.billing.advance = this.formatCurrency(advanceAmount);
 
         this.billing.amenity = this.billing.amenity || '₹0.00';
         this.billing.cancellation = this.billing.cancellation || '₹0.00';
