@@ -541,5 +541,15 @@ and then below Rooms Overview we show Rooms Overview Chart, And ROoms Available 
 and then below we show Today's Arival. Understood? We already have 
 an Dashboard which is good but we need this Dashboard 2 as well 
 So design like this with an new Component
+===========================================================
+
+2. Timewise CheckIn/Booking(2 hours same days should allow)
+3. SameDay CHeckOut SHould Allow based on Timewise
+Can we Implement Like this We have another Booking Implementation 
+Already but We need Same Day CheckIn/ CHeckOut options
+Like 2 hour if a guest want to book and then Checkout and 
+another person can book the same room again on the same day
+and so on.
+
 
 =============ENd 18th July 2026==========================
