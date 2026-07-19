@@ -23,6 +23,7 @@ namespace HotelRestaurant.Application.Services.Implementations
         private readonly IMapper _mapper;
 
         private readonly ILogger<ReservationService> _logger;
+        private static readonly TimeSpan SameDayTurnoverWindow = TimeSpan.FromHours(2);
 
         public ReservationService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ReservationService> logger)
         {
@@ -31,18 +32,104 @@ namespace HotelRestaurant.Application.Services.Implementations
             _logger = logger;
         }
 
+        // private static bool IsRoomConflict(DateTime proposedCheckIn, DateTime proposedCheckOut, DateTime existingCheckIn, DateTime existingCheckOut)
+        // {
+        //     if (proposedCheckOut <= existingCheckIn || proposedCheckIn >= existingCheckOut)
+        //     {
+        //         return false;
+        //     }
+
+        //     var sameDayShortStay = proposedCheckIn.Date == proposedCheckOut.Date
+        //         && existingCheckIn.Date == existingCheckOut.Date
+        //         && proposedCheckIn.Date == existingCheckIn.Date
+        //         && (proposedCheckOut - proposedCheckIn) <= SameDayTurnoverWindow
+        //         && (existingCheckOut - existingCheckIn) <= SameDayTurnoverWindow;
+
+        //     return !sameDayShortStay;
+        // }
+        private static bool IsRoomConflict(DateTime proposedCheckIn, DateTime proposedCheckOut, DateTime existingCheckIn, DateTime existingCheckOut)
+        {
+            // Force all dates to be evaluated uniformly (ignoring offset shifts during comparison)
+            var pIn = proposedCheckIn.ToUniversalTime();
+            var pOut = proposedCheckOut.ToUniversalTime();
+            var eIn = existingCheckIn.ToUniversalTime();
+            var eOut = existingCheckOut.ToUniversalTime();
+
+            TimeSpan cleaningBuffer = TimeSpan.FromMinutes(30);
+
+            // Standard non-overlapping rule + cleaning buffer
+            bool overlaps = pIn < (eOut + cleaningBuffer) && eIn < (pOut + cleaningBuffer);
+
+            return overlaps;
+        }
 
         #region Create Booking Core Logic (Refactored from Controller)
-        public async Task<BookingResultDto> CreateBookingAsync(CreateBookingDto dto)
+
+public async Task<BookingResultDto> CreateBookingAsync(CreateBookingDto dto)
+{
+    if (dto == null) throw new ArgumentNullException(nameof(dto), "Payload cannot be empty.");
+
+    // 1. Process String Fallbacks
+    string validatedFirstName = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingFirstName : dto.PrimaryFirstName) ? "WalkIn" : (dto.SameAsCustomer ? dto.BillingFirstName : dto.PrimaryFirstName);
+    string validatedLastName = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingLastName : dto.PrimaryLastName) ? "Guest" : (dto.SameAsCustomer ? dto.BillingLastName : dto.PrimaryLastName);
+    string validatedPhone = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingMobile : dto.PrimaryMobile) ? "0000000000" : (dto.SameAsCustomer ? dto.BillingMobile : dto.PrimaryMobile);
+
+    // 2. Pre-check Room Availability across all incoming rooms
+    var roomsList = await _unitOfWork.Rooms.GetAllAsync();
+    var sameDayTurnoverWindow = TimeSpan.FromHours(2);
+
+    // Normalize incoming DTO times to strip arbitrary timezone/kind conversions
+    var pIn = new DateTime(dto.CheckIn.Ticks, DateTimeKind.Unspecified);
+    var pOut = new DateTime(dto.CheckOut.Ticks, DateTimeKind.Unspecified);
+
+    bool isProposedShortStay = pIn.Date == pOut.Date && (pOut - pIn) <= sameDayTurnoverWindow;
+
+    foreach (var roomDto in dto.Rooms)
+    {
+        var room = roomsList.FirstOrDefault(r => r.RoomNumber.Trim() == roomDto.RoomNo.Trim());
+        if (room == null) continue;
+
+        // Fetch active reservations for this room from the DB
+        var activeReservations = await _unitOfWork.ReservationRooms.GetAllQueryable()
+            .Where(x => x.RoomId == room.Id && x.Status != BookingStatus.Cancelled)
+            .ToListAsync();
+
+        bool alreadyBooked = activeReservations.Any(x => 
         {
-            if (dto == null) throw new ArgumentNullException(nameof(dto), "Payload cannot be empty.");
+            // Normalize database dates 
+            var eIn = new DateTime(x.CheckInDate.Ticks, DateTimeKind.Unspecified);
+            var eOut = new DateTime(x.CheckOutDate.Ticks, DateTimeKind.Unspecified);
 
-            // 1. Process String Fallbacks
-            string validatedFirstName = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingFirstName : dto.PrimaryFirstName) ? "WalkIn" : (dto.SameAsCustomer ? dto.BillingFirstName : dto.PrimaryFirstName);
-            string validatedLastName = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingLastName : dto.PrimaryLastName) ? "Guest" : (dto.SameAsCustomer ? dto.BillingLastName : dto.PrimaryLastName);
-            string validatedPhone = string.IsNullOrWhiteSpace(dto.SameAsCustomer ? dto.BillingMobile : dto.PrimaryMobile) ? "0000000000" : (dto.SameAsCustomer ? dto.BillingMobile : dto.PrimaryMobile);
+            // 1. If standard overlap calculation isn't intersecting, it's safe!
+            bool standardOverlap = pIn < eOut && eIn < pOut;
+            if (!standardOverlap) return false;
 
-            // 2. Create the Primary Guest Account Profile (Main Booker/Billing entity)
+            // 2. Compute if the matched existing stay is a rapid same-day short stay
+            bool isExistingShortStay = eIn.Date == eOut.Date && (eOut - eIn) <= sameDayTurnoverWindow;
+            
+            // If they are consecutive same-day short stays, check if they cleanly clear each other out
+            if (isProposedShortStay && isExistingShortStay && pIn.Date == eIn.Date)
+            {
+                bool safeRotation = pOut <= eIn || pIn >= eOut;
+                if (safeRotation) return false; // Allowed change window, not a real collision
+            }
+
+            // Otherwise, standard intersection means it is blocked!
+            return true;
+        });
+
+        if (alreadyBooked)
+        {
+            throw new InvalidOperationException($"Room {room.RoomNumber} is already booked for selected dates.");
+        }
+    }
+
+    // 3. Open explicit Transaction block to isolate persistence operations safely
+    using (Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction = await _unitOfWork.BeginTransactionAsync())
+    {
+        try
+        {
+            // 4. Create the Primary Guest Account Profile
             var guest = new Guest
             {
                 FirstName = validatedFirstName,
@@ -57,7 +144,7 @@ namespace HotelRestaurant.Application.Services.Implementations
             await _unitOfWork.Guests.AddAsync(guest);
             await _unitOfWork.SaveChangesAsync();
 
-            // 3. Create Booking Container
+            // 5. Create Booking Container
             var bookingNumber = $"RES-{DateTime.Now:yyyyMMddHHmmss}";
             var booking = new Booking
             {
@@ -78,31 +165,19 @@ namespace HotelRestaurant.Application.Services.Implementations
             await _unitOfWork.Bookings.AddAsync(booking);
             await _unitOfWork.SaveChangesAsync();
 
-            // 4. Create Reservation Rooms & Seed Initial BookingGuests Entries
-            var roomsList = await _unitOfWork.Rooms.GetAllAsync();
+            // 6. Allocate Rooms & Seed Occupant Profiles
+            int roomCounter = 0;
             foreach (var roomDto in dto.Rooms)
             {
                 var room = roomsList.FirstOrDefault(r => r.RoomNumber.Trim() == roomDto.RoomNo.Trim());
                 if (room == null) continue;
 
-                // Check Room Availability State
-                var alreadyBooked = await _unitOfWork.ReservationRooms.GetAllQueryable()
-                    .AnyAsync(x => x.RoomId == room.Id
-                              && dto.CheckIn < x.CheckOutDate
-                              && dto.CheckOut > x.CheckInDate
-                              && x.Status != BookingStatus.Cancelled);
-
-                if (alreadyBooked)
-                {
-                    throw new InvalidOperationException($"Room {room.RoomNumber} is already booked for selected dates.");
-                }
-
                 var reservationRoom = new ReservationRoom
                 {
                     BookingId = booking.Id,
                     RoomId = room.Id,
-                    CheckInDate = dto.CheckIn,
-                    CheckOutDate = dto.CheckOut,
+                    CheckInDate = pIn,   
+                    CheckOutDate = pOut, 
                     Adults = roomDto.Adults,
                     Children = roomDto.Children,
                     RoomAmount = roomDto.TotalAmount,
@@ -114,28 +189,29 @@ namespace HotelRestaurant.Application.Services.Implementations
                 await _unitOfWork.ReservationRooms.AddAsync(reservationRoom);
                 room.Status = RoomStatus.Reserved;
 
-                // CRITICAL ADDITION: Create occupant profile tracking records for EVERY single room allocated
                 var initialOccupantRow = new BookingGuest
                 {
                     BookingId = booking.Id,
                     RoomNo = roomDto.RoomNo.Trim(),
                     Title = "Mr.",
-                    FirstName = validatedFirstName,  // Defaults to Rahul for room 101 AND 102
+                    FirstName = validatedFirstName,
                     LastName = validatedLastName,
                     Mobile = validatedPhone,
                     Gender = "Male",
                     Age = null,
-                    IdType = "Aadhar Card",
+                    IdType = "[Identity Type Redacted]",
                     IdNumber = "",
-                    IsPrimary = (booking.ReservationRooms.Count == 0), // true only for the first room item processed
+                    IsPrimary = (roomCounter == 0),
                     UpdatedAt = DateTime.UtcNow
                 };
+                
                 await _unitOfWork.BookingGuests.AddAsync(initialOccupantRow);
+                roomCounter++;
             }
 
             await _unitOfWork.SaveChangesAsync();
 
-            // 5. Create Invoice Log Context
+            // 7. Create Invoice Logs
             var invoice = new Invoice
             {
                 BookingId = booking.Id,
@@ -151,7 +227,7 @@ namespace HotelRestaurant.Application.Services.Implementations
             await _unitOfWork.Invoices.AddAsync(invoice);
             await _unitOfWork.SaveChangesAsync();
 
-            // If advance payment exists, create a Payment record linked to the invoice
+            // 8. Handle Optional Advance Payments
             if (dto.AdvanceAmount > 0)
             {
                 var payment = new HotelRestaurant.Core.Entities.Payment
@@ -169,6 +245,8 @@ namespace HotelRestaurant.Application.Services.Implementations
                 await _unitOfWork.SaveChangesAsync();
             }
 
+            await transaction.CommitAsync();
+
             return new BookingResultDto
             {
                 Success = true,
@@ -178,6 +256,13 @@ namespace HotelRestaurant.Application.Services.Implementations
                 InvoiceId = invoice.Id
             };
         }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+}
         #endregion
 
         #region Update Specific Room Occupants List

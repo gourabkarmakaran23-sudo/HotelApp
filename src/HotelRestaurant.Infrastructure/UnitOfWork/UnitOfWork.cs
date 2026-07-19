@@ -3,6 +3,7 @@ using HotelRestaurant.Core.Entities.HouseKeeping;
 using HotelRestaurant.Core.Interfaces;
 using HotelRestaurant.Infrastructure.Data;
 using HotelRestaurant.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HotelRestaurant.Infrastructure.UnitOfWork
 {
@@ -13,6 +14,7 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
+
             #region Master Data Repositories
             Currencies = new GenericRepository<Currency>(_context);
             PaymentMethods = new GenericRepository<PaymentMethods>(_context);
@@ -67,6 +69,13 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             LaundryLogs = new GenericRepository<LaundryLog>(_context);
             LaundryPayments = new GenericRepository<LaundryPayment>(_context);
         }
+
+        // public async Task<IDisposable> BeginTransactionAsync()
+        // {
+        //     // EF's transaction object naturally implements IDisposable
+        //     return await _context.Database.BeginTransactionAsync();
+        // }
+
         #region Master Data Repositories
         public IGenericRepository<OpeningBalance> OpeningBalances { get; }
         #endregion
@@ -140,6 +149,13 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         {
             return await _context.SaveChangesAsync(cancellationToken);
         }
+
+        #region Transaction Management
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _context.Database.BeginTransactionAsync();
+        }
+        #endregion
         public void Dispose()
         => _context.Dispose();
     }

@@ -550,6 +550,20 @@ Already but We need Same Day CheckIn/ CHeckOut options
 Like 2 hour if a guest want to book and then Checkout and 
 another person can book the same room again on the same day
 and so on.
+=============================================
 
+Getting this Error when try to book a room for 2 hours.
+==================================================
+I have booked a Room 401 by giving 18th July 9PM as CheckIn
+Date and 18th July 11PM As CheckOut Date but I see its Saved
+as 18th JUly 03:30 PM as Check In Date and 05:30PM
+as CHeckout Date which is wrong I have 05:30 hours graph
+and 2nd Issue WHen I try to Check In another Guest with
+Same Date Where I mentaioned 18th July 11:06PM as CheckIn 
+Date and 18th JUly 11:59PM as checkout Date but when I click
+Save Booking I am getting an error "Room 401 is already booked for selected dates."
+But data was saved in backedn some how don't know why. ANd 
+If we implement same day checking then why got this error.
+PLease fix all the erro that I told.
 
 =============ENd 18th July 2026==========================

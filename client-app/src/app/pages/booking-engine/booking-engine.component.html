@@ -39,6 +39,12 @@
             [class.input-error]="bookingForm.submitted && !form.checkOut" [disabled]="mode === 'view'" />
         </div>
 
+        <div class="form-group full-width" *ngIf="sameDayShortStayMessage">
+          <div style="padding: 10px 12px; border: 1px solid #bbf7d0; background: #f0fdf4; color: #166534; border-radius: 6px; font-size: 13px;">
+            {{ sameDayShortStayMessage }}
+          </div>
+        </div>
+
         <div class="form-group">
           <label>Arrival From <span class="req">*</span></label>
           <input type="text" placeholder="Arrival From" [(ngModel)]="form.arrivalFrom" name="arrivalFrom" [disabled]="mode === 'view'" />

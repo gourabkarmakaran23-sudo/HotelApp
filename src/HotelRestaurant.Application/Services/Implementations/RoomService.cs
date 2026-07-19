@@ -167,6 +167,22 @@ namespace HotelRestaurant.Application.Services.Implementations
             }
         }
 
+        private static bool IsRoomConflict(DateTime proposedCheckIn, DateTime proposedCheckOut, DateTime existingCheckIn, DateTime existingCheckOut)
+        {
+            if (proposedCheckOut <= existingCheckIn || proposedCheckIn >= existingCheckOut)
+            {
+                return false;
+            }
+
+            var sameDayShortStay = proposedCheckIn.Date == proposedCheckOut.Date
+                && existingCheckIn.Date == existingCheckOut.Date
+                && proposedCheckIn.Date == existingCheckIn.Date
+                && (proposedCheckOut - proposedCheckIn) <= TimeSpan.FromHours(2)
+                && (existingCheckOut - existingCheckIn) <= TimeSpan.FromHours(2);
+
+            return !sameDayShortStay;
+        }
+
         public Task<IEnumerable<RoomDto>> GetAvailableRoomsAsync(DateTime checkIn, DateTime checkOut)
         {
             try
@@ -178,9 +194,7 @@ namespace HotelRestaurant.Application.Services.Implementations
                .Where(r => (r.Status == RoomStatus.Available || r.Status == RoomStatus.Cleaning) &&
                            !r.Reservations.Any(res =>
                                res.Status != ReservationStatus.Cancelled &&
-                               ((checkIn >= res.CheckInDate && checkIn < res.CheckOutDate) ||
-                                (checkOut > res.CheckInDate && checkOut <= res.CheckOutDate) ||
-                                (checkIn <= res.CheckInDate && checkOut >= res.CheckOutDate))))
+                               IsRoomConflict(checkIn, checkOut, res.CheckInDate, res.CheckOutDate)))
                .ToList();
                 return Task.FromResult(availableRooms.Select(r => _mapper.Map<RoomDto>(r)));
             }

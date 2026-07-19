@@ -1,10 +1,17 @@
 using HotelRestaurant.Core.Entities;
 using HotelRestaurant.Core.Entities.HouseKeeping;
+using Microsoft.EntityFrameworkCore.Storage;
+
 
 namespace HotelRestaurant.Core.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
+        #region Transaction Management
+// Change IDbContextTransaction to IDisposable so you don't need EF imports here
+      Task<IDbContextTransaction> BeginTransactionAsync();
+        #endregion
+
         #region Master Data Repositories
         IGenericRepository<Currency> Currencies { get; }
         IGenericRepository<PaymentMethods> PaymentMethods { get; }

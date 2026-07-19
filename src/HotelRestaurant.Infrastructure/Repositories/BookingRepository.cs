@@ -29,14 +29,25 @@ namespace HotelRestaurant.Infrastructure.Repositories
                 // Ignore same booking during edit
                 && (!bookingId.HasValue || x.BookingId != bookingId.Value)
 
-                // DATE OVERLAP CHECK
-                && checkIn < x.CheckOutDate
-
-                && checkOut > x.CheckInDate
-
-                // Optional:
                 && x.Status != BookingStatus.Cancelled
+                && HasConflict(checkIn, checkOut, x.CheckInDate, x.CheckOutDate)
             );
+        }
+
+        private static bool HasConflict(DateTime proposedCheckIn, DateTime proposedCheckOut, DateTime existingCheckIn, DateTime existingCheckOut)
+        {
+            if (proposedCheckOut <= existingCheckIn || proposedCheckIn >= existingCheckOut)
+            {
+                return false;
+            }
+
+            var sameDayShortStay = proposedCheckIn.Date == proposedCheckOut.Date
+                && existingCheckIn.Date == existingCheckOut.Date
+                && proposedCheckIn.Date == existingCheckIn.Date
+                && (proposedCheckOut - proposedCheckIn) <= TimeSpan.FromHours(2)
+                && (existingCheckOut - existingCheckIn) <= TimeSpan.FromHours(2);
+
+            return !sameDayShortStay;
         }
 
     }

@@ -62,6 +62,7 @@ export class BookingEngineComponent implements OnInit {
   // ── Loader state ──────────────────────────────────────────────────────────
   isLoading = false;
   roomTypesList: any[] = [];
+  sameDayShortStayMessage = '';
 
   isEditMode = false;
   bookingId = 0;
@@ -454,86 +455,131 @@ export class BookingEngineComponent implements OnInit {
     this.updateCharges(0);
 
     // Step 3: Build clean payload
-    const payload = {
+    // const payload = {
 
-      bookingType: this.form.bookingType,
+    //   bookingType: this.form.bookingType,
 
-      bookingReference: this.form.bookingReference,
+    //   bookingReference: this.form.bookingReference,
 
-      soldBy: this.form.soldBy,
+    //   soldBy: this.form.soldBy,
 
-      arrivalFrom: this.form.arrivalFrom,
+    //   arrivalFrom: this.form.arrivalFrom,
 
-      customerProfile: this.form.customerProfile,
+    //   customerProfile: this.form.customerProfile,
 
-      purposeOfVisit: this.form.purposeOfVisit,
+    //   purposeOfVisit: this.form.purposeOfVisit,
 
-      remarks: this.form.remarks,
+    //   remarks: this.form.remarks,
 
-      checkIn: new Date(this.form.checkIn).toISOString(),
+    //   checkIn: new Date(this.form.checkIn).toISOString(),
 
-      checkOut: new Date(this.form.checkOut).toISOString(),
+    //   checkOut: new Date(this.form.checkOut).toISOString(),
 
-      totalAmount: Number(this.form.totalAmount) || 0,
+    //   totalAmount: Number(this.form.totalAmount) || 0,
 
-      billingTitle: this.form.billingTitle,
+    //   billingTitle: this.form.billingTitle,
 
-      billingFirstName: this.form.billingFirstName,
+    //   billingFirstName: this.form.billingFirstName,
 
-      billingLastName: this.form.billingLastName,
+    //   billingLastName: this.form.billingLastName,
 
-      billingMobile: this.form.billingMobile,
+    //   billingMobile: this.form.billingMobile,
 
-      billingAddress: this.form.billingAddress,
+    //   billingAddress: this.form.billingAddress,
 
-      email: this.form.email,
+    //   email: this.form.email,
 
-      gstin: this.form.gstin,
+    //   gstin: this.form.gstin,
 
-      paymentMode: this.form.paymentMode,
+    //   paymentMode: this.form.paymentMode,
 
-      advanceAmount: Number(this.form.advanceAmount) || 0,
+    //   advanceAmount: Number(this.form.advanceAmount) || 0,
 
-      advanceRemarks: this.form.advanceRemarks,
+    //   advanceRemarks: this.form.advanceRemarks,
 
-      sameAsCustomer: this.form.sameAsCustomer,
+    //   sameAsCustomer: this.form.sameAsCustomer,
 
-      primaryTitle: this.form.primaryTitle,
+    //   primaryTitle: this.form.primaryTitle,
 
-      primaryFirstName: this.form.primaryFirstName,
+    //   primaryFirstName: this.form.primaryFirstName,
 
-      primaryLastName: this.form.primaryLastName,
+    //   primaryLastName: this.form.primaryLastName,
 
-      primaryMobile: this.form.primaryMobile,
+    //   primaryMobile: this.form.primaryMobile,
 
-      nationality: this.form.nationality,
+    //   nationality: this.form.nationality,
 
-      rooms: this.form.rooms.map(room => ({
+    //   rooms: this.form.rooms.map(room => ({
 
-        roomTypeId: Number(room.roomTypeId),
+    //     roomTypeId: Number(room.roomTypeId),
 
-        roomNo: room.roomNo,
+    //     roomNo: room.roomNo,
 
-        mealPlan: room.mealPlan,
+    //     mealPlan: room.mealPlan,
 
-        extraChildAge: Number(room.extraChildAge) || 0,
+    //     extraChildAge: Number(room.extraChildAge) || 0,
 
-        adults: Number(room.adults) || 1,
+    //     adults: Number(room.adults) || 1,
 
-        children: Number(room.children) || 0,
+    //     children: Number(room.children) || 0,
 
-        rentPerNight: Number(room.rentPerNight) || 0,
+    //     rentPerNight: Number(room.rentPerNight) || 0,
 
-        complimentaryPerNight:
-          Number(room.complimentaryPerNight) || 0,
+    //     complimentaryPerNight:
+    //       Number(room.complimentaryPerNight) || 0,
 
-        extraCharge:
-          Number(room.extraCharge) || 0,
+    //     extraCharge:
+    //       Number(room.extraCharge) || 0,
 
-        totalAmount:
-          Number(room.totalAmount) || 0
-      }))
-    };
+    //     totalAmount:
+    //       Number(room.totalAmount) || 0
+    //   }))
+    // };
+
+    // BUILD CLEAN PAYLOAD WITH RAW STRINGS (DECOUPLING TIMEZONE MANIPULATIONS)
+  const payload = {
+    bookingType: this.form.bookingType,
+    bookingReference: this.form.bookingReference,
+    soldBy: this.form.soldBy,
+    arrivalFrom: this.form.arrivalFrom,
+    customerProfile: this.form.customerProfile,
+    purposeOfVisit: this.form.purposeOfVisit,
+    remarks: this.form.remarks,
+
+    // CHANGE THESE TWO LINES:
+    checkIn: this.form.checkIn,   // <-- Send directly without .toISOString()
+    checkOut: this.form.checkOut, // <-- Send directly without .toISOString()
+
+    totalAmount: Number(this.form.totalAmount) || 0,
+    billingTitle: this.form.billingTitle,
+    billingFirstName: this.form.billingFirstName,
+    billingLastName: this.form.billingLastName,
+    billingMobile: this.form.billingMobile,
+    billingAddress: this.form.billingAddress,
+    email: this.form.email,
+    gstin: this.form.gstin,
+    paymentMode: this.form.paymentMode,
+    advanceAmount: Number(this.form.advanceAmount) || 0,
+    advanceRemarks: this.form.advanceRemarks,
+    sameAsCustomer: this.form.sameAsCustomer,
+    primaryTitle: this.form.primaryTitle,
+    primaryFirstName: this.form.primaryFirstName,
+    primaryLastName: this.form.primaryLastName,
+    primaryMobile: this.form.primaryMobile,
+    nationality: this.form.nationality,
+    rooms: this.form.rooms.map(room => ({
+      roomTypeId: Number(room.roomTypeId),
+      roomNo: room.roomNo,
+      mealPlan: room.mealPlan,
+      extraChildAge: Number(room.extraChildAge) || 0,
+      adults: Number(room.adults) || 1,
+      children: Number(room.children) || 0,
+      rentPerNight: Number(room.rentPerNight) || 0,
+      complimentaryPerNight: Number(room.complimentaryPerNight) || 0,
+      extraCharge: Number(room.extraCharge) || 0,
+      totalAmount: Number(room.totalAmount) || 0
+    }))
+  };
 
     console.log('Submitting payload:', payload);
 
@@ -734,6 +780,33 @@ export class BookingEngineComponent implements OnInit {
     });
 
     this.calculateGrandTotal();
+    this.updateSameDayShortStayMessage();
+  }
+  updateSameDayShortStayMessage(): void {
+    if (!this.form.checkIn || !this.form.checkOut) {
+      this.sameDayShortStayMessage = '';
+      return;
+    }
+
+    const checkInDate = new Date(this.form.checkIn);
+    const checkOutDate = new Date(this.form.checkOut);
+
+    // Calculate difference in milliseconds
+    const diffMs = checkOutDate.getTime() - checkInDate.getTime();
+    
+    // Check if check-in and check-out are on the same calendar date
+    const isSameDay = checkInDate.toDateString() === checkOutDate.toDateString();
+
+    // Check if the duration is short (e.g., less than or equal to 2 hours)
+    const twoHoursInMs = 2 * 60 * 60 * 1000;
+    const isShortStay = diffMs > 0 && diffMs <= twoHoursInMs;
+
+    if (isSameDay && isShortStay) {
+      const hours = (diffMs / (1000 * 60 * 60)).toFixed(1);
+      this.sameDayShortStayMessage = `ℹ️ This is flagged as a Same-Day Short Stay (${hours} hours).`;
+    } else {
+      this.sameDayShortStayMessage = '';
+    }
   }
 
   onSameAsCustomerChange(): void {
