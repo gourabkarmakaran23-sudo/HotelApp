@@ -1,0 +1,133 @@
+SELECT "Id", "BookingId", "CommissionAgentId", "CommissionPercentage", "CommissionAmount", "PaymentStatus", "PaidDate", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."AgentCommissions";
+
+SELECT "Id", "AmenityName", "IconClass", "Description", "IsActive", "IsDeleted", "CreatedAt", "UpdatedAt"
+	FROM public."Amenities";
+
+SELECT "Id", "UserName", "Email", "PasswordHash", "Role", "CreatedAt", "UpdatedAt", "FullName", "IsActive", "IsDeleted"
+	FROM public."ApplicationUsers";
+
+SELECT "Id", "BedName", "Description", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."BedTypes";
+
+SELECT "Id", "BookingId", "FileName", "FilePath", "UploadedAt", "BookingGuestId"
+	FROM public."BookingDocuments";
+
+SELECT "Id", "BookingId", "RoomNo", "Title", "FirstName", "LastName", "Mobile", "Gender", "Age", "IdType", "IdNumber", "IsPrimary", "UpdatedAt"
+	FROM public."BookingGuests";
+
+SELECT "Id", "SourceName", "Details", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."BookingSources";
+
+SELECT "Id", "TypeName", "Remarks", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."BookingTypes";
+
+SELECT "Id", "BookingNumber", "GuestId", "BookingDate", "TotalAmount", "Status", "CreatedAt", "UpdatedAt", "IsDeleted", "ArrivalFrom", "BookingReference", "BookingType", "CustomerProfile", "PurposeOfVisit", "Remarks", "SoldBy"
+	FROM public."Bookings";
+
+SELECT "Id", "PolicyName", "CancellationWindowHours", "ChargePercentage", "Description", "IsActive", "IsDeleted", "CreatedAt", "UpdatedAt"
+	FROM public."CancellationPolicies";
+
+SELECT "Id", "AgentName", "Address", "Mobile", "Email", "GSTIN", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted", "CommissionRate"
+	FROM public."CommissionAgents";
+
+SELECT "Id", "ItemName", "Description", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."Complementaries";
+
+SELECT "Id", "CurrencyName", "CurrencyIcon", "Position", "ConversionRate", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."Currencies";
+
+SELECT "Id", "HotelId", "FirstName", "LastName", "Email", "Phone", "Role", "HireDate", "Salary", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."Employees";
+
+SELECT "Id", "Title", "FromDate", "ToDate", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."FinancialYears";
+
+SELECT "Id", "FloorName", "Remarks", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."FloorPlans";
+
+SELECT "Id", "FirstName", "LastName", "Email", "Phone", "Address", "NationalId", "DateOfBirth", "CreatedAt", "UpdatedAt", "IsDeleted", "Nationality", "Title"
+	FROM public."Guests";
+
+SELECT "Id", "Name", "Address", "City", "Country", "Phone", "Email", "Rating", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."Hotels";
+
+SELECT "Id", "TaskName", "Type", "IsDeleted"
+	FROM public."HouseKeepingChecklists";
+    
+SELECT "Id", "Name", "Category", "QuantityOnHand", "Unit", "ReorderLevel", "CostPrice", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."InventoryItems";
+
+SELECT "Id", "OrderId", "InvoiceDate", "Subtotal", "Tax", "Total", "PaymentStatus", "CreatedAt", "UpdatedAt", "IsDeleted", "DueAmount", "PaidAmount", "BookingId"
+	FROM public."Invoices";
+
+SELECT "Id", "InvoiceNo", "LaundryName", "ItemName", "OperateBy", "TaskName", "ItemCost", "Quantity", "Type", "SendDate", "ReceivedDate", "PaymentStatus", "Comments", "IsDeleted", "InLaundry", "InUse", "Ready"
+	FROM public."LaundryLogs";
+
+SELECT "Id", "Name", "InvoiceNo", "LaundryName", "TotalAmount", "DueAmount", "PaidAmount", "IsDeleted"
+	FROM public."LaundryPayments";
+
+SELECT "Id", "Name", "Category", "Description", "Price", "IsAvailable", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."MenuItems";
+
+SELECT "Id", "AccountName", "AccountType", "Amount", "BalanceType", "Date", "Remarks", "IsActive", "IsDeleted", "CreatedAt", "UpdatedAt"
+	FROM public."OpeningBalances";
+
+SELECT "Id", "OrderId", "MenuItemId", "Quantity", "UnitPrice", "TotalPrice", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."OrderItems";
+
+SELECT "Id", "ReservationId", "GuestId", "OrderDate", "OrderStatus", "TotalAmount", "CreatedAt", "UpdatedAt", "IsDeleted", "BookingId"
+	FROM public."Orders";
+
+SELECT "Id", "OtherPaymentInvoiceId", "Type", "Hsn", "Description", "Unit", "Rate", "Qty", "SubTotal", "GstRate", "GstType", "GstAmount", "Total"
+	FROM public."OtherPaymentInvoiceItems";
+
+SELECT "Id", "InvoiceNo", "InvoiceDate", "CustomerName", "Mobile", "CustomerAddress", "Gstin", "Remarks", "AttachmentName", "SubTotalSummary", "TotalGstSummary", "Adjustment", "RoundOff", "InvoiceAmount", "PaidAmount", "IsDeleted", "CreatedAt", "UpdatedAt"
+	FROM public."OtherPaymentInvoices";
+
+SELECT "Id", "MethodName", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."PaymentMethods";
+
+SELECT "Id", "ReceiptNo", "PaymentDate", "Amount", "Method", "Remarks", "BookingId", "InvoiceId", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."Payments";
+
+SELECT "Id", "Code", "DiscountType", "DiscountValue", "MinimumBookingAmount", "StartDate", "EndDate", "MaxUses", "UsedCount", "IsActive", "IsDeleted", "CreatedAt", "UpdatedAt"
+	FROM public."Promocodes";
+
+SELECT "Id", "ItemName", "SupplierName", "InvoiceNumber", "Quantity", "Unit", "Rate", "TotalAmount", "PurchaseDate", "Remarks", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."PurchaseItems";
+
+SELECT "Id", "ItemName", "SupplierName", "ReferenceInvoiceNo", "ReturnQuantity", "Unit", "RefundRate", "TotalRefundAmount", "ReturnDate", "ReasonForReturn", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."PurchaseReturns";
+
+SELECT "Id", "BookingId", "GuestName", "RefundAmount", "Status", "IsDeleted", "BookingSource", "RequestDate", "Remarks", "BankName", "AccountNo", "IfscCode", "ProcessStatus", "RefundChannel", "TransactionId", "RefundedDate", "AttachmentName"
+	FROM public."RefundRecords";
+
+SELECT "Id", "BookingId", "RoomId", "CheckInDate", "CheckOutDate", "Adults", "Children", "RoomAmount", "Status", "Notes", "Pax", "MealPlan", "CreatedAt", "UpdatedAt", "IsDeleted", "ChildAge", "ComplimentaryNight", "ExtraChildCharge", "RentPerNight"
+	FROM public."ReservationRooms";
+
+SELECT "Id", "Name", "Description", "IconUrl", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."RoomFacility";
+
+SELECT "RoomTypeId", "RoomFacilityId", "IsIncluded"
+	FROM public."RoomTypeFacility";
+
+SELECT "Id", "Name", "Description", "BasePrice", "MaxOccupancy", "MaxAdults", "MaxChildren", "Amenities", "ImageUrl", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."RoomTypes";
+
+SELECT "Id", "HotelId", "RoomNumber", "FloorNo", "Capacity", "Price", "Status", "Description", "CreatedAt", "UpdatedAt", "IsDeleted", "RoomTypesId"
+	FROM public."Rooms";
+
+SELECT "Id", "Name", "RoomTypeId", "PricePerNight", "EffectiveFrom", "EffectiveTo", "ApplicableDays", "SeasonType", "IsActive", "Description", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."Tariff";
+
+SELECT "Id", "TaxName", "TaxRate", "TaxCode", "IsActive", "IsDeleted", "CreatedAt", "UpdatedAt"
+	FROM public."Taxes";
+
+SELECT "Id", "RoomNumber", "GuestName", "CallDateTime", "Remarks", "Status", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted"
+	FROM public."WakeUpCalls";
+
+SELECT "Id", "Name", "RoomNo", "Date", "Status", "IsDeleted"
+	FROM public.roomcleanings;
+
+    

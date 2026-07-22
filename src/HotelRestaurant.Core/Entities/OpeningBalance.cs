@@ -1,10 +1,13 @@
 using System;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities
 {
-    public class OpeningBalance
+    public class OpeningBalance: IMultiHotelEntity
     {
         public int Id { get; set; }
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
+        public Hotel Hotel { get; set; }
         public string AccountName { get; set; } = string.Empty;
         public string AccountType { get; set; } = string.Empty; // e.g., Bank, Cash, Asset, Liability
         public decimal Amount { get; set; }

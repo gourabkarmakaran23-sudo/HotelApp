@@ -1,15 +1,17 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities
 {
     [Table("BookingGuests")]
-    public class BookingGuest
+    public class BookingGuest: IMultiHotelEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
 
         [Required]
         public int BookingId { get; set; }

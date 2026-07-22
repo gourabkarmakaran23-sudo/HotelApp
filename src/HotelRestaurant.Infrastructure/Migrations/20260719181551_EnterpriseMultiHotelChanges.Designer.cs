@@ -3,6 +3,7 @@ using System;
 using HotelRestaurant.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HotelRestaurant.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260719181551_EnterpriseMultiHotelChanges")]
+    partial class EnterpriseMultiHotelChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,9 +48,6 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("HotelId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -62,8 +62,6 @@ namespace HotelRestaurant.Infrastructure.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("HotelId");
 
                     b.ToTable("AgentCommissions");
                 });
@@ -88,9 +86,6 @@ namespace HotelRestaurant.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<int>("HotelId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("IconClass")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -105,8 +100,6 @@ namespace HotelRestaurant.Infrastructure.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("HotelId");
 
                     b.ToTable("Amenities");
                 });
@@ -131,9 +124,6 @@ namespace HotelRestaurant.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
-
-                    b.Property<int>("HotelId")
-                        .HasColumnType("integer");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -163,8 +153,6 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("HotelId");
-
                     b.HasIndex("UserName")
                         .IsUnique();
 
@@ -190,9 +178,6 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int>("HotelId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
@@ -203,8 +188,6 @@ namespace HotelRestaurant.Infrastructure.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("HotelId");
 
                     b.ToTable("BedTypes");
                 });
@@ -2325,50 +2308,6 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.ToTable("WakeUpCalls", (string)null);
                 });
 
-            modelBuilder.Entity("HotelRestaurant.Core.Entities.AgentCommission", b =>
-                {
-                    b.HasOne("HotelRestaurant.Core.Entities.Hotel", "Hotel")
-                        .WithMany()
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hotel");
-                });
-
-            modelBuilder.Entity("HotelRestaurant.Core.Entities.Amenity", b =>
-                {
-                    b.HasOne("HotelRestaurant.Core.Entities.Hotel", "Hotel")
-                        .WithMany()
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hotel");
-                });
-
-            modelBuilder.Entity("HotelRestaurant.Core.Entities.ApplicationUser", b =>
-                {
-                    b.HasOne("HotelRestaurant.Core.Entities.Hotel", "Hotel")
-                        .WithMany()
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hotel");
-                });
-
-            modelBuilder.Entity("HotelRestaurant.Core.Entities.BedType", b =>
-                {
-                    b.HasOne("HotelRestaurant.Core.Entities.Hotel", "Hotel")
-                        .WithMany()
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hotel");
-                });
-
             modelBuilder.Entity("HotelRestaurant.Core.Entities.Booking", b =>
                 {
                     b.HasOne("HotelRestaurant.Core.Entities.Guest", "Guest")
@@ -2380,7 +2319,7 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.HasOne("HotelRestaurant.Core.Entities.Hotel", "Hotel")
                         .WithMany()
                         .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Guest");
@@ -2745,7 +2684,7 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.HasOne("HotelRestaurant.Core.Entities.Hotel", "Hotel")
                         .WithMany()
                         .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("HotelRestaurant.Core.Entities.Room", "Room")

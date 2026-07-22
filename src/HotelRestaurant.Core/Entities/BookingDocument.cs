@@ -4,15 +4,18 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities
 {
 
     [Table("BookingDocuments")]
-    public class BookingDocument
+    public class BookingDocument:IMultiHotelEntity
     {
         [Key]
         public int Id { get; set; }
+
+        public int HotelId { get; set; } // Dynamic indexing optimization safety metric
 
         [Required]
         public int BookingId { get; set; }

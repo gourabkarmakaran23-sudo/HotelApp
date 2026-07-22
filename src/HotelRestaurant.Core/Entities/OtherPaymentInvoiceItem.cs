@@ -1,8 +1,12 @@
+using HotelRestaurant.Core.Interfaces;
+
 namespace HotelRestaurant.Core.Entities
 {
-    public class OtherPaymentInvoiceItem
+    public class OtherPaymentInvoiceItem:IMultiHotelEntity
     {
         public int Id { get; set; }
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
+        public Hotel Hotel { get; set; }
         public int OtherPaymentInvoiceId { get; set; }
         
         public string Type { get; set; } = "Service"; // Product / Service

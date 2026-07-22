@@ -1,10 +1,13 @@
 using System;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities
 {
-    public class Promocode
+    public class Promocode: IMultiHotelEntity
     {
         public int Id { get; set; }
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
+        public Hotel Hotel { get; set; }
         public string Code { get; set; } = string.Empty; // e.g., WELCOME10
         public string DiscountType { get; set; } = "Percentage"; // Percentage / Flat
         public decimal DiscountValue { get; set; }

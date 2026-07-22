@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using HotelRestaurant.Core.Interfaces;
 namespace HotelRestaurant.Core.Entities
 {
-    public class PurchaseItem : BaseEntity
+    public class PurchaseItem : BaseEntity,IMultiHotelEntity
     {
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
+        public Hotel Hotel { get; set; }
+        
         public string ItemName { get; set; } = string.Empty;
         public string SupplierName { get; set; } = string.Empty;
         public string InvoiceNumber { get; set; } = string.Empty;
@@ -18,6 +21,6 @@ namespace HotelRestaurant.Core.Entities
         public string? Remarks { get; set; }
 
         // Soft Delete tracker baseline 
-        public bool IsDeleted { get; set; } = false;
+       
     }
 }

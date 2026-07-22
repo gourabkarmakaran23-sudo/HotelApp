@@ -1,8 +1,11 @@
+using HotelRestaurant.Core.Interfaces;
+
 namespace HotelRestaurant.Core.Entities
 {
-    public class Employee : BaseEntity
+    public class Employee : BaseEntity,IMultiHotelEntity
     {
         public int HotelId { get; set; }
+        
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

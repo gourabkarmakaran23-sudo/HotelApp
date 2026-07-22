@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities
 {
-    public class CommissionAgent : BaseEntity
+    public class CommissionAgent : BaseEntity,IMultiHotelEntity
     {
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
         public string AgentName { get; set; } = "";
 
         // Added missing commission rate field (using decimal for financial precision)

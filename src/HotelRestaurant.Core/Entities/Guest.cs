@@ -1,8 +1,12 @@
+using HotelRestaurant.Core.Interfaces;
+
 namespace HotelRestaurant.Core.Entities
 {
 
-public class Guest : BaseEntity
+public class Guest : BaseEntity,IMultiHotelEntity
     {
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
+        public Hotel Hotel { get; set; }
         public string Title { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;

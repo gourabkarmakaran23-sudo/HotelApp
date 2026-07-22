@@ -1,9 +1,12 @@
 using System;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities
 {
-    public class Payment : BaseEntity
+    public class Payment : BaseEntity,IMultiHotelEntity
     {
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
+        public Hotel Hotel { get; set; }
         public string ReceiptNo { get; set; } = string.Empty;
         public DateTime PaymentDate { get; set; } = DateTime.UtcNow;
         public decimal Amount { get; set; }

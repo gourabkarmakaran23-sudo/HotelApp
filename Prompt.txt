@@ -567,3 +567,22 @@ If we implement same day checking then why got this error.
 PLease fix all the erro that I told.
 
 =============ENd 18th July 2026==========================
+
+======Start 19th JULY 2026 =================================
+   Company can have multiple hotels. So hotelwise Revenue,
+   COmpanywise Revenue(Profit/Loss), All Masters and 
+   Transaction should be Hotelwise, Hotelwise Login,
+   SuperAdmin LOgin who can see ALl Hotels,
+
+=====================================================
+I give all the tables we have with ENtity and UnitOfWork 
+what Entity Need LIke COmpany please tell and I think all
+table needs HotelId and Hotel table needs CompanyId
+So please design Accordinly So that we can Work HOtel Wise
+So hotelwise Revenue,
+   COmpanywise Revenue(Profit/Loss), All Masters and 
+   Transaction should be Hotelwise, Hotelwise Login,
+   SuperAdmin LOgin who can see ALl Hotels,
+
+
+======End 19th JULY 2026 =================================

@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities
 {
-    public class OtherPaymentInvoice
+    public class OtherPaymentInvoice:IMultiHotelEntity
     {
         public int Id { get; set; }
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
+        public Hotel Hotel { get; set; }
         public string InvoiceNo { get; set; } = string.Empty;
         public DateTime InvoiceDate { get; set; }
         public string CustomerName { get; set; } = string.Empty;

@@ -407,6 +407,8 @@ namespace HotelRestaurant.Infrastructure.Data
                     .Property(r => r.RefundAmount)
                     .HasColumnType("decimal(18,2)");
             });
+            // Add inside OnModelCreating inside your AppDbContext framework layout config[cite: 13]
+
         }
     }
 }

@@ -1,10 +1,12 @@
 using System;
-
+using HotelRestaurant.Core.Interfaces;
 namespace HotelRestaurant.Core.Entities
 {
-    public class Tax
+    public class Tax:IMultiHotelEntity
     {
         public int Id { get; set; }
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
+        public Hotel Hotel { get; set; }
         public string TaxName { get; set; } = string.Empty;
         public decimal TaxRate { get; set; } // e.g., 18.00
         public string TaxCode { get; set; } = string.Empty; // HSN/SAC Code

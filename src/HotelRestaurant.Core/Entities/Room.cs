@@ -1,3 +1,5 @@
+
+using HotelRestaurant.Core.Interfaces;
 namespace HotelRestaurant.Core.Entities
 {
     public class Room : BaseEntity
@@ -24,7 +26,7 @@ namespace HotelRestaurant.Core.Entities
         public decimal Price { get; set; }
         public RoomStatus Status { get; set; } 
         public string Description { get; set; } = string.Empty;
-        public bool IsDeleted { get; set; }
+        
         // Navigation relationships 
         public Hotel? Hotel { get; set; }
         

@@ -1,10 +1,12 @@
 using System;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities
 {
-    public class CancellationPolicy
+    public class CancellationPolicy:IMultiHotelEntity
     {
         public int Id { get; set; }
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
         public string PolicyName { get; set; } = string.Empty;
         public int CancellationWindowHours { get; set; } // e.g., 48 hours before check-in
         public decimal ChargePercentage { get; set; } // e.g., 50% or 100% deduction

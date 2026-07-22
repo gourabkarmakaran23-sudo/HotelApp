@@ -60,6 +60,7 @@ namespace HotelRestaurant.Infrastructure.Data
                 BookingNumber = "BK-1001",
 
                 Guest = guest,
+                Hotel = hotel, // 👈 CRITICAL: Bind the tracking model reference directly here
 
                 BookingDate = DateTime.UtcNow,
 
@@ -73,6 +74,7 @@ namespace HotelRestaurant.Infrastructure.Data
                 Booking = booking,
 
                 Room = rooms[1],
+                Hotel = hotel, // 👈 CRITICAL: Bind the multi-hotel reference to child scopes too!
 
                 CheckInDate = DateTime.UtcNow.Date.AddDays(3),
 

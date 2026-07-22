@@ -1,3 +1,4 @@
+using HotelRestaurant.Core.Interfaces;
 namespace HotelRestaurant.Core.Entities
 {
     public enum RefundStatus
@@ -7,9 +8,11 @@ namespace HotelRestaurant.Core.Entities
         Refunded = 2      // Refunded Archives
     }
 
-    public class RefundRecord
+    public class RefundRecord:IMultiHotelEntity
     {
         public int Id { get; set; }
+        public int HotelId { get; set; } // Essential for tracing specific hotel outlays
+        public Hotel Hotel { get; set; }
         public string BookingId { get; set; } = string.Empty;
         public string GuestName { get; set; } = string.Empty;
         public decimal RefundAmount { get; set; }
