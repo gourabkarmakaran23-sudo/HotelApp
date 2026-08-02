@@ -597,5 +597,11 @@ Hotel API and Hotel Entry Form is not there so how I get Hotel API call
 
 =================2nd Aug 2026==========================
 Yes please do. And Create an Admin who can see all companies hotel. ANd Create One User with a Particular hotel. Give the Script and Add in the Registration Form. And Admin Can create new user also.
+=====================================
+In Dashboard ...  is not their after Right click like 1st image and Its also not real data and also right click button is not working.
+Can you help me to do that. So that everything should worked.
+==============================================
+
+
 
 -===============end 2nd Aug 2026 ======================

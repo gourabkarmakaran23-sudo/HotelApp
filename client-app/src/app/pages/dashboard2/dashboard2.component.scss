@@ -287,3 +287,37 @@
 
   .menu-divider { border: 0; border-top: 1px solid #e5e7eb; margin: 0.25rem 0; }
 }
+
+.room-matrix-cell {
+  position: relative; // Needed for absolute positioning of the 3-dots icon
+
+  .three-dots-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.3);
+    color: #1f2937;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    z-index: 5;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.85);
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+

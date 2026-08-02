@@ -96,6 +96,13 @@
            [attr.data-status]="room.status"
            (contextmenu)="onRoomRightClick($event, room)">
         
+        <!-- 🌟 3-Dots Button Icon -->
+        <button class="three-dots-btn" 
+                title="Options" 
+                (click)="toggleCardMenu($event, room)">
+          &#8285;
+        </button>
+
         <div class="room-top-header">
           <span class="room-number">{{ room.roomNo }}</span>
           <span class="room-type-tag">{{ room.type }}</span>
@@ -112,7 +119,30 @@
         </div>
       </div>
     </div>
-  </div>
+    <!-- The Dynamic Visual Room Grid Blocks Layout Matrix -->
+    <!-- <div class="rooms-grid-matrix">
+      <div *ngFor="let room of filteredRooms" 
+           class="room-matrix-cell" 
+           [attr.data-status]="room.status"
+           (contextmenu)="onRoomRightClick($event, room)">
+        
+        <div class="room-top-header">
+          <span class="room-number">{{ room.roomNo }}</span>
+          <span class="room-type-tag">{{ room.type }}</span>
+        </div>
+        
+        <div class="room-center-status-profile">
+          <p class="status-badge-text">{{ room.status }}</p>
+          <p class="occupant-holder-name" *ngIf="room.guestName">{{ room.guestName }}</p>
+          <p class="duration-timeline-range" *ngIf="room.duration">{{ room.duration }}</p>
+        </div>
+
+        <div class="room-bottom-housekeeping" [attr.data-hk]="room.housekeeping">
+          {{ room.housekeeping }}
+        </div>
+      </div>
+    </div>
+  </div> -->
 
   <!-- 3rd Layer: Analytical Visualization Data Charts Section Block -->
   <div class="charts-double-column-grid">
