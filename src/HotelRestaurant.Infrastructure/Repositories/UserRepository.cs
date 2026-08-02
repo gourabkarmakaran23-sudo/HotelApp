@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HotelRestaurant.Core.Entities;
 using HotelRestaurant.Core.Interfaces;
 using HotelRestaurant.Infrastructure.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelRestaurant.Infrastructure.Repositories
@@ -15,7 +16,7 @@ namespace HotelRestaurant.Infrastructure.Repositories
 /// </summary>
 public class UserRepository : GenericRepository<ApplicationUser>, IUserRepository
 {
-    public UserRepository(AppDbContext context) : base(context) { }
+    public UserRepository(AppDbContext context, IHttpContextAccessor? httpContextAccessor = null) : base(context, httpContextAccessor) { }
  
       public async Task<ApplicationUser?> GetByEmailAsync(string email)
         => await _dbSet

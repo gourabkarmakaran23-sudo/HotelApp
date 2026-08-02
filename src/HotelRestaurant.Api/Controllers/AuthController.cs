@@ -71,6 +71,29 @@ public class AuthController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, result);
     }
 
+    /// <summary>Create a subordinate account for an authenticated Admin or SuperAdmin.</summary>
+    [HttpPost("create-user")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> CreateUserByAdmin([FromBody] RegisterRequestDto request)
+    {
+        _logger.LogInformation("Admin user creation attempt for {Email}", request.Email);
+
+        var result = await _authService.RegisterAsync(request);
+
+        if (!result.Success)
+        {
+            _logger.LogWarning("Admin user creation failed for {Email}: {Message}",
+                               request.Email, result.Message);
+            return BadRequest(result);
+        }
+
+        _logger.LogInformation("Admin created user: {Email}", request.Email);
+        return StatusCode(StatusCodes.Status201Created, result);
+    }
+
     /// <summary>Returns the current authenticated user's profile (requires JWT).</summary>
     [HttpGet("me")]
     [Authorize]

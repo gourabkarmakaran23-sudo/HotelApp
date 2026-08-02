@@ -21,6 +21,17 @@
         <small *ngIf="form.get('password')?.hasError('minlength') && form.get('password')?.touched">Password must be at least 6 characters.</small>
       </div>
 
+      <!-- Optional Selected Hotel for Multi-Hotel context logins -->
+      <div class="form-group" *ngIf="availableHotels.length > 0">
+        <label for="hotelId">Select Hotel Property</label>
+        <select id="hotelId" formControlName="hotelId">
+          <option [value]="null">All Properties (SuperAdmin Mode)</option>
+          <option *ngFor="let hotel of availableHotels" [value]="hotel.id">
+            {{ hotel.name }}
+          </option>
+        </select>
+      </div>
+
       <div class="form-actions">
         <button type="submit" [disabled]="loading">{{ loading ? 'Signing in...' : 'Sign In' }}</button>
       </div>
@@ -38,9 +49,9 @@
       <h2>Hotel and Restaurant Control</h2>
       <p>Streamline guest check-in, booking reports, invoices, and restaurant service in one polished interface.</p>
       <ul>
-        <li>Secure JWT login</li>
-        <li>Fast booking search</li>
-        <li>Reservation and order summaries</li>
+        <li>Multi-Property Isolation</li>
+        <li>Company-wide Consolidated Profit & Loss</li>
+        <li>Role & Claim-based Authorization</li>
       </ul>
     </div>
   </section>

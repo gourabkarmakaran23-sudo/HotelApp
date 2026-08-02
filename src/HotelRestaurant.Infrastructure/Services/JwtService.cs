@@ -23,10 +23,13 @@ public class JwtService : IJwtService
 
     public string GenerateToken(ApplicationUser user)
     {
-        var jwtSection = _config.GetSection("Jwt");
+        var jwtSection = _config.GetSection("JwtSettings");
         var key        = new SymmetricSecurityKey(
-                             Encoding.UTF8.GetBytes(jwtSection["Key"]!));
+                             Encoding.UTF8.GetBytes(jwtSection["Key"] ?? "SuperSecretKey12345!Hotel2026JwtTokenSecret"));
         var creds      = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var canViewAllHotels = string.Equals(user.Role, "SuperAdmin", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase);
 
         var claims = new[]
         {
@@ -34,15 +37,20 @@ public class JwtService : IJwtService
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.Name,               user.FullName),
             new Claim(ClaimTypes.Role,               user.Role),
+            new Claim("hotel_id",                   user.HotelId.ToString()),
+            new Claim("can_view_all_hotels",        canViewAllHotels ? "true" : "false"),
             new Claim(JwtRegisteredClaimNames.Jti,   Guid.NewGuid().ToString())
         };
 
+        var expiryMinutes = int.TryParse(jwtSection["ExpiryMinutes"], out var parsedExpiry)
+            ? parsedExpiry
+            : 60;
+
         var token = new JwtSecurityToken(
-            issuer:             jwtSection["Issuer"],
-            audience:           jwtSection["Audience"],
+            issuer:             jwtSection["Issuer"] ?? "HotelRestaurantApi",
+            audience:           jwtSection["Audience"] ?? "HotelRestaurantClient",
             claims:             claims,
-            expires:            DateTime.UtcNow.AddHours(
-                                    int.Parse(jwtSection["ExpiryHours"] ?? "8")),
+            expires:            DateTime.UtcNow.AddMinutes(expiryMinutes),
             signingCredentials: creds
         );
 

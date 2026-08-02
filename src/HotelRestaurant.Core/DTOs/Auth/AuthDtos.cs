@@ -9,7 +9,8 @@ namespace HotelRestaurant.Core.DTOs.Auth
  
 public record LoginRequestDto(
     string Email,
-    string Password
+    string Password,
+    int? SelectedHotelId = null
 );
  
 public record RegisterRequestDto(
@@ -18,7 +19,8 @@ public record RegisterRequestDto(
     string Email,
     string Password,
     string ConfirmPassword,
-    string Role = "User"
+    string Role = "User",
+    int? HotelId = null
 );
  
 // ── Response DTOs ─────────────────────────────────────────────────────────────
@@ -30,7 +32,8 @@ public record AuthResponseDto(
     int    UserId   = 0,
     string FullName = "",
     string Email    = "",
-    string Role     = ""
+    string Role     = "",
+    int? ActiveHotelId = null
 );
 
 }

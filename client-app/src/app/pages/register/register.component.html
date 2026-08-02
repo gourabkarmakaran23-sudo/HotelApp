@@ -8,8 +8,13 @@
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
       <div class="form-group">
-        <label for="name">Full name</label>
-        <input id="name" type="text" formControlName="name" placeholder="Jane Doe" />
+        <label for="userName">User name</label>
+        <input id="userName" type="text" formControlName="userName" placeholder="jane.doe" />
+      </div>
+
+      <div class="form-group">
+        <label for="fullName">Full name</label>
+        <input id="fullName" type="text" formControlName="fullName" placeholder="Jane Doe" />
       </div>
 
       <div class="form-group">
@@ -26,6 +31,23 @@
         <div class="form-group half-width">
           <label for="confirmPassword">Confirm password</label>
           <input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="••••••••" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label for="role">Role</label>
+          <select id="role" formControlName="role">
+            <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
+          </select>
+        </div>
+
+        <div class="form-group half-width">
+          <label for="hotelId">Hotel</label>
+          <select id="hotelId" formControlName="hotelId">
+            <option [value]="null">All Properties (SuperAdmin)</option>
+            <option *ngFor="let hotel of availableHotels" [value]="hotel.id">{{ hotel.name }}</option>
+          </select>
         </div>
       </div>
 

@@ -52,6 +52,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register all validators from the assembly where CreateRoomDtoValidator resides
 builder.Services.AddValidatorsFromAssemblyContaining<CreateRoomDtoValidator>();
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
@@ -224,55 +225,6 @@ app.UseHttpsRedirection();
 var apiGroup = app.MapGroup("/api");
 
 var authGroup = apiGroup.MapGroup("/auth");
-
-authGroup.MapPost("/register", async (RegisterRequest request, AppDbContext context) =>
-{
-    if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
-    {
-        return Results.BadRequest("Name, email, and password are required.");
-    }
-
-    if (request.Password != request.ConfirmPassword)
-    {
-        return Results.BadRequest("Password and confirm password do not match.");
-    }
-
-    var normalizedEmail = request.Email.Trim().ToLowerInvariant();
-    if (await context.ApplicationUsers.AnyAsync(u => u.Email == normalizedEmail))
-    {
-        return Results.Conflict("A user with this email already exists.");
-    }
-
-    var user = new ApplicationUser
-    {
-        UserName = request.Name.Trim(),
-        Email = normalizedEmail,
-        PasswordHash = PasswordHasher.HashPassword(request.Password),
-        Role = "User",
-        CreatedAt = DateTime.UtcNow,
-        UpdatedAt = DateTime.UtcNow
-    };
-
-    await context.ApplicationUsers.AddAsync(user);
-    await context.SaveChangesAsync();
-
-    return Results.Created($"/api/auth/{user.Id}", new { user.Id, user.UserName, user.Email });
-});
-
-authGroup.MapPost("/login", async (LoginRequest request, AppDbContext context, IJwtTokenService tokenService) =>
-{
-    var normalizedEmail = request.Email.Trim().ToLowerInvariant();
-    var user = await context.ApplicationUsers
-        .FirstOrDefaultAsync(u => u.Email == normalizedEmail || u.UserName == request.Email.Trim());
-
-    if (user is null || !PasswordHasher.VerifyPassword(request.Password, user.PasswordHash))
-    {
-        return Results.Unauthorized();
-    }
-
-    var token = tokenService.CreateToken(user);
-    return Results.Ok(new LoginResponse(token, 60));
-});
 
 apiGroup.MapGet("/dashboard/summary", async (AppDbContext context, ClaimsPrincipal user) =>
 {

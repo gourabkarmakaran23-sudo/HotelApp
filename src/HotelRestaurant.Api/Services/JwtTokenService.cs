@@ -35,6 +35,8 @@ namespace HotelRestaurant.Api.Services
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Role, user.Role),
+                new Claim("hotel_id", user.HotelId.ToString()),
+                new Claim("can_view_all_hotels", string.Equals(user.Role, "SuperAdmin", StringComparison.OrdinalIgnoreCase) ? "true" : "false"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

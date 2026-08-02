@@ -16,6 +16,8 @@ First create the Architecture we will design the App later.
 Create all the Project FIrst
 dotnet new sln -n HotelRestaurant; mkdir src; dotnet new webapi -n HotelRestaurant.Api -o src/HotelRestaurant.Api; dotnet new classlib -n HotelRestaurant.Application -o src/HotelRestaurant.Application; dotnet new classlib -n HotelRestaurant.Infrastructure -o src/HotelRestaurant.Infrastructure; dotnet new classlib -n HotelRestaurant.Core -o src/HotelRestaurant.Core; dotnet sln add src/HotelRestaurant.Api/HotelRestaurant.Api.csproj src/HotelRestaurant.Application/HotelRestaurant.Application.csproj src/HotelRestaurant.Infrastructure/HotelRestaurant.Infrastructure.csproj src/HotelRestaurant.Core/HotelRestaurant.Core.csproj; dotnet add src/HotelRestaurant.Application/HotelRestaurant.Application.csproj reference src/HotelRestaurant.Core/HotelRestaurant.Core.csproj; dotnet add src/HotelRestaurant.Infrastructure/HotelRestaurant.Infrastructure.csproj reference src/HotelRestaurant.Core/HotelRestaurant.Core.csproj; dotnet add src/HotelRestaurant.Api/HotelRestaurant.Api.csproj reference src/HotelRestaurant.Application/HotelRestaurant.Application.csproj; dotnet add src/HotelRestaurant.Api/HotelRestaurant.Api.csproj reference src/HotelRestaurant.Infrastructure/HotelRestaurant.Infrastructure.csproj; dotnet add src/HotelRestaurant.Infrastructure/HotelRestaurant.Infrastructure.csproj package Microsoft.EntityFrameworkCore Npgsql.EntityFrameworkCore.PostgreSQL Microsoft.EntityFrameworkCore.Design; dotnet add src/HotelRestaurant.Api/HotelRestaurant.Api.csproj package Microsoft.AspNetCore.Authentication.JwtBearer FluentValidation.AspNetCore Swashbuckle.AspNetCore Serilog.AspNetCore AutoMapper.Extensions.Microsoft.DependencyInjection
 
+F:\1_Holel_Projects_Techno\Hotel_App_2026_Lattest\src\HotelRestaurant.Infrastructure\UnitOfWork\UnitOfWork.cs
+F:\1_Holel_Projects_Techno\Hotel_App_2026_Lattest\src\HotelRestaurant.Application\Services\Implementations\HotelService.cs
 
 Now First Design the User Interface for login, register and Dashboard/Home page in frontend after
 Frontend done we implement API to integrate with. We will used JWT Authentication and Solid Principle, Dry Principle, Repository Design Pattern, Singletone Design Pattern, UnitofWork framework.
@@ -586,3 +588,14 @@ So hotelwise Revenue,
 
 
 ======End 19th JULY 2026 =================================
+
+==========Start 23rd July 2026================================
+Hotel API and Hotel Entry Form is not there so how I get Hotel API call
+
+
+=========End 23rd July 2026 ============================
+
+=================2nd Aug 2026==========================
+Yes please do. And Create an Admin who can see all companies hotel. ANd Create One User with a Particular hotel. Give the Script and Add in the Registration Form. And Admin Can create new user also.
+
+-===============end 2nd Aug 2026 ======================

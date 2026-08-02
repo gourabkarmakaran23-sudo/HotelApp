@@ -16,6 +16,8 @@ export class UserRepositoryService {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, request);
   }
 
+  
+
   register(request: RegisterRequest): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/register`, request);
   }
