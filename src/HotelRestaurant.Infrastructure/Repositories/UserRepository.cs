@@ -25,5 +25,14 @@ public class UserRepository : GenericRepository<ApplicationUser>, IUserRepositor
     public async Task<bool> EmailExistsAsync(string email)
         => await _dbSet
             .AnyAsync(u => u.Email.ToLower() == email.ToLower());
+
+      public async Task<IReadOnlyList<ApplicationUser>> GetAllForUserListAsync()
+        => await _dbSet
+            .AsNoTracking()
+            .Where(user => !user.IsDeleted)
+            .Include(user => user.Company)
+            .Include(user => user.Hotel)
+            .OrderBy(user => user.FullName)
+            .ToListAsync();
 }
 }

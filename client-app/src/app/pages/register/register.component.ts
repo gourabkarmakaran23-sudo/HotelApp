@@ -69,7 +69,7 @@ export class RegisterComponent implements OnInit {
     const companyId = this.form.value.companyId ?? null;
     const hotelId = this.form.value.hotelId ?? null;
 
-    this.authService.register({
+    this.authService.createUser({
       userName: userName || email.split('@')[0],
       fullName,
       email,
@@ -79,7 +79,7 @@ export class RegisterComponent implements OnInit {
       companyId,
       hotelId
     }).subscribe({
-      next: () => this.router.navigate(['/login']),
+      next: () => this.router.navigate(['/admin/users']),
       error: (err) => {
         this.error = err?.error?.message ?? 'Unable to register. Please try again.';
         this.loading = false;

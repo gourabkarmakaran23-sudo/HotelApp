@@ -36,7 +36,7 @@ export class AppComponent implements OnDestroy {
 
   private shouldShowShell(url: string): boolean {
     const path = url.split(/[?#]/, 1)[0].replace(/\/$/, '');
-    return this.authService.isAuthenticated() && path !== '/login' && path !== '/register';
+    return this.authService.isAuthenticated() && path !== '/login';
   }
 
   onSidebarToggle(): void {

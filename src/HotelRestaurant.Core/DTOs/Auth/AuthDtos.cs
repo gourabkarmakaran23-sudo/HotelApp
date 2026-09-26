@@ -39,4 +39,15 @@ public record AuthResponseDto(
     int? ActiveCompanyId = null
 );
 
+public record UserListItemDto(
+    int Id,
+    string UserName,
+    string FullName,
+    string Email,
+    string Role,
+    string CompanyName,
+    string HotelName,
+    bool IsActive
+);
+
 }

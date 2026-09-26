@@ -2,8 +2,8 @@
   <section class="auth-panel">
     <div class="auth-header">
       <p class="eyebrow">SMARTLüth Hospitality</p>
-      <h1>Create your account</h1>
-      <p>Start managing hotel rooms, reservations, invoices, and restaurant orders with one secure portal.</p>
+      <h1>Create user</h1>
+      <p>Create an account and assign its role, company, and hotel access.</p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
@@ -60,11 +60,11 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit" [disabled]="loading">{{ loading ? 'Creating account...' : 'Create account' }}</button>
+        <button type="submit" [disabled]="loading">{{ loading ? 'Creating user...' : 'Create user' }}</button>
       </div>
 
       <p class="register-link">
-        Already registered? <a routerLink="/login">Sign in</a>
+        <a routerLink="/admin/users">Back to User List</a>
       </p>
 
       <p class="error-message" *ngIf="error">{{ error }}</p>
@@ -73,8 +73,8 @@
 
   <section class="auth-aside">
     <div class="aside-card">
-      <h2>Modern operations for modern hospitality</h2>
-      <p>Register now to enable centralized booking control, invoice generation, and restaurant order tracking.</p>
+      <h2>Account administration</h2>
+      <p>Assign each account the role and property scope required for its work.</p>
       <ul>
         <li>JWT authentication ready</li>
         <li>Maintenance-free room management</li>

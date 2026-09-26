@@ -13,6 +13,7 @@ namespace HotelRestaurant.Application.Services;
 /// </summary>
 public class AuthService : IAuthService
 {
+    private static readonly string[] AssignableRoles = ["SuperAdmin", "Admin", "User"];
     private readonly IUnitOfWork _unitOfWork;
     private readonly IJwtService _jwtService;
 
@@ -88,9 +89,11 @@ public class AuthService : IAuthService
         if (request.Password.Length < 8)
             return Fail("Password must be at least 8 characters.");
 
-        var normalizedRole = string.IsNullOrWhiteSpace(request.Role)
-            ? "User"
-            : request.Role.Trim();
+        var requestedRole = string.IsNullOrWhiteSpace(request.Role) ? "User" : request.Role.Trim();
+        var normalizedRole = AssignableRoles.FirstOrDefault(role =>
+            string.Equals(role, requestedRole, StringComparison.OrdinalIgnoreCase));
+        if (normalizedRole is null)
+            return Fail("Only SuperAdmin, Admin, and User roles can be created.");
 
         var canViewAllHotels = string.Equals(normalizedRole, "SuperAdmin", StringComparison.OrdinalIgnoreCase);
 
@@ -143,6 +146,21 @@ public class AuthService : IAuthService
 
         var token = _jwtService.GenerateToken(user);
         return Success(token, user, "Registration successful.", canViewAllHotels ? (int?)null : user.HotelId);
+    }
+
+    public async Task<IReadOnlyList<UserListItemDto>> GetUsersAsync()
+    {
+        var users = await _unitOfWork.ApplicationUsers.GetAllForUserListAsync();
+        return users.Select(user => new UserListItemDto(
+            user.Id,
+            user.UserName,
+            user.FullName,
+            user.Email,
+            user.Role,
+            user.Company?.Name ?? string.Empty,
+            user.Hotel?.Name ?? string.Empty,
+            user.IsActive
+        )).ToArray();
     }
 
     private static bool VerifyPassword(string password, string storedHash)

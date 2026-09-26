@@ -24,7 +24,19 @@ import { Dashboard2Component } from './pages/dashboard2/dashboard2.component';
 export const routes: Routes = [
   { path: '',           redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'login',      component: LoginComponent },
-  { path: 'register',   component: RegisterComponent },
+  { path: 'register', redirectTo: 'admin/users/create', pathMatch: 'full' },
+  {
+    path: 'admin/users/create',
+    component: RegisterComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['SuperAdmin'] }
+  },
+  {
+    path: 'admin/users',
+    loadComponent: () => import('./pages/user-list/user-list.component').then(m => m.UserListComponent),
+    canActivate: [AuthGuard],
+    data: { roles: ['SuperAdmin'] }
+  },
   {
     path: 'dashboard',
     component: DashboardComponent,

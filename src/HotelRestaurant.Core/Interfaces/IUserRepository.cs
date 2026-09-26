@@ -14,5 +14,6 @@ public interface IUserRepository : IGenericRepository<ApplicationUser>
 {
     Task<ApplicationUser?> GetByEmailAsync(string email);
     Task<bool>  EmailExistsAsync(string email);
+    Task<IReadOnlyList<ApplicationUser>> GetAllForUserListAsync();
 }
 }

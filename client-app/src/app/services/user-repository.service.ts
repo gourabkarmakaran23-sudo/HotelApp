@@ -4,6 +4,17 @@ import { Observable } from 'rxjs';
 import { apiBaseUrl } from '../app.config';
 import { LoginRequest, LoginResponse, RegisterRequest } from '../models/auth.models';
 
+export interface UserListItem {
+  id: number;
+  userName: string;
+  fullName: string;
+  email: string;
+  role: string;
+  companyName: string;
+  hotelName: string;
+  isActive: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,7 +29,11 @@ export class UserRepositoryService {
 
   
 
-  register(request: RegisterRequest): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/register`, request);
+  createUser(request: RegisterRequest): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/create-user`, request);
+  }
+
+  getUsers(): Observable<UserListItem[]> {
+    return this.http.get<UserListItem[]>(`${this.baseUrl}/users`);
   }
 }

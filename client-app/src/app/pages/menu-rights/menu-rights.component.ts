@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { MenuPermissionOption, MenuPermissionsService } from '../../services/menu-permissions.service';
 
 @Component({
   selector: 'app-menu-rights',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <section class="permission-page">
       <header class="page-header">
@@ -15,6 +16,7 @@ import { MenuPermissionOption, MenuPermissionsService } from '../../services/men
           <p>Assign which menus each role can access.</p>
         </div>
         <div class="header-actions">
+          <a class="create-user" routerLink="/admin/users">User List</a>
           <label class="role-select">
             Role
             <select [ngModel]="selectedRole" (ngModelChange)="selectRole($event)" name="role">
@@ -71,6 +73,7 @@ import { MenuPermissionOption, MenuPermissionsService } from '../../services/men
     .page-header p { margin: 6px 0 0; color: #687387; }
     .role-select { display: grid; gap: 6px; font-weight: 600; }
     .header-actions { display: flex; align-items: end; gap: 10px; }
+    .create-user { padding: 9px 16px; border-radius: 4px; background: #246b45; color: #fff; font-weight: 600; text-decoration: none; white-space: nowrap; }
     select { min-width: 180px; padding: 8px 10px; border: 1px solid #c9d1dd; border-radius: 4px; background: #fff; }
     .selection-count { margin: 14px 0 -6px; color: #687387; font-size: 13px; }
     .menu-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: 14px; padding: 18px 0; }

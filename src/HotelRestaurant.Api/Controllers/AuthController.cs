@@ -47,11 +47,12 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>Register a new user account.</summary>
-    /// <response code="201">Registration successful — returns token and user info.</response>
+    /// <summary>Create a new user account. SuperAdmin access is required.</summary>
+    /// <response code="201">User created successfully.</response>
     /// <response code="400">Validation failed or email already in use.</response>
+    /// <response code="403">The caller is not a SuperAdmin.</response>
     [HttpPost("register")]
-    [AllowAnonymous]
+    [Authorize(Roles = "SuperAdmin")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
@@ -71,27 +72,37 @@ public class AuthController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, result);
     }
 
-    /// <summary>Create a subordinate account for an authenticated Admin or SuperAdmin.</summary>
+    /// <summary>Create a user account. SuperAdmin access is required.</summary>
     [HttpPost("create-user")]
-    [Authorize(Roles = "Admin,SuperAdmin")]
+    [Authorize(Roles = "SuperAdmin")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateUserByAdmin([FromBody] RegisterRequestDto request)
     {
-        _logger.LogInformation("Admin user creation attempt for {Email}", request.Email);
+        _logger.LogInformation("SuperAdmin user creation attempt for {Email}", request.Email);
 
         var result = await _authService.RegisterAsync(request);
 
         if (!result.Success)
         {
-            _logger.LogWarning("Admin user creation failed for {Email}: {Message}",
+            _logger.LogWarning("SuperAdmin user creation failed for {Email}: {Message}",
                                request.Email, result.Message);
             return BadRequest(result);
         }
 
-        _logger.LogInformation("Admin created user: {Email}", request.Email);
+        _logger.LogInformation("SuperAdmin created user: {Email}", request.Email);
         return StatusCode(StatusCodes.Status201Created, result);
+    }
+
+    /// <summary>List user accounts. SuperAdmin access is required.</summary>
+    [HttpGet("users")]
+    [Authorize(Roles = "SuperAdmin")]
+    [ProducesResponseType(typeof(IReadOnlyList<UserListItemDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<IReadOnlyList<UserListItemDto>>> GetUsers()
+    {
+        return Ok(await _authService.GetUsersAsync());
     }
 
     /// <summary>Returns the current authenticated user's profile (requires JWT).</summary>

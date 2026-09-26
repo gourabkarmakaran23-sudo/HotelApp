@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
 import { LoginRequest, LoginResponse, RegisterRequest } from '../models/auth.models';
-import { UserRepositoryService } from './user-repository.service';
+import { UserListItem, UserRepositoryService } from './user-repository.service';
 import { HotelLookupDto, HotelService } from './hotel.service';
 import { HttpClient } from '@angular/common/http';
 import { MenuPermissionsService } from './menu-permissions.service';
@@ -39,8 +39,12 @@ export class AuthService {
     );
   }
 
-  register(request: RegisterRequest): Observable<void> {
-    return this.userRepository.register(request);
+  createUser(request: RegisterRequest): Observable<void> {
+    return this.userRepository.createUser(request);
+  }
+
+  getUsers(): Observable<UserListItem[]> {
+    return this.userRepository.getUsers();
   }
 
   logout(): void {

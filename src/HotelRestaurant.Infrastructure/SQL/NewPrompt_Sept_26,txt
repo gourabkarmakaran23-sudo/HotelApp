@@ -18,3 +18,11 @@ Prompt 4: Also Need a menu for Super Admin
 where Super Admin can assign menu fro ather User like Admin and User
 
 Prompt 5: Now Need Real Data I mean Database Data for Account Manu and Report Manu also want to used all master for all dropdown like Payment Method comes from Table not hardcoded. All Hardcoded dropdoen now should comes from real table only Understood?
+
+Prompt 6: In Login Form Create Account is
+not needed Instead Super Admin only can add
+new users for new Super Admin, Admin and User
+and others.
+
+Prompt 7: In Super Admin Menu I did not see User List to show User and Create User in the User List I did not see for Super Admin Role
+
