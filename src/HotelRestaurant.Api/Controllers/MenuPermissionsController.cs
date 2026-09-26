@@ -49,6 +49,31 @@ public sealed class MenuPermissionsController : ControllerBase
         return Ok(routes);
     }
 
+    [HttpGet("navigation")]
+    public async Task<ActionResult<IReadOnlyList<MenuPermissionOptionDto>>> GetNavigation(CancellationToken cancellationToken)
+    {
+        var menus = _context.ApplicationMenus.AsNoTracking();
+        if (!User.IsInRole("SuperAdmin"))
+        {
+            var roleName = GetRoleName();
+            if (roleName is null || !EditableRoles.Contains(roleName, StringComparer.OrdinalIgnoreCase))
+            {
+                return Ok(Array.Empty<MenuPermissionOptionDto>());
+            }
+
+            menus = menus.Where(menu => !menu.IsSuperAdminOnly && _context.RoleMenuPermissions
+                .Any(permission => permission.RoleName == roleName && permission.MenuId == menu.Id));
+        }
+
+        var navigation = await menus
+            .Where(menu => !menu.Route.Contains(":"))
+            .OrderBy(menu => menu.SortOrder)
+            .Select(menu => new MenuPermissionOptionDto(menu.Route, menu.Label, menu.Category, menu.SortOrder))
+            .ToListAsync(cancellationToken);
+
+        return Ok(navigation);
+    }
+
     [HttpGet("catalog")]
     [Authorize(Roles = "SuperAdmin")]
     public async Task<ActionResult<IReadOnlyList<MenuPermissionOptionDto>>> GetCatalog(CancellationToken cancellationToken)

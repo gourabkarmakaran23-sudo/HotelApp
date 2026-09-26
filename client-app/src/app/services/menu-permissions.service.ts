@@ -20,6 +20,10 @@ export class MenuPermissionsService {
     return this.http.get<string[]>(`${this.apiUrl}/current`);
   }
 
+  getNavigation(): Observable<MenuPermissionOption[]> {
+    return this.http.get<MenuPermissionOption[]>(`${this.apiUrl}/navigation`);
+  }
+
   getCatalog(): Observable<MenuPermissionOption[]> {
     return this.http.get<MenuPermissionOption[]>(`${this.apiUrl}/catalog`);
   }

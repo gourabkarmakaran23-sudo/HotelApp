@@ -16,3 +16,5 @@ Can we do it by table for SUper Admin all menus are comes and Other roles which 
 
 Prompt 4: Also Need a menu for Super Admin
 where Super Admin can assign menu fro ather User like Admin and User
+
+Prompt 5: Now Need Real Data I mean Database Data for Account Manu and Report Manu also want to used all master for all dropdown like Payment Method comes from Table not hardcoded. All Hardcoded dropdoen now should comes from real table only Understood?

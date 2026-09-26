@@ -15,6 +15,18 @@
   gap: 1rem;
 }
 
+.app-body.auth-body {
+  display: block;
+  min-height: 100vh;
+  padding: 0;
+  background: transparent;
+}
+
+.auth-body .app-main {
+  display: block;
+  min-height: 100vh;
+}
+
 @media (max-width: 768px) {
   .app-body {
     flex-direction: column;

@@ -1,12 +1,12 @@
-<app-header (sidebarToggle)="onSidebarToggle()"></app-header>
+<app-header *ngIf="showShell" (sidebarToggle)="onSidebarToggle()"></app-header>
 
-<div class="app-body">
-  <app-sidebar></app-sidebar>
+<div class="app-body" [class.auth-body]="!showShell">
+  <app-sidebar *ngIf="showShell"></app-sidebar>
 
   <main class="app-main">
-    <app-custom-alert></app-custom-alert>
+    <app-custom-alert *ngIf="showShell"></app-custom-alert>
     <router-outlet></router-outlet>
   </main>
 </div>
 
-<app-footer></app-footer>
+<app-footer *ngIf="showShell"></app-footer>
