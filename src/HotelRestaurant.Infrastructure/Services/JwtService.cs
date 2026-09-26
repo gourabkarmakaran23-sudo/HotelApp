@@ -28,8 +28,7 @@ public class JwtService : IJwtService
                              Encoding.UTF8.GetBytes(jwtSection["Key"] ?? "SuperSecretKey12345!Hotel2026JwtTokenSecret"));
         var creds      = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var canViewAllHotels = string.Equals(user.Role, "SuperAdmin", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase);
+        var canViewAllHotels = string.Equals(user.Role, "SuperAdmin", StringComparison.OrdinalIgnoreCase);
 
         var claims = new[]
         {
@@ -38,6 +37,7 @@ public class JwtService : IJwtService
             new Claim(ClaimTypes.Name,               user.FullName),
             new Claim(ClaimTypes.Role,               user.Role),
             new Claim("hotel_id",                   user.HotelId.ToString()),
+            new Claim("company_id",                 user.CompanyId.ToString()),
             new Claim("can_view_all_hotels",        canViewAllHotels ? "true" : "false"),
             new Claim(JwtRegisteredClaimNames.Jti,   Guid.NewGuid().ToString())
         };

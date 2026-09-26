@@ -20,6 +20,7 @@ export class CheckoutComponent implements OnInit {
   bookingNumber = '';
   guestName = '';
   roomNos = '';
+  bookingStatus = '';
   directCheckoutMode = false;
   searchQuery = '';
   searchResults: Array<{ bookingId: number; bookingNumber: string; guestName: string; roomNo: string; checkInDate: string; checkOutDate: string; bookingStatus: string }> = [];
@@ -237,6 +238,23 @@ export class CheckoutComponent implements OnInit {
     this.router.navigateByUrl('/checkin');
   }
 
+  onSearchKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.searchBooking();
+    }
+  }
+
+  private isAlreadyCheckedOut(status: string | null | undefined): boolean {
+    const normalized = String(status ?? '').toLowerCase();
+    return normalized.includes('checkedout') || normalized.includes('checked out') || normalized.includes('completed');
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.searchError = '';
+    this.searchResults = [];
+  }
+
   searchBooking(): void {
     const query = this.searchQuery.trim();
     this.searchError = '';
@@ -260,6 +278,14 @@ export class CheckoutComponent implements OnInit {
           bookingStatus: row.bookingStatus ?? ''
         }));
 
+        const closedResult = this.searchResults.find((row) => this.isAlreadyCheckedOut(row.bookingStatus));
+        if (closedResult) {
+          this.searchError = `Booking ${closedResult.bookingNumber || closedResult.bookingId} has already been checked out.`;
+          this.searchResults = [];
+          this.searching = false;
+          return;
+        }
+
         if (this.searchResults.length === 0) {
           this.searchError = 'No matching booking found. Try booking number or guest name.';
         } else if (this.searchResults.length === 1) {
@@ -278,6 +304,12 @@ export class CheckoutComponent implements OnInit {
   selectSearchResult(result: { bookingId: number; bookingNumber: string; guestName: string; roomNo: string; checkInDate: string; checkOutDate: string; bookingStatus: string }): void {
     if (!result.bookingId) {
       this.searchError = 'Selected booking has no valid ID.';
+      return;
+    }
+
+    if (this.isAlreadyCheckedOut(result.bookingStatus)) {
+      this.searchError = `Booking ${result.bookingNumber || result.bookingId} has already been checked out.`;
+      this.searchResults = [];
       return;
     }
 
@@ -458,6 +490,23 @@ export class CheckoutComponent implements OnInit {
         console.log('CheckoutComponent loadBookingDetails response', res);
         if (!res) {
           this.alertService.error('Unable to load booking details for checkout.');
+          return;
+        }
+
+        const bookingStatus = res.bookingStatus ?? res.status ?? this.bookingStatus;
+        this.bookingStatus = String(bookingStatus ?? '');
+
+        if (this.isAlreadyCheckedOut(this.bookingStatus)) {
+          this.bookingId = null;
+          this.bookingNumber = '';
+          this.guestName = '';
+          this.roomNos = '';
+          this.roomBills = [];
+          this.remainingDue = 0;
+          this.paymentEntries = [{ paymentMode: '', amount: 0, note: '' }];
+          this.updateBalance();
+          this.alertService.error(`Booking ${res.bookingNumber || bookingId} has already been checked out.`);
+          this.loadingBooking = false;
           return;
         }
 

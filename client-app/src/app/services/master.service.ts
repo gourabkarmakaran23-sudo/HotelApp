@@ -64,37 +64,37 @@ private readonly extendedBaseUrl = `${apiBaseUrl}/ExtendedMaster`; // নতু�
 
   //#region Commission Agent Management
   getAgents(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/agents`, this.getAuthHeaders());
+    return this.http.get<any[]>(`${this.baseUrl}/commission-agents`, this.getAuthHeaders());
   }
 
   createAgent(payload: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/agents`, payload, this.getAuthHeaders());
+    return this.http.post<any>(`${this.baseUrl}/commission-agents`, payload, this.getAuthHeaders());
   }
 
   updateAgent(id: number, payload: any): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/agents/${id}`, payload, this.getAuthHeaders());
+    return this.http.put<any>(`${this.baseUrl}/commission-agents/${id}`, payload, this.getAuthHeaders());
   }
 
   deleteAgent(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.baseUrl}/agents/${id}`, this.getAuthHeaders());
+    return this.http.delete<any>(`${this.baseUrl}/commission-agents/${id}`, this.getAuthHeaders());
   }
   //#endregion
 
   //#region Agent Commissions
   getAgentCommissions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/agent-commissions`, this.getAuthHeaders());
+    return this.http.get<any[]>(`${this.baseUrl}/commission-agents`, this.getAuthHeaders());
   }
 
   createAgentCommission(payload: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/agent-commissions`, payload, this.getAuthHeaders());
+    return this.http.post<any>(`${this.baseUrl}/commission-agents`, payload, this.getAuthHeaders());
   }
 
   updateAgentCommission(id: number, payload: any): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/agent-commissions/${id}`, payload, this.getAuthHeaders());
+    return this.http.put<any>(`${this.baseUrl}/commission-agents/${id}`, payload, this.getAuthHeaders());
   }
 
   deleteAgentCommission(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.baseUrl}/agent-commissions/${id}`, this.getAuthHeaders());
+    return this.http.delete<any>(`${this.baseUrl}/commission-agents/${id}`, this.getAuthHeaders());
   }
   //#endregion
 
@@ -200,10 +200,10 @@ private readonly extendedBaseUrl = `${apiBaseUrl}/ExtendedMaster`; // নতু�
   //#endregion
 
   //#region Complementary & Floor Plans
-  getComplementaries(): Observable<any[]> { return this.http.get<any[]>(`${this.baseUrl}/complementaries`, this.getAuthHeaders()); }
-  createComplementary(payload: any): Observable<number> { return this.http.post<number>(`${this.baseUrl}/complementaries`, payload, this.getAuthHeaders()); }
-  updateComplementary(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.baseUrl}/complementaries/${id}`, payload, this.getAuthHeaders()); }
-  deleteComplementary(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.baseUrl}/complementaries/${id}`, this.getAuthHeaders()); }
+  getComplementaries(): Observable<any[]> { return this.http.get<any[]>(`${this.baseUrl}/complementary`, this.getAuthHeaders()); }
+  createComplementary(payload: any): Observable<number> { return this.http.post<number>(`${this.baseUrl}/complementary`, payload, this.getAuthHeaders()); }
+  updateComplementary(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.baseUrl}/complementary/${id}`, payload, this.getAuthHeaders()); }
+  deleteComplementary(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.baseUrl}/complementary/${id}`, this.getAuthHeaders()); }
 
   getFloorPlans(): Observable<any[]> { return this.http.get<any[]>(`${this.baseUrl}/floor-plans`, this.getAuthHeaders()); }
   createFloorPlan(payload: any): Observable<number> { return this.http.post<number>(`${this.baseUrl}/floor-plans`, payload, this.getAuthHeaders()); }

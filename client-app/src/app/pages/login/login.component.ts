@@ -4,11 +4,6 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
-export interface HotelLookup {
-  id: number;
-  name: string;
-}
-
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -19,13 +14,11 @@ export interface HotelLookup {
 export class LoginComponent {
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    hotelId: [null as number | null]
+    password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
   error = '';
   loading = false;
-  availableHotels: HotelLookup[] = [];
 
   constructor(
     private readonly fb: FormBuilder,
@@ -44,18 +37,13 @@ export class LoginComponent {
 
   const email = this.form.value.email ?? '';
   const password = this.form.value.password ?? '';
-  const hotelId = this.form.value.hotelId ?? null;
 
   this.authService.login({
     email,
-    password,
-    ...(hotelId !== null && { selectedHotelId: hotelId }) // Only send selectedHotelId if selected
+    password
   }).subscribe({
-    next: (response: any) => {
-      // Get hotel ID from API response, fallback to user selection, or default to null
-      const activeHotel = response?.activeHotelId ?? hotelId ?? null;
-      
-      this.authService.setActiveHotel(activeHotel);
+    next: (response) => {
+      this.authService.setActiveHotel(response.activeHotelId ?? null);
       this.router.navigate(['/dashboard']);
     },
     error: (err) => {

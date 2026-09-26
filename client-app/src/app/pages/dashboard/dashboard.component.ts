@@ -8,7 +8,6 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import { DashboardService } from '../../services/dashboard.service';
-import { AuthService } from '../../services/auth.service';
 import { DashboardSummary, DashboardStats, RoomTypeBookingHistoryRow } from '../../models/dashboard.models';
 
 interface RoomOccupancy {
@@ -141,7 +140,6 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private readonly dashboardService: DashboardService,
-    private readonly authService: AuthService,
     private readonly router: Router
   ) {}
 
@@ -465,8 +463,4 @@ export class DashboardComponent implements OnInit {
     return today.toISOString().split('T')[0];
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
 }

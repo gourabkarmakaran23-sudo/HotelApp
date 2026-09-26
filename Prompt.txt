@@ -605,3 +605,21 @@ Can you help me to do that. So that everything should worked.
 
 
 -===============end 2nd Aug 2026 ======================
+
+
+=======14 Sept 2026=================================
+
+Company can have multiple hotels. So hotelwise Revenue,
+   COmpanywise Revenue(Profit/Loss), All Masters and 
+   Transaction should be Hotelwise, Hotelwise Login,
+   SuperAdmin LOgin who can see ALl Hotels
+
+Check All Master and All trasaction page and see 
+anythings need to change. Is This we can do a demo to a client.
+What changes we need to do to make it professional and client can 
+accept it.
+
+========14 Sept 2026 ===============================
+
+ SuperAdmin LOgin who can see ALl Hotels, But Admin/User can see particular hotel details na But I see all role see all companies and 
+ all hotels which was not good  I guess.

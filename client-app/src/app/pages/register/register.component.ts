@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { CompanyLookupDto, CompanyService } from '../../services/company.service';
 import { HotelLookupDto, HotelService } from '../../services/hotel.service';
 
 @Component({
@@ -20,22 +21,30 @@ export class RegisterComponent implements OnInit {
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', [Validators.required]],
     role: ['User', [Validators.required]],
+    companyId: [null as number | null],
     hotelId: [null as number | null]
   });
 
   error = '';
   loading = false;
+  availableCompanies: CompanyLookupDto[] = [];
   availableHotels: HotelLookupDto[] = [];
   roleOptions = ['SuperAdmin', 'Admin', 'User'];
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
+    private readonly companyService: CompanyService,
     private readonly hotelService: HotelService,
     private readonly router: Router
   ) {}
 
   ngOnInit(): void {
+    this.companyService.getLookup().subscribe({
+      next: (companies) => this.availableCompanies = companies,
+      error: () => this.availableCompanies = []
+    });
+
     this.hotelService.getLookup().subscribe({
       next: (hotels) => this.availableHotels = hotels,
       error: () => this.availableHotels = []
@@ -57,6 +66,7 @@ export class RegisterComponent implements OnInit {
     const password = this.form.value.password ?? '';
     const confirmPassword = this.form.value.confirmPassword ?? '';
     const role = this.form.value.role ?? 'User';
+    const companyId = this.form.value.companyId ?? null;
     const hotelId = this.form.value.hotelId ?? null;
 
     this.authService.register({
@@ -66,6 +76,7 @@ export class RegisterComponent implements OnInit {
       password,
       confirmPassword,
       role,
+      companyId,
       hotelId
     }).subscribe({
       next: () => this.router.navigate(['/login']),

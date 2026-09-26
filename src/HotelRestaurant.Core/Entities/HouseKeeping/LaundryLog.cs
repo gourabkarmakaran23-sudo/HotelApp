@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities.HouseKeeping
 {
-    public class LaundryLog
+    public class LaundryLog : IMultiHotelEntity
     {
         public int Id { get; set; }
+        public int HotelId { get; set; }
         [Required]
         public string InvoiceNo { get; set; }
         [Required]

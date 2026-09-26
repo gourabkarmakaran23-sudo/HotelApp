@@ -109,6 +109,23 @@ export class BookingListComponent implements OnInit {
       headerName: 'Total Amt',
       width: 110,
       valueFormatter: (p: ValueFormatterParams) => p.value ? `₹${p.value}` : '₹0'
+    },
+    {
+      field: 'action',
+      headerName: 'Action',
+      width: 120,
+      pinned: 'right',
+      cellRenderer: (params: ICellRendererParams) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = 'Checkout';
+        button.className = 'booking-list-action-btn';
+        button.addEventListener('click', (event) => {
+          event.stopPropagation();
+          this.openDirectCheckout(params.data);
+        });
+        return button;
+      }
     }
   ];
 
@@ -335,6 +352,28 @@ onPaginationChanged(): void {
 
   openNewBooking(): void {
     this.router.navigate(['/booking-engine']);
+  }
+
+  openDirectCheckout(row: any): void {
+    if (!row) {
+      return;
+    }
+
+    const status = String(row.bookingStatus ?? row.status ?? '').toLowerCase();
+    if (status.includes('checkedout') || status.includes('checked out') || status.includes('completed')) {
+      alert(`Booking ${row.bookingNumber || row.id} has already been checked out.`);
+      return;
+    }
+
+    const bookingId = row.bookingId ?? row.id;
+    if (!bookingId) {
+      return;
+    }
+
+    this.router.navigate(['/direct-checkout'], {
+      queryParams: { bookingId },
+      state: { row, bookingId }
+    });
   }
 
   formatDateTime(isoStr: string): string {

@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities.HouseKeeping
 {
     // ৪. Laundry Payment Ledger Entity
-    public class LaundryPayment
+    public class LaundryPayment : IMultiHotelEntity
     {
         public int Id { get; set; }
+        public int HotelId { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

@@ -7,6 +7,7 @@ import { apiBaseUrl } from '../app.config';
 export interface HotelLookupDto {
   id: number;
   name: string;
+  companyId: number;
 }
 
 export interface HotelDto {
@@ -21,6 +22,7 @@ export interface HotelDto {
 }
 
 export interface CreateHotelDto {
+  companyId: number;
   name: string;
   address: string;
   city: string;
@@ -34,12 +36,15 @@ export interface CreateHotelDto {
   providedIn: 'root'
 })
 export class HotelService {
-  private readonly apiUrl = `${apiBaseUrl}/api/hotels`;
+  private readonly apiUrl = `${apiBaseUrl}/hotels`;
 
   constructor(private readonly http: HttpClient) {}
 
-  getLookup(): Observable<HotelLookupDto[]> {
-    return this.http.get<HotelLookupDto[]>(`${this.apiUrl}/lookup`);
+  getLookup(companyId?: number): Observable<HotelLookupDto[]> {
+    const url = companyId === undefined
+      ? `${this.apiUrl}/lookup`
+      : `${this.apiUrl}/lookup?companyId=${companyId}`;
+    return this.http.get<HotelLookupDto[]>(url);
   }
 
   getAll(): Observable<HotelDto[]> {

@@ -9,13 +9,26 @@ namespace HotelRestaurant.Infrastructure.Data
         {
             await context.Database.MigrateAsync();
 
-            if (await context.Hotels.AnyAsync())
+            if (await context.Companies.AnyAsync() || await context.Hotels.AnyAsync())
             {
                 return;
             }
 
+            var company = new Company
+            {
+                Name = "Azure Group",
+                LegalRegistrationNumber = "REG-AZ-1001",
+                Address = "10 Corporate Avenue",
+                City = "Harmony",
+                Country = "Utopia",
+                Phone = "+1-555-0001",
+                Email = "admin@azuregroup.example",
+                IsActive = true
+            };
+
             var hotel = new Hotel
             {
+                Company = company,
                 Name = "Azure Lake Hotel",
                 Address = "125 Lake View Boulevard",
                 City = "Harmony",
@@ -150,6 +163,7 @@ namespace HotelRestaurant.Infrastructure.Data
                 new InventoryItem { Name = "Fresh Salmon Fillets", Category = "Seafood", QuantityOnHand = 15m, Unit = InventoryUnit.Kilogram, ReorderLevel = 3m, CostPrice = 12.00m }
             };
 
+            context.Companies.Add(company);
             context.Hotels.Add(hotel);
             context.Rooms.AddRange(rooms);
             context.Employees.Add(employee);

@@ -5,39 +5,47 @@
     </button>
     <div class="brand">
       <span class="brand-icon material-icons">hotel</span>
-      <span class="brand-name">StayLux</span>
+      <div class="brand-text">
+        <span class="brand-name">StayLux</span>
+        <span class="brand-subtitle">Enterprise</span>
+      </div>
     </div>
   </div>
 
-  <nav class="header-nav">
-    <a class="nav-link" routerLink="/website" routerLinkActive="active">
-      <span class="material-icons">language</span>
-      Website
+  <nav class="header-nav" *ngIf="isAuthenticated">
+    <a class="nav-link" *ngIf="canViewCompanies" routerLink="/companies" routerLinkActive="active">
+      <span class="material-icons">business</span>
+      Companies
     </a>
-    <a class="nav-link highlight" routerLink="/customer-invoice" routerLinkActive="active">
-      <span class="material-icons">receipt_long</span>
-      Customer Invoice
+    <a class="nav-link highlight" routerLink="/dashboard" routerLinkActive="active">
+      <span class="material-icons">dashboard</span>
+      Dashboard
     </a>
-    <a class="nav-link primary" routerLink="/booking-report" routerLinkActive="active">
-      <span class="material-icons">bar_chart</span>
-      Booking Report
+    <a class="nav-link primary" *ngIf="canViewBookings" routerLink="/booking-list" routerLinkActive="active">
+      <span class="material-icons">event_available</span>
+      Bookings
     </a>
     <button class="icon-btn"><span class="material-icons">grid_view</span></button>
     <button class="icon-btn"><span class="material-icons">wifi</span></button>
     <button class="icon-btn"><span class="material-icons">settings</span></button>
   </nav>
 
-  <div class="header-right">
+  <div class="header-right" *ngIf="isAuthenticated">
+    <app-company-switcher></app-company-switcher>
+    <app-hotel-switcher></app-hotel-switcher>
     <div class="clock">{{ currentTime }}</div>
     <div class="avatar-wrap">
       <button class="avatar-btn" (click)="toggleUserMenu()">
         <span class="material-icons">account_circle</span>
       </button>
       <div class="user-menu" *ngIf="showUserMenu">
-        <button class="user-menu-item">
-          <span class="material-icons">person</span> Profile
+        <button class="user-menu-item" *ngIf="canViewCompanies" routerLink="/companies">
+          <span class="material-icons">business</span> Companies
         </button>
-        <button class="user-menu-item danger">
+        <button class="user-menu-item" *ngIf="canViewCompanies" routerLink="/hotels">
+          <span class="material-icons">hotel</span> Hotels
+        </button>
+        <button class="user-menu-item danger" (click)="logout()">
           <span class="material-icons">logout</span> Logout
         </button>
       </div>

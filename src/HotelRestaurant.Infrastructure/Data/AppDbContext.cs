@@ -11,7 +11,10 @@ namespace HotelRestaurant.Infrastructure.Data
         {
         }
 
+        public DbSet<Company> Companies => Set<Company>();
         public DbSet<Hotel> Hotels => Set<Hotel>();
+        public DbSet<ApplicationMenu> ApplicationMenus => Set<ApplicationMenu>();
+        public DbSet<RoleMenuPermission> RoleMenuPermissions => Set<RoleMenuPermission>();
         public DbSet<Room> Rooms => Set<Room>();
         public DbSet<RoomTypes> RoomTypes => Set<RoomTypes>();
 
@@ -169,6 +172,17 @@ namespace HotelRestaurant.Infrastructure.Data
                 */
             });
 
+            modelBuilder.Entity<Company>(entity =>
+            {
+                entity.Property(c => c.Name).IsRequired().HasMaxLength(150);
+                entity.Property(c => c.LegalRegistrationNumber).HasMaxLength(100);
+                entity.Property(c => c.Address).HasMaxLength(250);
+                entity.Property(c => c.City).HasMaxLength(100);
+                entity.Property(c => c.Country).HasMaxLength(100);
+                entity.Property(c => c.Phone).HasMaxLength(30);
+                entity.Property(c => c.Email).HasMaxLength(150);
+            });
+
             modelBuilder.Entity<Hotel>(entity =>
             {
                 entity.Property(h => h.Name).IsRequired().HasMaxLength(150);
@@ -178,6 +192,10 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.Property(h => h.Phone).HasMaxLength(30);
                 entity.Property(h => h.Email).HasMaxLength(150);
                 entity.Property(h => h.Rating).HasPrecision(3, 2);
+                entity.HasOne(h => h.Company)
+                    .WithMany(c => c.Hotels)
+                    .HasForeignKey(h => h.CompanyId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Room>(entity =>
@@ -210,7 +228,37 @@ namespace HotelRestaurant.Infrastructure.Data
                 entity.Property(u => u.Role).IsRequired().HasMaxLength(50);
                 entity.HasIndex(u => u.Email).IsUnique();
                 entity.HasIndex(u => u.UserName).IsUnique();
+                entity.HasOne(u => u.Hotel)
+                    .WithMany()
+                    .HasForeignKey(u => u.HotelId)
+                    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(u => u.Company)
+                    .WithMany()
+                    .HasForeignKey(u => u.CompanyId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
+
+            modelBuilder.Entity<ApplicationMenu>(entity =>
+            {
+                entity.ToTable("ApplicationMenus");
+                entity.HasKey(menu => menu.Id);
+                entity.Property(menu => menu.Route).IsRequired().HasMaxLength(150);
+                entity.Property(menu => menu.Label).IsRequired().HasMaxLength(100);
+                entity.Property(menu => menu.Category).IsRequired().HasMaxLength(80);
+                entity.HasIndex(menu => menu.Route).IsUnique();
+            });
+
+            modelBuilder.Entity<RoleMenuPermission>(entity =>
+            {
+                entity.ToTable("RoleMenuPermissions");
+                entity.HasKey(permission => new { permission.RoleName, permission.MenuId });
+                entity.Property(permission => permission.RoleName).HasMaxLength(50);
+                entity.HasOne(permission => permission.Menu)
+                    .WithMany(menu => menu.RolePermissions)
+                    .HasForeignKey(permission => permission.MenuId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             modelBuilder.Entity<ReservationRoom>()
                 .HasOne(x => x.Booking)
                 .WithMany(x => x.ReservationRooms)

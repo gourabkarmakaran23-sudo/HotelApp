@@ -59,6 +59,8 @@ builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 // ── 3. Application Services ───────────────────────────────────────────────────
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<IHotelService, HotelService>();
 
 // ── 4. JWT Service (Singleton — stateless, thread-safe) ──────────────────────
 builder.Services.AddSingleton<IJwtService, JwtService>();

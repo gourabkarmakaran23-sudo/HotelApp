@@ -48,6 +48,7 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
             CancellationPolicies = new GenericRepository<CancellationPolicy>(_context, _httpContextAccessor);
             Amenities = new GenericRepository<Amenity>(_context, _httpContextAccessor);
             #endregion
+            Companies = new GenericRepository<Company>(_context, _httpContextAccessor);
             Hotels = new GenericRepository<Hotel>(_context, _httpContextAccessor);
             Rooms = new GenericRepository<Room>(_context, _httpContextAccessor);
             RoomTypes = new GenericRepository<RoomTypes>(_context, _httpContextAccessor);
@@ -108,6 +109,7 @@ namespace HotelRestaurant.Infrastructure.UnitOfWork
         public IGenericRepository<BookingDocument> BookingDocuments { get; }
 
         private IUserRepository? _users;
+        public IGenericRepository<Company> Companies { get; }
         public IGenericRepository<Hotel> Hotels { get; }
         public IGenericRepository<Room> Rooms { get; }
         public IGenericRepository<RoomTypes> RoomTypes { get; }

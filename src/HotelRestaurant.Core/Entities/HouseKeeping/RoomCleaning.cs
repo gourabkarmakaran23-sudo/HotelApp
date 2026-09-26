@@ -4,15 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HotelRestaurant.Core.Interfaces;
 
 namespace HotelRestaurant.Core.Entities.HouseKeeping
 {
     // ১. Room Cleaning Log Entity
    // [Table("roomcleanings")]
    [Table("roomcleanings")]
-    public class RoomCleaning
+    public class RoomCleaning : IMultiHotelEntity
     {
         public int Id { get; set; }
+        public int HotelId { get; set; }
         [Required]
         public string Name { get; set; } // Housekeeper name
         [Required]

@@ -1,7 +1,12 @@
+using HotelRestaurant.Core.Interfaces;
+
 namespace HotelRestaurant.Core.Entities
 {
-    public class Hotel : BaseEntity
+    public class Hotel : BaseEntity, IMultiCompanyEntity
     {
+        public int CompanyId { get; set; }
+        public Company? Company { get; set; }
+
         public string Name { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;

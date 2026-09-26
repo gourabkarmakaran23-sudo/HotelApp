@@ -111,6 +111,43 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.ToTable("Amenities");
                 });
 
+            modelBuilder.Entity("HotelRestaurant.Core.Entities.ApplicationMenu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<bool>("IsSuperAdminOnly")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Route")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Route")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationMenus", (string)null);
+                });
+
             modelBuilder.Entity("HotelRestaurant.Core.Entities.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
@@ -118,6 +155,9 @@ namespace HotelRestaurant.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -159,6 +199,8 @@ namespace HotelRestaurant.Infrastructure.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -543,6 +585,66 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.ToTable("CommissionAgents");
                 });
 
+            modelBuilder.Entity("HotelRestaurant.Core.Entities.Company", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LegalRegistrationNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companies");
+                });
+
             modelBuilder.Entity("HotelRestaurant.Core.Entities.Complementary", b =>
                 {
                     b.Property<int>("Id")
@@ -849,6 +951,9 @@ namespace HotelRestaurant.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Country")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -884,6 +989,8 @@ namespace HotelRestaurant.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.ToTable("Hotels");
                 });
 
@@ -894,6 +1001,9 @@ namespace HotelRestaurant.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -922,6 +1032,9 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.Property<string>("Comments")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("InLaundry")
                         .HasColumnType("integer");
@@ -991,6 +1104,9 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.Property<decimal>("DueAmount")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("HotelId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("InvoiceNo")
                         .IsRequired()
                         .HasColumnType("text");
@@ -1027,6 +1143,9 @@ namespace HotelRestaurant.Infrastructure.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -2003,6 +2122,22 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.ToTable("ReservationRooms");
                 });
 
+            modelBuilder.Entity("HotelRestaurant.Core.Entities.RoleMenuPermission", b =>
+                {
+                    b.Property<string>("RoleName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("MenuId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("RoleName", "MenuId");
+
+                    b.HasIndex("MenuId");
+
+                    b.ToTable("RoleMenuPermissions", (string)null);
+                });
+
             modelBuilder.Entity("HotelRestaurant.Core.Entities.Room", b =>
                 {
                     b.Property<int>("Id")
@@ -2144,6 +2279,9 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
@@ -2349,11 +2487,19 @@ namespace HotelRestaurant.Infrastructure.Migrations
 
             modelBuilder.Entity("HotelRestaurant.Core.Entities.ApplicationUser", b =>
                 {
+                    b.HasOne("HotelRestaurant.Core.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("HotelRestaurant.Core.Entities.Hotel", "Hotel")
                         .WithMany()
                         .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Company");
 
                     b.Navigation("Hotel");
                 });
@@ -2474,6 +2620,17 @@ namespace HotelRestaurant.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Hotel");
+                });
+
+            modelBuilder.Entity("HotelRestaurant.Core.Entities.Hotel", b =>
+                {
+                    b.HasOne("HotelRestaurant.Core.Entities.Company", "Company")
+                        .WithMany("Hotels")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("HotelRestaurant.Core.Entities.InventoryItem", b =>
@@ -2761,6 +2918,17 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.Navigation("Room");
                 });
 
+            modelBuilder.Entity("HotelRestaurant.Core.Entities.RoleMenuPermission", b =>
+                {
+                    b.HasOne("HotelRestaurant.Core.Entities.ApplicationMenu", "Menu")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Menu");
+                });
+
             modelBuilder.Entity("HotelRestaurant.Core.Entities.Room", b =>
                 {
                     b.HasOne("HotelRestaurant.Core.Entities.Hotel", "Hotel")
@@ -2859,6 +3027,11 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.Navigation("Hotel");
                 });
 
+            modelBuilder.Entity("HotelRestaurant.Core.Entities.ApplicationMenu", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
             modelBuilder.Entity("HotelRestaurant.Core.Entities.Booking", b =>
                 {
                     b.Navigation("BookingGuests");
@@ -2868,6 +3041,11 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("ReservationRooms");
+                });
+
+            modelBuilder.Entity("HotelRestaurant.Core.Entities.Company", b =>
+                {
+                    b.Navigation("Hotels");
                 });
 
             modelBuilder.Entity("HotelRestaurant.Core.Entities.Guest", b =>

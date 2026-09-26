@@ -11,13 +11,20 @@
   <div *ngIf="directCheckoutMode && !bookingId" class="direct-checkout-search">
     <p>Direct Checkout works best when you search for an existing booking before loading checkout details.</p>
     <div class="search-row">
-      <input type="text" [(ngModel)]="searchQuery" placeholder="Search by Booking No or Guest Name" class="search-input" />
-      <button class="btn btn-search" type="button" (click)="searchBooking()" [disabled]="searching">Search</button>
+      <input type="text" [(ngModel)]="searchQuery" (keydown)="onSearchKeydown($event)" placeholder="Search by Booking No or Guest Name" class="search-input" />
+      <button class="btn btn-search" type="button" (click)="searchBooking()" [disabled]="searching">{{ searching ? 'Searching...' : 'Search' }}</button>
+      <button class="btn btn-clear" type="button" (click)="clearSearch()" *ngIf="searchQuery || searchResults.length > 0 || searchError">Clear</button>
     </div>
     <div *ngIf="searchError" class="alert alert-error">{{ searchError }}</div>
     <div *ngIf="searchResults.length > 0" class="search-results">
       <div class="search-result-item" *ngFor="let result of searchResults" (click)="selectSearchResult(result)">
-        <strong>{{ result.bookingNumber }}</strong> — {{ result.guestName }} — {{ result.roomNo }} — {{ result.checkInDate }} to {{ result.checkOutDate }}
+        <div class="result-header">
+          <strong>{{ result.bookingNumber }}</strong>
+          <span class="status-pill" *ngIf="result.bookingStatus">{{ result.bookingStatus }}</span>
+        </div>
+        <div class="result-meta">Guest: {{ result.guestName }}</div>
+        <div class="result-meta">Room: {{ result.roomNo }}</div>
+        <div class="result-meta">Stay: {{ result.checkInDate }} to {{ result.checkOutDate }}</div>
       </div>
     </div>
   </div>

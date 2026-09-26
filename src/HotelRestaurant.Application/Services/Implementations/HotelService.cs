@@ -23,7 +23,8 @@ namespace HotelRestaurant.Application.Services.Implementations
                 .Select(h => new HotelLookupDto
                 {
                     Id = h.Id,
-                    Name = h.Name
+                    Name = h.Name,
+                    CompanyId = h.CompanyId
                 });
         }
 
@@ -45,8 +46,20 @@ namespace HotelRestaurant.Application.Services.Implementations
 
         public async Task<HotelDto> CreateAsync(CreateHotelDto dto)
         {
+            if (dto.CompanyId <= 0)
+            {
+                throw new InvalidOperationException("A valid company is required to create a hotel.");
+            }
+
+            var company = await _unitOfWork.Companies.GetByIdAsync(dto.CompanyId);
+            if (company == null || company.IsDeleted)
+            {
+                throw new InvalidOperationException("The selected company does not exist.");
+            }
+
             var hotel = new HotelRestaurant.Core.Entities.Hotel
             {
+                CompanyId = dto.CompanyId,
                 Name = dto.Name,
                 Address = dto.Address,
                 City = dto.City,
@@ -65,6 +78,7 @@ namespace HotelRestaurant.Application.Services.Implementations
         private static HotelDto MapToDto(HotelRestaurant.Core.Entities.Hotel hotel) => new()
         {
             Id = hotel.Id,
+            CompanyId = hotel.CompanyId,
             Name = hotel.Name,
             Address = hotel.Address,
             City = hotel.City,

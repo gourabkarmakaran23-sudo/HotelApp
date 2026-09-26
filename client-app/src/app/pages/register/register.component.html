@@ -43,12 +43,20 @@
         </div>
 
         <div class="form-group half-width">
-          <label for="hotelId">Hotel</label>
-          <select id="hotelId" formControlName="hotelId">
-            <option [value]="null">All Properties (SuperAdmin)</option>
-            <option *ngFor="let hotel of availableHotels" [value]="hotel.id">{{ hotel.name }}</option>
+          <label for="companyId">Company</label>
+          <select id="companyId" formControlName="companyId">
+            <option [value]="null">Select company</option>
+            <option *ngFor="let company of availableCompanies" [value]="company.id">{{ company.name }}</option>
           </select>
         </div>
+      </div>
+
+      <div class="form-group">
+        <label for="hotelId">Hotel</label>
+        <select id="hotelId" formControlName="hotelId">
+          <option [value]="null">All Properties (SuperAdmin)</option>
+          <option *ngFor="let hotel of availableHotels" [value]="hotel.id">{{ hotel.name }}</option>
+        </select>
       </div>
 
       <div class="form-actions">

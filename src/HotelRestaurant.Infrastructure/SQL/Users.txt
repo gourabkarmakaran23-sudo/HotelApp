@@ -1,0 +1,14 @@
+Role	SuperAdmin    
+Username superadmin
+Email    superadmin@smartluth.com
+Password   Super@123
+---------------------
+Role       Admin
+Username   admin
+Email      admin@smartluth.com
+Pass       Admin@123
+--------------------------
+Role      User
+Username  hoteluser
+Email     user@smartluth.com
+Password  User@123

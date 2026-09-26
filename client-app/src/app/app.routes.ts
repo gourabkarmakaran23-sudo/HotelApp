@@ -21,8 +21,6 @@ import { LaundryComponent } from './pages/house-keeping/laundry/laundry.componen
 import { LaundryPaymentComponent } from './pages/house-keeping/laundry-payment/laundry-payment.component';
 import { Dashboard2Component } from './pages/dashboard2/dashboard2.component';
 
-
-
 export const routes: Routes = [
   { path: '',           redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'login',      component: LoginComponent },
@@ -35,7 +33,26 @@ export const routes: Routes = [
   {
     path: 'dashboard2',
     component: Dashboard2Component,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: { roles: ['SuperAdmin'] }
+  },
+  {
+    path: 'companies',
+    loadComponent: () => import('./pages/companies/company-list.component').then(m => m.CompanyListComponent),
+    canActivate: [AuthGuard],
+    data: { roles: ['SuperAdmin'] }
+  },
+  {
+    path: 'hotels',
+    loadComponent: () => import('./pages/hotels/hotel-list.component').then(m => m.HotelListComponent),
+    canActivate: [AuthGuard],
+    data: { roles: ['SuperAdmin'] }
+  },
+  {
+    path: 'admin/menu-rights',
+    loadComponent: () => import('./pages/menu-rights/menu-rights.component').then(m => m.MenuRightsComponent),
+    canActivate: [AuthGuard],
+    data: { roles: ['SuperAdmin'] }
   },
   {
     path: 'booking-list',
@@ -273,6 +290,7 @@ export const routes: Routes = [
   //#region House Keeping
 {
     path: 'housekeeping',
+    canActivateChild: [AuthGuard],
     children: [
       { path: 'assign-room-cleaning', component: AssignRoomCleaningComponent },
       { path: 'room-cleaning', component: RoomCleaningComponent },

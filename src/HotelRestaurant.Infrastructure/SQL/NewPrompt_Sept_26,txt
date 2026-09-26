@@ -1,0 +1,18 @@
+Prompt 1:  In Login Where Select Company Dropdown
+comes in Login Role. I told you na Super Admin
+can see all Companies and All Hotels Details with all combined Reports.
+But Admin can see only Assigned Company and Hotels and Users can see only one COmpany or One Hotel.
+
+1 Company can have multiple hotels. So hotelwise Revenue,
+   COmpanywise Revenue(Profit/Loss), All Masters and 
+   Transaction should be Hotelwise, Hotelwise Login,
+   SuperAdmin LOgin who can see ALl Hotels,
+
+Prompt 2: 
+Where their are 2 Logout button tell me?
+
+Prompt 3:
+Can we do it by table for SUper Admin all menus are comes and Other roles which menu are assigned that comes
+
+Prompt 4: Also Need a menu for Super Admin
+where Super Admin can assign menu fro ather User like Admin and User

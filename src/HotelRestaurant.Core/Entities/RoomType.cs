@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using HotelRestaurant.Core.Interfaces;
 namespace HotelRestaurant.Core.Entities
 {
-    public class RoomTypes:BaseEntity
+    public class RoomTypes:BaseEntity, IMultiHotelEntity
     {
+        public int HotelId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
 

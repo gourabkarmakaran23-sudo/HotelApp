@@ -37,30 +37,41 @@ public class AuthService : IAuthService
         if (!VerifyPassword(request.Password, user.PasswordHash))
             return Fail("Invalid email or password.");
 
+        var isSuperAdmin = string.Equals(user.Role, "SuperAdmin", StringComparison.OrdinalIgnoreCase);
+        if (!isSuperAdmin && request.CompanyId.HasValue && request.CompanyId.Value != user.CompanyId)
+            return Fail("This account cannot access the selected company.");
+
         if (request.SelectedHotelId.HasValue && request.SelectedHotelId.Value > 0)
         {
             var selectedHotel = await _unitOfWork.Hotels.GetByIdAsync(request.SelectedHotelId.Value);
             if (selectedHotel is null || selectedHotel.IsDeleted)
                 return Fail("Selected hotel is invalid.");
 
-            var canViewAllHotels = string.Equals(user.Role, "SuperAdmin", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase);
-
-            if (!canViewAllHotels && user.HotelId != request.SelectedHotelId.Value)
+            if (!isSuperAdmin && user.HotelId != request.SelectedHotelId.Value)
             {
                 return Fail("This account cannot access the selected hotel.");
+            }
+
+            if (request.CompanyId.HasValue && request.CompanyId.Value > 0 && selectedHotel.CompanyId != request.CompanyId.Value)
+            {
+                return Fail("The selected hotel does not belong to the selected company.");
             }
         }
 
         var effectiveHotelId = request.SelectedHotelId.HasValue && request.SelectedHotelId.Value > 0
             ? request.SelectedHotelId.Value
-            : (string.Equals(user.Role, "SuperAdmin", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase)
+            : isSuperAdmin
                 ? (int?)null
-                : user.HotelId);
+                : user.HotelId;
+
+        var effectiveCompanyId = request.CompanyId.HasValue && request.CompanyId.Value > 0
+            ? request.CompanyId.Value
+            : isSuperAdmin
+                ? (int?)null
+                : user.CompanyId;
 
         var token = _jwtService.GenerateToken(user);
-        return Success(token, user, "Login successful.", effectiveHotelId);
+        return Success(token, user, "Login successful.", effectiveHotelId, effectiveCompanyId);
     }
 
     // ── Register ──────────────────────────────────────────────────────────────
@@ -81,8 +92,7 @@ public class AuthService : IAuthService
             ? "User"
             : request.Role.Trim();
 
-        var canViewAllHotels = string.Equals(normalizedRole, "SuperAdmin", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(normalizedRole, "Admin", StringComparison.OrdinalIgnoreCase);
+        var canViewAllHotels = string.Equals(normalizedRole, "SuperAdmin", StringComparison.OrdinalIgnoreCase);
 
         if (!canViewAllHotels && (request.HotelId is null || request.HotelId <= 0))
             return Fail("A valid hotel is required for account registration.");
@@ -93,6 +103,15 @@ public class AuthService : IAuthService
             if (existingHotel is null || existingHotel.IsDeleted)
                 return Fail("The selected hotel does not exist.");
         }
+
+        var companyId = request.CompanyId.HasValue && request.CompanyId.Value > 0
+            ? request.CompanyId.Value
+            : (request.HotelId.HasValue && request.HotelId.Value > 0
+                ? (await _unitOfWork.Hotels.GetByIdAsync(request.HotelId.Value))?.CompanyId ?? 0
+                : 0);
+
+        if (companyId <= 0 && !canViewAllHotels)
+            return Fail("A valid company is required for account registration.");
 
         if (await _unitOfWork.ApplicationUsers.EmailExistsAsync(request.Email.Trim()))
             return Fail("An account with this email already exists.");
@@ -114,6 +133,7 @@ public class AuthService : IAuthService
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             Role         = normalizedRole,
             HotelId      = assignedHotelId,
+            CompanyId    = companyId > 0 ? companyId : (await _unitOfWork.Hotels.GetByIdAsync(assignedHotelId))?.CompanyId ?? 0,
             IsActive     = true,
             CreatedAt    = DateTime.UtcNow
         };
@@ -180,7 +200,7 @@ public class AuthService : IAuthService
     private static AuthResponseDto Fail(string message)
         => new(Success: false, Message: message);
 
-    private static AuthResponseDto Success(string token, ApplicationUser user, string message, int? activeHotelId = null)
+    private static AuthResponseDto Success(string token, ApplicationUser user, string message, int? activeHotelId = null, int? activeCompanyId = null)
         => new(
             Success: true,
             Message: message,
@@ -189,6 +209,7 @@ public class AuthService : IAuthService
             FullName: user.FullName,
             Email:   user.Email,
             Role:    user.Role,
-            ActiveHotelId: activeHotelId
+            ActiveHotelId: activeHotelId,
+            ActiveCompanyId: activeCompanyId
         );
 }

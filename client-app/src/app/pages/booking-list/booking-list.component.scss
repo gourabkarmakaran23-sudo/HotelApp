@@ -511,3 +511,19 @@ $row-hover:     #eef2ff;
   color: #065f46;
   font-family: 'Courier New', monospace;
 }
+
+::ng-deep .booking-list-action-btn {
+  background: #2563eb;
+  color: #ffffff;
+  border: 1px solid #2563eb;
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #1d4ed8;
+  }
+}

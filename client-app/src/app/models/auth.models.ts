@@ -13,20 +13,16 @@ export interface LoginRequest {
   email: string;
   password: string;
   selectedHotelId?: number | null;
+  companyId?: number | null;
 }
 
 // Define your API Response model
 export interface LoginResponse {
   token: string;
   activeHotelId?: number | null;
+  activeCompanyId?: number | null;
   // include other properties returned by your API (e.g. userId, email, roles)
 }
-// export interface RegisterRequest {
-//   name: string;
-//   email: string;
-//   password: string;
-//   confirmPassword: string;
-// }
 
 export interface RegisterRequest {
   userName: string;
@@ -36,4 +32,5 @@ export interface RegisterRequest {
   confirmPassword?: string;
   role?: string;
   hotelId?: number | null;
+  companyId?: number | null;
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CompanyLookupDto, CompanyService } from '../../services/company.service';
 import { HotelService, HotelDto, CreateHotelDto } from '../../services/hotel.service';
 
 @Component({
@@ -21,12 +22,26 @@ import { HotelService, HotelDto, CreateHotelDto } from '../../services/hotel.ser
         <form [formGroup]="form" (ngSubmit)="saveHotel()">
           <div class="form-row">
             <div class="form-group">
+              <label>Company</label>
+              <select formControlName="companyId">
+                <option [value]="null">Select company</option>
+                <option *ngFor="let company of companies" [value]="company.id">{{ company.name }}</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label>Hotel Name</label>
               <input formControlName="name" placeholder="Grand Luxe Hotel" />
             </div>
+          </div>
+
+          <div class="form-row">
             <div class="form-group">
               <label>Phone</label>
               <input formControlName="phone" placeholder="+1 234 567 890" />
+            </div>
+            <div class="form-group">
+              <label>Rating</label>
+              <input type="number" step="0.1" formControlName="rating" placeholder="4.5" />
             </div>
           </div>
 
@@ -36,8 +51,8 @@ import { HotelService, HotelDto, CreateHotelDto } from '../../services/hotel.ser
               <input type="email" formControlName="email" placeholder="contact@hotel.com" />
             </div>
             <div class="form-group">
-              <label>Rating</label>
-              <input type="number" step="0.1" formControlName="rating" placeholder="4.5" />
+              <label>&nbsp;</label>
+              <span></span>
             </div>
           </div>
 
@@ -107,10 +122,12 @@ import { HotelService, HotelDto, CreateHotelDto } from '../../services/hotel.ser
 })
 export class HotelListComponent implements OnInit {
   hotels: HotelDto[] = [];
+  companies: CompanyLookupDto[] = [];
   showForm = false;
   loading = false;
 
   form = this.fb.group({
+    companyId: [null as number | null, Validators.required],
     name: ['', Validators.required],
     address: ['', Validators.required],
     city: ['', Validators.required],
@@ -122,10 +139,15 @@ export class HotelListComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
+    private readonly companyService: CompanyService,
     private readonly hotelService: HotelService
   ) {}
 
   ngOnInit(): void {
+    this.companyService.getLookup().subscribe({
+      next: (companies) => this.companies = companies,
+      error: () => this.companies = []
+    });
     this.loadHotels();
   }
 
@@ -141,7 +163,16 @@ export class HotelListComponent implements OnInit {
     if (this.form.invalid) return;
 
     this.loading = true;
-    const dto = this.form.value as CreateHotelDto;
+    const dto: CreateHotelDto = {
+      companyId: Number(this.form.value.companyId ?? 0),
+      name: this.form.value.name ?? '',
+      address: this.form.value.address ?? '',
+      city: this.form.value.city ?? '',
+      country: this.form.value.country ?? '',
+      phone: this.form.value.phone ?? '',
+      email: this.form.value.email ?? '',
+      rating: Number(this.form.value.rating ?? 5)
+    };
 
     this.hotelService.create(dto).subscribe({
       next: () => {

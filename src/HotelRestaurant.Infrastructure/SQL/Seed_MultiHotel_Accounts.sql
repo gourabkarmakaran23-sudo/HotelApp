@@ -26,7 +26,7 @@ SET
 -- Use these login credentials on the app:
 --   superadmin@smartluth.com / Super@123
 --   admin@smartluth.com / Admin@123
---   user@smartluth.com / User@123
+--   user@smartluth.com / User@123I
 INSERT INTO public."ApplicationUsers" ("UserName", "FullName", "Email", "PasswordHash", "Role", "HotelId", "IsActive", "CreatedAt", "UpdatedAt", "IsDeleted")
 VALUES
   (

@@ -26,9 +26,11 @@ namespace HotelRestaurant.API.Controllers
         {
             try
             {
-                var hotelIdHeader = Request.Headers["X-Hotel-Id"].FirstOrDefault();
                 var isSuperAdmin = User.IsInRole("SuperAdmin");
-                var selectedHotelId = int.TryParse(hotelIdHeader, out var parsedHotelId) ? parsedHotelId : (int?)null;
+                var selectedHotelId = isSuperAdmin &&
+                    int.TryParse(Request.Headers["X-Hotel-Id"].FirstOrDefault(), out var parsedHotelId)
+                    ? parsedHotelId
+                    : (int?)null;
 
                 var bookingsQuery = _unitOfWork.Bookings
                     .GetAllQueryable()

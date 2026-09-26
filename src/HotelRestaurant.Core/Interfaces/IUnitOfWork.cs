@@ -46,6 +46,7 @@ namespace HotelRestaurant.Core.Interfaces
         IGenericRepository<CancellationPolicy> CancellationPolicies { get; }
         IGenericRepository<Amenity> Amenities { get; }
         #endregion
+        IGenericRepository<Company> Companies { get; }
         IGenericRepository<Hotel> Hotels { get; }
         IGenericRepository<RoomTypes> RoomTypes { get; }
         IGenericRepository<Room> Rooms { get; }

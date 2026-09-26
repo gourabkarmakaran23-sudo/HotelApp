@@ -204,7 +204,10 @@ https://www.exceedhms.com/Pricing.php
 
 
 
-
+Role	Username	Email	Password
+SuperAdmin	superadmin	superadmin@smartluth.com	Super@123
+Admin	admin	admin@smartluth.com	Admin@123
+User	hoteluser	user@smartluth.com	User@123I
 
 
 
