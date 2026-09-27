@@ -400,6 +400,46 @@ public class MasterController : ControllerBase
     [HttpDelete("booking-sources/{id}")] public async Task<IActionResult> DeleteBookingSource(int id) => Ok(await _masterService.DeleteBookingSourceAsync(id));
     #endregion
 
+    [HttpGet("booking-engine/references")]
+    public async Task<IActionResult> GetBookingEngineReferences() => Ok(await _masterService.GetBookingEngineReferencesAsync());
+
+    [HttpGet("booking-engine/titles")]
+    public async Task<IActionResult> GetBookingEngineTitles() => Ok(await _masterService.GetBookingEngineTitlesAsync());
+
+    [HttpGet("booking-engine/sold-by")]
+    public async Task<IActionResult> GetBookingEngineSalespeople() => Ok(await _masterService.GetBookingEngineSalespeopleAsync());
+
+    [HttpGet("employees")]
+    public async Task<IActionResult> GetEmployees() => Ok(await _masterService.GetEmployeesAsync());
+
+    [HttpGet("employees/{id:int}")]
+    public async Task<IActionResult> GetEmployee(int id)
+    {
+        var employee = await _masterService.GetEmployeeByIdAsync(id);
+        return employee == null ? NotFound() : Ok(employee);
+    }
+
+    [HttpPost("employees")]
+    public async Task<IActionResult> CreateEmployee([FromBody] EmployeeDto dto)
+    {
+        var id = await _masterService.CreateEmployeeAsync(dto);
+        return CreatedAtAction(nameof(GetEmployee), new { id }, new { id });
+    }
+
+    [HttpPut("employees/{id:int}")]
+    public async Task<IActionResult> UpdateEmployee(int id, [FromBody] EmployeeDto dto)
+    {
+        var updated = await _masterService.UpdateEmployeeAsync(id, dto);
+        return updated ? NoContent() : NotFound();
+    }
+
+    [HttpDelete("employees/{id:int}")]
+    public async Task<IActionResult> DeleteEmployee(int id)
+    {
+        var deleted = await _masterService.DeleteEmployeeAsync(id);
+        return deleted ? NoContent() : NotFound();
+    }
+
     #region Complementary Master
     [HttpGet("complementary")] public async Task<IActionResult> GetComplementaries() => Ok(await _masterService.GetComplementariesAsync());
     [HttpPost("complementary")] public async Task<IActionResult> CreateComplementary([FromBody] ComplementaryDto d) => Ok(await _masterService.CreateComplementaryAsync(d));

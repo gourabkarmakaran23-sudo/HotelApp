@@ -29,6 +29,8 @@ namespace HotelRestaurant.Core.Interfaces
         IGenericRepository<BedType> BedTypes { get; }
         IGenericRepository<BookingType> BookingTypes { get; }
         IGenericRepository<BookingSource> BookingSources { get; }
+        IGenericRepository<BookingReferenceOption> BookingReferenceOptions { get; }
+        IGenericRepository<GuestTitle> GuestTitles { get; }
         #endregion
         #region Core Hotel & Restaurant Repositories
         IGenericRepository<Complementary> Complementaries { get; }

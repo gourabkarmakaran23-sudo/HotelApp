@@ -8,12 +8,55 @@
     <input type="text" placeholder="Search rooms..." (input)="onSearch($event)" class="form-control search-input" />
   </div>
 
-  <div class="grid-wrapper">
-    <ag-grid-angular style="width: 100%; height: 310px;" class="ag-theme-alpine" [rowData]="filteredRooms"
-      [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="10"
-      [paginationPageSizeSelector]="[10, 20, 50]" (gridReady)="onGridReady($event)"
-      (cellClicked)="onCellClicked($event)">
-    </ag-grid-angular>
+  <div class="table-responsive">
+    <table class="management-table">
+      <thead>
+        <tr>
+          <th>Room Number</th>
+          <th>Room Type</th>
+          <th>Floor No</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let room of pagedRooms">
+          <td><strong>{{ room.roomNumber }}</strong></td>
+          <td>{{ room.roomTypeName }}</td>
+          <td>{{ room.floorNo ?? room.floorNumber }}</td>
+          <td>₹{{ room.price | number:'1.2-2' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="room.status === 'Available' ? 'active' : 'inactive'">
+              {{ room.status }}
+            </span>
+          </td>
+          <td class="text-center actions-cell">
+            <button type="button" class="action-btn edit-btn" title="Edit room" (click)="openEditModal(room)">✏️</button>
+            <button type="button" class="action-btn delete-btn" title="Delete room" (click)="onDelete(room.id ?? room.Id)">🗑️</button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredRooms.length === 0">
+          <td colspan="6" class="empty-state">No matching rooms found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-panel" *ngIf="filteredRooms.length > 0">
+    <label>Page size:
+      <select name="pageSize" [(ngModel)]="pageSize" (ngModelChange)="currentPage = 1">
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+        <option [ngValue]="50">50</option>
+      </select>
+    </label>
+    <span>{{ firstVisibleRow }} to {{ lastVisibleRow }} of {{ filteredRooms.length }}</span>
+    <div class="pagination-actions">
+      <button type="button" title="Previous page" [disabled]="currentPage <= 1" (click)="currentPage = currentPage - 1">‹</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button type="button" title="Next page" [disabled]="currentPage >= totalPages" (click)="currentPage = currentPage + 1">›</button>
+    </div>
   </div>
 
   <div class="modal-backdrop" *ngIf="isModalOpen">

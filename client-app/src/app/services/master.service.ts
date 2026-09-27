@@ -3,6 +3,19 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { apiBaseUrl } from '../app.config';
 
+export interface EmployeeRecord {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: string;
+  hireDate: string;
+  salary: number;
+}
+
+export type EmployeePayload = Omit<EmployeeRecord, 'id'>;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -197,6 +210,15 @@ private readonly extendedBaseUrl = `${apiBaseUrl}/ExtendedMaster`; // নতু�
   createBookingSource(payload: any): Observable<number> { return this.http.post<number>(`${this.baseUrl}/booking-sources`, payload, this.getAuthHeaders()); }
   updateBookingSource(id: number, payload: any): Observable<boolean> { return this.http.put<boolean>(`${this.baseUrl}/booking-sources/${id}`, payload, this.getAuthHeaders()); }
   deleteBookingSource(id: number): Observable<boolean> { return this.http.delete<boolean>(`${this.baseUrl}/booking-sources/${id}`, this.getAuthHeaders()); }
+
+  getBookingEngineReferences(): Observable<string[]> { return this.http.get<string[]>(`${this.baseUrl}/booking-engine/references`, this.getAuthHeaders()); }
+  getBookingEngineTitles(): Observable<string[]> { return this.http.get<string[]>(`${this.baseUrl}/booking-engine/titles`, this.getAuthHeaders()); }
+  getBookingEngineSalespeople(): Observable<string[]> { return this.http.get<string[]>(`${this.baseUrl}/booking-engine/sold-by`, this.getAuthHeaders()); }
+
+  getEmployees(): Observable<EmployeeRecord[]> { return this.http.get<EmployeeRecord[]>(`${this.baseUrl}/employees`, this.getAuthHeaders()); }
+  createEmployee(payload: EmployeePayload): Observable<{ id: number }> { return this.http.post<{ id: number }>(`${this.baseUrl}/employees`, payload, this.getAuthHeaders()); }
+  updateEmployee(id: number, payload: EmployeePayload): Observable<void> { return this.http.put<void>(`${this.baseUrl}/employees/${id}`, payload, this.getAuthHeaders()); }
+  deleteEmployee(id: number): Observable<void> { return this.http.delete<void>(`${this.baseUrl}/employees/${id}`, this.getAuthHeaders()); }
   //#endregion
 
   //#region Complementary & Floor Plans

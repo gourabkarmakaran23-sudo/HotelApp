@@ -32,3 +32,13 @@ Prompt 7: In Super Admin Menu I did not see User List to show User and Create Us
 Prompt 1: Payment Method booking-engine
 should come from Origial paymet method payment-methods not hardcoded means payment
 method should come form DB.
+
+Prompt 2: Booking Type, Booking Reference,
+Sold By, Title also should comes from table
+only not hardcoded in Booking-Engine na.
+
+
+Sold By is not populated we need to insert record on this I guess but where was that entry screen for SOld By
+
+
+Where I can See Employee List page in Masters or which Menu? Room List page should be look like Room Type lists

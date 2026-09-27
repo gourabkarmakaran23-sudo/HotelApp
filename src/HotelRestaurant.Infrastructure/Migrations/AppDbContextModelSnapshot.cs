@@ -423,6 +423,36 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.ToTable("BookingGuests");
                 });
 
+            modelBuilder.Entity("HotelRestaurant.Core.Entities.BookingReferenceOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ReferenceName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BookingReferenceOptions");
+                });
+
             modelBuilder.Entity("HotelRestaurant.Core.Entities.BookingSource", b =>
                 {
                     b.Property<int>("Id")
@@ -457,6 +487,36 @@ namespace HotelRestaurant.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BookingSources");
+                });
+
+            modelBuilder.Entity("HotelRestaurant.Core.Entities.GuestTitle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TitleName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GuestTitles");
                 });
 
             modelBuilder.Entity("HotelRestaurant.Core.Entities.BookingType", b =>

@@ -74,15 +74,9 @@ export class BookingEngineComponent implements OnInit {
 
   showViewModal = false;
   // ── Dropdown data ─────────────────────────────────────────────────────────
-  bookingTypes = [
-    'Book Online',
-    'Counter Booking',
-    'Local Travel Agent (LTA)',
-    'Online Travel Agent (OTA)'
-  ];
-
-  bookingReferences = ['Head Back Office', 'Kolkata Back Office'];
-  soldByNames = ['Gourab Karmakar', 'Sanjay Kumar Hazra', 'Pinaki Das', 'Rohit Sen'];
+  bookingTypes: any[] = [];
+  bookingReferences: string[] = [];
+  soldByNames: string[] = [];
 
   mealPlanOptions = [
     'Room Only',
@@ -91,7 +85,7 @@ export class BookingEngineComponent implements OnInit {
     'Room with Breakfast'
   ];
 
-  billingNameTitles = ['Mr.', 'Ms.', 'Mrs.', 'M/s', 'Dr.', 'Prof.'];
+  billingNameTitles: string[] = [];
   childAgeOptions = Array.from({ length: 16 }, (_, i) => i);
 
   mealPlanRates: Record<string, number> = {
@@ -111,11 +105,11 @@ export class BookingEngineComponent implements OnInit {
   // ── Form model ──────────────────────────────────────────────────────────
   form: BookingForm = {
 
-    bookingType: 'Book Online',
+    bookingType: '',
 
-    bookingReference: 'Head Back Office',
+    bookingReference: '',
 
-    soldBy: 'Gourab Karmakar',
+    soldBy: '',
 
     arrivalFrom: '',
 
@@ -162,7 +156,7 @@ export class BookingEngineComponent implements OnInit {
 
     totalAmount: 0,
 
-    billingTitle: 'Mr',
+    billingTitle: '',
 
     billingFirstName: '',
 
@@ -184,7 +178,7 @@ export class BookingEngineComponent implements OnInit {
 
     sameAsCustomer: true,
 
-    primaryTitle: 'Mr',
+    primaryTitle: '',
 
     primaryFirstName: '',
 
@@ -210,6 +204,7 @@ export class BookingEngineComponent implements OnInit {
   ngOnInit(): void {
     this.loadRoomTypes();
     this.loadPaymentMethods();
+    this.loadBookingEngineOptions();
    
     // const id = this.route.snapshot.paramMap.get('id');
 
@@ -243,6 +238,51 @@ export class BookingEngineComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load payment methods:', err);
       }
+    });
+  }
+
+  loadBookingEngineOptions(): void {
+    this.masterService.getBookingTypes().subscribe({
+      next: (types) => {
+        this.bookingTypes = (types || []).filter(type => type.isActive);
+        if (!this.form.bookingType && this.bookingTypes.length) {
+          this.form.bookingType = this.bookingTypes[0].typeName;
+        }
+      },
+      error: (err) => console.error('Failed to load booking types:', err)
+    });
+
+    this.masterService.getBookingEngineReferences().subscribe({
+      next: (references) => {
+        this.bookingReferences = references || [];
+        if (!this.form.bookingReference && this.bookingReferences.length) {
+          this.form.bookingReference = this.bookingReferences[0];
+        }
+      },
+      error: (err) => console.error('Failed to load booking references:', err)
+    });
+
+    this.masterService.getBookingEngineSalespeople().subscribe({
+      next: (names) => {
+        this.soldByNames = names || [];
+        if (!this.form.soldBy && this.soldByNames.length) {
+          this.form.soldBy = this.soldByNames[0];
+        }
+      },
+      error: (err) => console.error('Failed to load booking salespeople:', err)
+    });
+
+    this.masterService.getBookingEngineTitles().subscribe({
+      next: (titles) => {
+        this.billingNameTitles = titles || [];
+        if (!this.form.billingTitle && this.billingNameTitles.length) {
+          this.form.billingTitle = this.billingNameTitles[0];
+        }
+        if (!this.form.primaryTitle && this.billingNameTitles.length) {
+          this.form.primaryTitle = this.billingNameTitles[0];
+        }
+      },
+      error: (err) => console.error('Failed to load guest titles:', err)
     });
   }
 

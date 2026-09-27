@@ -73,6 +73,8 @@ namespace HotelRestaurant.Infrastructure.Data
         public DbSet<BedType> BedTypes => Set<BedType>();
         public DbSet<BookingType> BookingTypes => Set<BookingType>();
         public DbSet<BookingSource> BookingSources => Set<BookingSource>();
+        public DbSet<BookingReferenceOption> BookingReferenceOptions => Set<BookingReferenceOption>();
+        public DbSet<GuestTitle> GuestTitles => Set<GuestTitle>();
 
         // 1. Append definitions to your DbSets entries
         public DbSet<Complementary> Complementaries => Set<Complementary>();
@@ -398,6 +400,18 @@ namespace HotelRestaurant.Infrastructure.Data
             {
                 e.HasKey(x => x.Id);
                 e.Property(x => x.SourceName).IsRequired().HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<BookingReferenceOption>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.ReferenceName).IsRequired().HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<GuestTitle>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.TitleName).IsRequired().HasMaxLength(30);
             });
 
             // 2. Add these model mapping configurations inside OnModelCreating()

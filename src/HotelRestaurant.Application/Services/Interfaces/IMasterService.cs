@@ -91,6 +91,16 @@ namespace HotelRestaurant.Application.Services.Interfaces
         Task<bool> UpdateBookingSourceAsync(int id, BookingSourceDto dto);
         Task<bool> DeleteBookingSourceAsync(int id);
 
+        Task<List<string>> GetBookingEngineReferencesAsync();
+        Task<List<string>> GetBookingEngineTitlesAsync();
+        Task<List<string>> GetBookingEngineSalespeopleAsync();
+
+        Task<List<EmployeeDto>> GetEmployeesAsync();
+        Task<EmployeeDto?> GetEmployeeByIdAsync(int id);
+        Task<int> CreateEmployeeAsync(EmployeeDto dto);
+        Task<bool> UpdateEmployeeAsync(int id, EmployeeDto dto);
+        Task<bool> DeleteEmployeeAsync(int id);
+
         // Complementary Service Routines
         Task<List<ComplementaryDto>> GetComplementariesAsync();
         Task<int> CreateComplementaryAsync(ComplementaryDto dto);

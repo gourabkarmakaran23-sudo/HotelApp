@@ -662,6 +662,114 @@ namespace HotelRestaurant.Application.Services.Implementations
             return true;
         }
 
+        public async Task<List<string>> GetBookingEngineReferencesAsync()
+        {
+            var references = await _unitOfWork.BookingReferenceOptions.GetAllAsync();
+            return references
+                .Where(x => !x.IsDeleted && x.IsActive)
+                .Select(x => x.ReferenceName)
+                .OrderBy(x => x)
+                .ToList();
+        }
+
+        public async Task<List<string>> GetBookingEngineTitlesAsync()
+        {
+            var titles = await _unitOfWork.GuestTitles.GetAllAsync();
+            return titles
+                .Where(x => !x.IsDeleted && x.IsActive)
+                .Select(x => x.TitleName)
+                .OrderBy(x => x)
+                .ToList();
+        }
+
+        public async Task<List<string>> GetBookingEngineSalespeopleAsync()
+        {
+            var employees = await _unitOfWork.Employees.GetAllAsync();
+            return employees
+                .Where(x => !x.IsDeleted)
+                .Select(x => $"{x.FirstName} {x.LastName}".Trim())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+        }
+
+        public async Task<List<EmployeeDto>> GetEmployeesAsync()
+        {
+            var employees = await _unitOfWork.Employees.GetAllAsync();
+            return employees
+                .Where(x => !x.IsDeleted)
+                .OrderBy(x => x.LastName)
+                .ThenBy(x => x.FirstName)
+                .Select(MapEmployee)
+                .ToList();
+        }
+
+        public async Task<EmployeeDto?> GetEmployeeByIdAsync(int id)
+        {
+            var employee = await _unitOfWork.Employees.GetByIdAsync(id);
+            return employee == null || employee.IsDeleted ? null : MapEmployee(employee);
+        }
+
+        public async Task<int> CreateEmployeeAsync(EmployeeDto dto)
+        {
+            var employee = new Employee
+            {
+                FirstName = dto.FirstName.Trim(),
+                LastName = dto.LastName.Trim(),
+                Email = dto.Email.Trim(),
+                Phone = dto.Phone.Trim(),
+                Role = dto.Role,
+                HireDate = dto.HireDate,
+                Salary = dto.Salary
+            };
+
+            await _unitOfWork.Employees.AddAsync(employee);
+            await _unitOfWork.SaveChangesAsync();
+            return employee.Id;
+        }
+
+        public async Task<bool> UpdateEmployeeAsync(int id, EmployeeDto dto)
+        {
+            var employee = await _unitOfWork.Employees.GetByIdAsync(id);
+            if (employee == null || employee.IsDeleted) return false;
+
+            employee.FirstName = dto.FirstName.Trim();
+            employee.LastName = dto.LastName.Trim();
+            employee.Email = dto.Email.Trim();
+            employee.Phone = dto.Phone.Trim();
+            employee.Role = dto.Role;
+            employee.HireDate = dto.HireDate;
+            employee.Salary = dto.Salary;
+            employee.UpdatedAt = DateTime.UtcNow;
+
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteEmployeeAsync(int id)
+        {
+            var employee = await _unitOfWork.Employees.GetByIdAsync(id);
+            if (employee == null || employee.IsDeleted) return false;
+
+            employee.IsDeleted = true;
+            employee.UpdatedAt = DateTime.UtcNow;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        private static EmployeeDto MapEmployee(Employee employee) => new()
+        {
+            Id = employee.Id,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            Email = employee.Email,
+            Phone = employee.Phone,
+            Role = employee.Role,
+            HireDate = employee.HireDate,
+            Salary = employee.Salary
+        };
+
         #endregion
 
         #region Complementary & Floor Plan Master Methods

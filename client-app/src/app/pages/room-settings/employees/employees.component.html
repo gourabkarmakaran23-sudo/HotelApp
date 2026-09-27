@@ -1,0 +1,102 @@
+<main class="employees-page">
+  <header class="page-heading">
+    <div>
+      <h1>Employees</h1>
+      <p>Manage staff available in the Sold By list for this hotel.</p>
+    </div>
+  </header>
+
+  <p class="error-message" role="alert" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <section class="employee-layout">
+    <form class="employee-form" #employeeForm="ngForm" (ngSubmit)="save()">
+      <div class="section-heading">
+        <h2>{{ isEditMode ? 'Edit Employee' : 'Add Employee' }}</h2>
+      </div>
+
+      <div class="form-grid">
+        <label>
+          <span>First Name <b>*</b></span>
+          <input type="text" name="firstName" [(ngModel)]="form.firstName" maxlength="80" required>
+        </label>
+        <label>
+          <span>Last Name <b>*</b></span>
+          <input type="text" name="lastName" [(ngModel)]="form.lastName" maxlength="80" required>
+        </label>
+        <label>
+          <span>Role <b>*</b></span>
+          <select name="role" [(ngModel)]="form.role" required>
+            <option *ngFor="let role of roles" [ngValue]="role.value">{{ role.label }}</option>
+          </select>
+        </label>
+        <label>
+          <span>Hire Date <b>*</b></span>
+          <input type="date" name="hireDate" [(ngModel)]="form.hireDate" required>
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" [(ngModel)]="form.email" maxlength="200">
+        </label>
+        <label>
+          <span>Phone</span>
+          <input type="tel" name="phone" [(ngModel)]="form.phone" maxlength="40">
+        </label>
+        <label>
+          <span>Salary</span>
+          <input type="number" name="salary" [(ngModel)]="form.salary" min="0" step="0.01">
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="button-secondary" (click)="resetForm()">Clear</button>
+        <button type="submit" class="button-primary" [disabled]="employeeForm.invalid || isSaving">
+          {{ isSaving ? 'Saving...' : isEditMode ? 'Save Changes' : 'Add Employee' }}
+        </button>
+      </div>
+    </form>
+
+    <section class="employee-list" aria-labelledby="employee-list-title">
+      <div class="section-heading list-heading">
+        <h2 id="employee-list-title">Hotel Staff</h2>
+        <span>{{ employees.length }} {{ employees.length === 1 ? 'employee' : 'employees' }}</span>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Contact</th>
+              <th>Hire Date</th>
+              <th>Salary</th>
+              <th aria-label="Actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let employee of employees">
+              <td class="employee-name">{{ employee.firstName }} {{ employee.lastName }}</td>
+              <td>{{ roleName(employee.role) }}</td>
+              <td>
+                <span>{{ employee.phone || 'No phone' }}</span>
+                <small>{{ employee.email }}</small>
+              </td>
+              <td>{{ employee.hireDate | date:'mediumDate' }}</td>
+              <td>{{ employee.salary | currency:'INR':'symbol':'1.0-2' }}</td>
+              <td class="row-actions">
+                <button type="button" title="Edit employee" (click)="edit(employee)">Edit</button>
+                <button type="button" class="remove-button" title="Remove employee" (click)="remove(employee)">Remove</button>
+              </td>
+            </tr>
+            <tr *ngIf="!isLoading && employees.length === 0">
+              <td colspan="6" class="empty-state">No employees have been added for this hotel.</td>
+            </tr>
+            <tr *ngIf="isLoading">
+              <td colspan="6" class="empty-state">Loading employees...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+</main>

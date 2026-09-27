@@ -167,6 +167,7 @@ export const routes: Routes = [
   
   //#region Room Settings Sub Pages
   { path: 'booking-type', loadComponent: () => import('./pages/room-settings/booking-type/booking-type.component').then(m => m.BookingTypeComponent), canActivate: [AuthGuard] },
+  { path: 'employees', loadComponent: () => import('./pages/room-settings/employees/employees.component').then(m => m.EmployeesComponent), canActivate: [AuthGuard] },
   { path: 'booking-source', loadComponent: () => import('./pages/room-settings/booking-source/booking-source.component').then(m => m.BookingSourceComponent), canActivate: [AuthGuard] },
   { path: 'bed-type', loadComponent: () => import('./pages/room-settings/bed-type/bed-type.component').then(m => m.BedTypeComponent), canActivate: [AuthGuard] },
   { path: 'floor-plan', loadComponent: () => import('./pages/room-settings/floor-plan/floor-plan.component').then(m => m.FloorPlanComponent), canActivate: [AuthGuard] },
