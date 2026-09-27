@@ -7,6 +7,9 @@
   </header>
 
   <p class="error-message" role="alert" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="scope-notice" role="note" *ngIf="requiresHotelSelection">
+    Select a specific Property in the header before adding or editing employees.
+  </p>
 
   <section class="employee-layout">
     <form class="employee-form" #employeeForm="ngForm" (ngSubmit)="save()">
@@ -49,7 +52,7 @@
 
       <div class="form-actions">
         <button type="button" class="button-secondary" (click)="resetForm()">Clear</button>
-        <button type="submit" class="button-primary" [disabled]="employeeForm.invalid || isSaving">
+        <button type="submit" class="button-primary" [disabled]="employeeForm.invalid || isSaving || requiresHotelSelection">
           {{ isSaving ? 'Saving...' : isEditMode ? 'Save Changes' : 'Add Employee' }}
         </button>
       </div>

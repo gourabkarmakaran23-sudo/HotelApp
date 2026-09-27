@@ -226,6 +226,17 @@ td small {
   background: #fff4f4;
 }
 
+.scope-notice {
+  max-width: 1500px;
+  margin: 0 auto 14px;
+  padding: 10px 12px;
+  color: #73541a;
+  font-size: 13px;
+  border: 1px solid #ead9ad;
+  border-radius: 4px;
+  background: #fff9e9;
+}
+
 @media (max-width: 900px) {
   .employee-layout {
     grid-template-columns: 1fr;

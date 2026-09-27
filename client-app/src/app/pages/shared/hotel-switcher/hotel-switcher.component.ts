@@ -27,6 +27,12 @@ export class HotelSwitcherComponent implements OnInit {
   ngOnInit(): void {
     this.isSuperAdmin = this.authService.hasRole('SuperAdmin');
     this.activeHotelId = this.authService.getActiveHotelId();
+    if (this.isSuperAdmin) {
+      this.authService.getHotelsList().subscribe({
+        next: hotels => this.hotels = hotels || [],
+        error: () => this.hotels = []
+      });
+    }
   }
 
   onHotelChange(event: Event): void {

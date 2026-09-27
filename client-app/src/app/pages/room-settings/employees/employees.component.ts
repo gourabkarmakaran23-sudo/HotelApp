@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AuthService } from '../../../services/auth.service';
 import { EmployeePayload, EmployeeRecord, MasterService } from '../../../services/master.service';
 
 @Component({
@@ -31,7 +32,14 @@ export class EmployeesComponent implements OnInit {
 
   form: EmployeePayload = this.emptyForm();
 
-  constructor(private readonly masterService: MasterService) {}
+  constructor(
+    private readonly masterService: MasterService,
+    private readonly authService: AuthService
+  ) {}
+
+  get requiresHotelSelection(): boolean {
+    return this.authService.hasRole('SuperAdmin') && this.authService.getActiveHotelId() === null;
+  }
 
   ngOnInit(): void {
     this.loadEmployees();
@@ -81,8 +89,9 @@ export class EmployeesComponent implements OnInit {
         this.loadEmployees();
         this.isSaving = false;
       },
-      error: () => {
-        this.errorMessage = 'Unable to save this employee. Check the details and try again.';
+      error: err => {
+        this.errorMessage = err?.error?.message || err?.error?.detail || err?.message ||
+          'Unable to save this employee. Check the details and try again.';
         this.isSaving = false;
       }
     });

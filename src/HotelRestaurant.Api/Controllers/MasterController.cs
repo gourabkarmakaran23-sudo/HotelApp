@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using HotelRestaurant.Application.DTOs.Master;
 using HotelRestaurant.Application.DTOs.RoomSettings;
 using HotelRestaurant.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelRestaurant.Api.Controllers;
@@ -420,24 +421,55 @@ public class MasterController : ControllerBase
     }
 
     [HttpPost("employees")]
+    [Authorize]
     public async Task<IActionResult> CreateEmployee([FromBody] EmployeeDto dto)
     {
+        if (!HasEmployeeHotelScope(out var scopeError)) return BadRequest(new { message = scopeError });
         var id = await _masterService.CreateEmployeeAsync(dto);
         return CreatedAtAction(nameof(GetEmployee), new { id }, new { id });
     }
 
     [HttpPut("employees/{id:int}")]
+    [Authorize]
     public async Task<IActionResult> UpdateEmployee(int id, [FromBody] EmployeeDto dto)
     {
+        if (!HasEmployeeHotelScope(out var scopeError)) return BadRequest(new { message = scopeError });
         var updated = await _masterService.UpdateEmployeeAsync(id, dto);
         return updated ? NoContent() : NotFound();
     }
 
     [HttpDelete("employees/{id:int}")]
+    [Authorize]
     public async Task<IActionResult> DeleteEmployee(int id)
     {
+        if (!HasEmployeeHotelScope(out var scopeError)) return BadRequest(new { message = scopeError });
         var deleted = await _masterService.DeleteEmployeeAsync(id);
         return deleted ? NoContent() : NotFound();
+    }
+
+    private bool HasEmployeeHotelScope(out string errorMessage)
+    {
+        var canViewAllHotels = User.FindFirst("can_view_all_hotels")?.Value;
+        if (User.IsInRole("SuperAdmin") && string.Equals(canViewAllHotels, "true", StringComparison.OrdinalIgnoreCase))
+        {
+            if (int.TryParse(Request.Headers["X-Hotel-Id"].FirstOrDefault(), out var selectedHotelId) && selectedHotelId > 0)
+            {
+                errorMessage = string.Empty;
+                return true;
+            }
+
+            errorMessage = "Select a specific property before saving an employee.";
+            return false;
+        }
+
+        if (int.TryParse(User.FindFirst("hotel_id")?.Value, out var assignedHotelId) && assignedHotelId > 0)
+        {
+            errorMessage = string.Empty;
+            return true;
+        }
+
+        errorMessage = "Your account is not assigned to a property.";
+        return false;
     }
 
     #region Complementary Master
