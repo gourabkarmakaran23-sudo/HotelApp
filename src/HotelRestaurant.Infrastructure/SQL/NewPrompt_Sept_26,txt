@@ -26,3 +26,9 @@ and others.
 
 Prompt 7: In Super Admin Menu I did not see User List to show User and Create User in the User List I did not see for Super Admin Role
 
+
+
+27th Sept 2026
+Prompt 1: Payment Method booking-engine
+should come from Origial paymet method payment-methods not hardcoded means payment
+method should come form DB.

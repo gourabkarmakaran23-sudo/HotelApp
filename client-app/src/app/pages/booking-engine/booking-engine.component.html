@@ -417,9 +417,9 @@
           <select [(ngModel)]="form.paymentMode" name="paymentMode"
             [class.input-error]="bookingForm.submitted && !form.paymentMode">
             <option value="">Choose Payment Mode</option>
-            <option value="Cash">Cash</option>
-            <option value="Card">Card</option>
-            <option value="Online">Online</option>
+            <option *ngFor="let method of paymentMethods" [value]="method.methodName">
+              {{ method.methodName }}
+            </option>
           </select>
           <div class="field-error" *ngIf="bookingForm.submitted && !form.paymentMode">
             Payment Mode is required

@@ -7,6 +7,7 @@ import { CustomAlertService } from '../../services/custom-alert.service';
 import { CustomAlertComponent } from '../shared/custom-alert/custom-alert.component';
 import { RoomTypeService } from '../../services/room-type.service';
 import { RoomService } from '../../services/room.service';
+import { MasterService } from '../../services/master.service';
 import { BookingRoom } from '../../models/booking.models';
 import { BookingForm } from '../../models/booking.models';
 
@@ -62,6 +63,7 @@ export class BookingEngineComponent implements OnInit {
   // ── Loader state ──────────────────────────────────────────────────────────
   isLoading = false;
   roomTypesList: any[] = [];
+  paymentMethods: any[] = [];
   sameDayShortStayMessage = '';
 
   isEditMode = false;
@@ -174,7 +176,7 @@ export class BookingEngineComponent implements OnInit {
 
     gstin: '',
 
-    paymentMode: 'Cash',
+    paymentMode: '',
 
     advanceAmount: 0,
 
@@ -198,6 +200,7 @@ export class BookingEngineComponent implements OnInit {
     private readonly bookingService: BookingService,
     private roomTypeService: RoomTypeService,
     private roomService: RoomService,
+    private readonly masterService: MasterService,
     private readonly alertService: CustomAlertService
   ) {
 
@@ -206,6 +209,7 @@ export class BookingEngineComponent implements OnInit {
   }
   ngOnInit(): void {
     this.loadRoomTypes();
+    this.loadPaymentMethods();
    
     // const id = this.route.snapshot.paramMap.get('id');
 
@@ -231,6 +235,17 @@ export class BookingEngineComponent implements OnInit {
   });
 
   };
+  loadPaymentMethods(): void {
+    this.masterService.getPaymentMethods().subscribe({
+      next: (methods) => {
+        this.paymentMethods = (methods || []).filter(method => method.isActive);
+      },
+      error: (err) => {
+        console.error('Failed to load payment methods:', err);
+      }
+    });
+  }
+
   closeModal(): void {
 
     this.showViewModal = false;
